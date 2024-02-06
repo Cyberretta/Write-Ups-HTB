@@ -113,10 +113,10 @@ Service detection performed. Please report any incorrect results at https://nmap
 		
 		<h2 id="web-enumeration">Web enumeration (port 80)</h2>
 		<p>Let’s see what’s on the webserver on port 80 : </p>
-        <img src="index.png">
+        <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Return/index.png">
         <p>So, we have access to a printer admin panel. The first problem I see here is the fact that there is <strong class="highlight-red">no access control</strong> on this admin panel. The impact of this will depend on what we are able to do on this admin panel.</p>
         <p>Let’s see what’s on the <strong class="highlight-default">Settings</strong> page : </p>
-        <img src="settings.png"/>
+        <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Return/settings.png"/>
         <p>
             We can see the configuration of the printer. Fortunately for the target (not for an attacker), the password is not returned in the password field, this is a good point. We can see the server port set to <strong class="highlight-red">389</strong>. 
             According to this information, the printer will try to authenticate using the LDAP protocol and not the LDAPS protocol. The problem with LDAP is that the communication is not encrypted, so the credentials will be sent in clear text and may be captured by an attacker. 
@@ -199,7 +199,7 @@ Service detection performed. Please report any incorrect results at https://nmap
 
 [+] Listening for events...</code></pre>
     <p>Now, we can set the server address to our IP address on the printer admin panel : </p>
-    <img src="exploit.png"/>
+    <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Return/exploit.png"/>
     <p>Then we can click on the <strong>Update</strong> button. Finally, let’s see if <a href="https://github.com/SpiderLabs/Responder">Responder</a> captured the LDAP authentication request : </p>
     <pre class="code"><code>[LDAP] Cleartext Client   : 10.129.95.241
 [LDAP] Cleartext Username : return\svc-printer

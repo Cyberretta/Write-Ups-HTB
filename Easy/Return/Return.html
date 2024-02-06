@@ -201,8 +201,7 @@ Service detection performed. Please report any incorrect results at https://nmap
     <p>Now, we can set the server address to our IP address on the printer admin panel : </p>
     <img src="exploit.png"/>
     <p>Then we can click on the <strong>Update</strong> button. Finally, let’s see if <a href="https://github.com/SpiderLabs/Responder">Responder</a> captured the LDAP authentication request : </p>
-    <pre class="code">
-    <code>[LDAP] Cleartext Client   : 10.129.95.241
+    <pre class="code"><code>[LDAP] Cleartext Client   : 10.129.95.241
 [LDAP] Cleartext Username : return\svc-printer
 [LDAP] Cleartext Password : [HIDDEN]</code></pre>
     <p>We successfully captured the clear-text password for the <code><strong>svc-printer</strong></code> user. Since port <code><strong>5985</strong></code> 

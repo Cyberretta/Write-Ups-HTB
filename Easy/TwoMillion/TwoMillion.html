@@ -5,14 +5,15 @@
         <img class="headerIcon" src="https://labs.hackthebox.com/storage/avatars/d7bc2758fb7589dfa046bee9ce4d75cb.png"></img>
         <h1 class="mainTitle">HackTheBox - TwoMillion (Easy)</h1>
     </div>
-    <p>
-    </p>
 </header>
 <div class="writeUp">
-    <h1 id="table-of-contents">Table of contents</h1>
+    <p class="boxLink">
+    	<a href="https://app.hackthebox.com/machines/547">https://app.hackthebox.com/machines/547</a>
+    </p>
+    <h1>Table of contents</h1>
     <nav>
         <div>
-            <a href="#table-of-contents">Table of contents</a>
+            <a>Table of contents</a>
         </div>
         <div>
             <a>Enumeration</a>
@@ -54,7 +55,8 @@
             <a>Vulnerabilities summary</a>
         </div>
         <div>
-            <a>Improper Access Control on the API</a>
+            <a><strong>Improper Access Control on the API</strong>
+            </a>
         </div>
         <div>
             <a>OS Command Injection</a>
@@ -91,13 +93,16 @@ Service detection performed. Please report any incorrect results at https://nmap
 # Nmap done at Fri Dec 15 16:09:14 2023 -- 1 IP address (1 host up) scanned in 18.95 seconds</code>
 </pre>
     <p>
-        We can see on the nmap scan that the web server redirects us to <code>http://2million.htb/</code>
-        <code>/etc/hosts</code>
-    </p>
+        We can see on the nmap scan that the web server redirects us to <strong><code>http://2million.htb/</code>
+        </strong>
+        virtual host. We need to add it to our <strong><code>/etc/hosts</code>
+        </strong>
+        file.</p>
     <h2>Web enumeration</h2>
     <p>
-        Let’s take a look at the web server on port <code>80</code>
-    </p>
+        Let’s take a look at the web server on port <strong><code>80</code>
+        </strong>
+        : </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled.png"></img>
     </a>
     <p>
@@ -105,14 +110,16 @@ Service detection performed. Please report any incorrect results at https://nmap
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%201.png"></img>
     </a>
     <p>
-        Let’s take a look at the <code>/register</code>
-    </p>
+        Let’s take a look at the <strong><code>/register</code>
+        </strong>
+        page : </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%202.png"></img>
     </a>
     <p>
         It seems that we need an invite code. We may be able to retrieve a valid invite code from the API. On the
-        <code>/invite</code>
-    </p>
+        <strong><code>/invite</code>
+        </strong>
+        page, we can enter an invite code, and it checks if it is valid or not :</p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%203.png"></img>
     </a>
     <p>
@@ -120,15 +127,18 @@ Service detection performed. Please report any incorrect results at https://nmap
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%204.png"></img>
     </a>
     <p>
-        We can see that the <code>/api/v1/invite/verify</code>
-    </p>
+        We can see that the <code><strong>/api/v1/invite/verify</strong>
+</code>
+        endpoint is used to check if the invite code is valid. We can try to fuzz this endpoint using Gobuster : </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%205.png"></img>
     </a>
     <h1>Initial access</h1>
     <h2>Retrieving a valid invite code</h2>
     <p>
-        We found another endpoint called <code>/generate</code>
-    </p>
+        We found another endpoint called <strong><code>/generate</code>
+        </strong>
+        . We may be able to generate a valid invite code on this endpoint. Let’s send a POST request to this endpoint
+        using BurpSuite : </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%206.png"></img>
     </a>
     <p>
@@ -140,12 +150,14 @@ Service detection performed. Please report any incorrect results at https://nmap
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%208.png"></img>
     </a>
     <p>
-        So we have an invite code : <code>0BLQN-9AII9-170XM-ZNEW</code>
-    </p>
+        So we have an invite code : <strong><code>0BLQN-9AII9-170XM-ZNEW</code>
+        </strong>
+        .</p>
     <h2>Obtaining admin access to the API</h2>
     <p>
-        Let’s see what we can find on the <code>/api/v1</code>
-    </p>
+        Let’s see what we can find on the <strong><code>/api/v1</code>
+        </strong>
+        endpoint : </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%209.png"></img>
     </a>
     <p>
@@ -153,9 +165,11 @@ Service detection performed. Please report any incorrect results at https://nmap
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2010.png"></img>
     </a>
     <p>
-        We have a list of available api routes. There is an <code>admin</code>
-        <code>/api/v1/admin/settings/update</code>
-    </p>
+        We have a list of available api routes. There is an <strong><code>admin</code>
+        </strong>
+        part in the API. It seems that we can update a user profile with the <code><strong>/api/v1/admin/settings/update</strong>
+</code>
+        endpoint. Let’s send a request to this endpoint : </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2011.png"></img>
     </a>
     <p>
@@ -163,8 +177,9 @@ Service detection performed. Please report any incorrect results at https://nmap
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2012.png"></img>
     </a>
     <p>
-        We need to provide an <code>email</code>
-    </p>
+        We need to provide an <code><strong>email</strong>
+</code>
+        in json format : </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2013.png"></img>
     </a>
     <p>
@@ -172,9 +187,11 @@ Service detection performed. Please report any incorrect results at https://nmap
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2014.png"></img>
     </a>
     <p>
-        We need to specify an <code>is_admin</code>
-        <code>1</code>
-    </p>
+        We need to specify an <code><strong>is_admin</strong>
+</code>
+        parameter. Let’s try to update this value to <code><strong>1</strong>
+</code>
+        : </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2015.png"></img>
     </a>
     <p>
@@ -182,18 +199,22 @@ Service detection performed. Please report any incorrect results at https://nmap
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2016.png"></img>
     </a>
     <p>
-        It seems we are now admin. Let’s verify this by sending a GET request to <code>/api/v1/admin/auth</code>
-    </p>
+        It seems we are now admin. Let’s verify this by sending a GET request to <strong><code>/api/v1/admin/auth</code>
+        </strong>
+        : </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2017.png"></img>
     </a>
     <p>
         We have now an admin access to the API.</p>
     <h2>Exploiting an OS Command Injection</h2>
     <p>
-        We can generate an <code>.ovpn</code>
-        <code>username</code>
-        <code>/api/v1/admin/vpn/generate</code>
-    </p>
+        We can generate an <strong><code>.ovpn</code>
+        </strong>
+        by sending a POST request with the <code><strong>username</strong>
+</code>
+        at the <code><strong>/api/v1/admin/vpn/generate</strong>
+</code>
+        endpoint : </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2018.png"></img>
     </a>
     <p>
@@ -201,8 +222,11 @@ Service detection performed. Please report any incorrect results at https://nmap
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2019.png"></img>
     </a>
     <p>
-        Maybe the <code>username</code>
-    </p>
+        Maybe the <strong><code>username</code>
+        </strong>
+        we send to the web server is passed in a command line. So we may be able to perform an <strong>OS command
+            injection</strong>
+        . Let’s try to inject a command by adding a semicolon : </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2020.png"></img>
     </a>
     <p>
@@ -210,8 +234,9 @@ Service detection performed. Please report any incorrect results at https://nmap
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2021.png"></img>
     </a>
     <p>
-        We successfully injected an arbitrary command in the <code>username</code>
-    </p>
+        We successfully injected an arbitrary command in the <code><strong>username</strong>
+</code>
+        field. We can start a listener and inject a malicious payload in order to get a reverse shell : </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2022.png"></img>
     </a>
     <p>
@@ -219,49 +244,63 @@ Service detection performed. Please report any incorrect results at https://nmap
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2023.png"></img>
     </a>
     <p>
-        We have now a foothold as <code>www-data</code>
-    </p>
+        We have now a foothold as <strong><code>www-data</code>
+        </strong>
+        .</p>
     <h1>Post-exploitation</h1>
     <h2>Local enumeration</h2>
     <p>
-        Let’s see if there is another user account by looking at the <code>/home</code>
-    </p>
+        Let’s see if there is another user account by looking at the <code><strong>/home</strong>
+</code>
+        directory : </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2024.png"></img>
     </a>
     <p>
-        There is an <code>admin</code>
-        <code>.env</code>
-    </p>
+        There is an <strong><code>admin</code>
+        </strong>
+        user. Let’s take a look at the web application source code to see if we can find credentials. There is a <code><strong>.env</strong>
+</code>
+        file in the web root : </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2025.png"></img>
     </a>
     <h2>Privilege escalation (admin)</h2>
     <p>
-        Let’s see if this password was reused for the local <code>admin</code>
-    </p>
+        Let’s see if this password was reused for the local <code><strong>admin</strong>
+</code>
+        user : </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2026.png"></img>
     </a>
     <p>
-        We successfully escalated our privileges to the <code>admin</code>
-    </p>
+        We successfully escalated our privileges to the <strong><code>admin</code>
+        </strong>
+        user.</p>
     <h2>Privilege escalation (root)</h2>
     <p>
         Let’s take a look at the Linux kernel version : </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2027.png"></img>
     </a>
     <p>
-        This version of the Linux kernel may be vulnerable to <code>CVE-2023-0386</code>
+        This version of the Linux kernel may be vulnerable to <code><strong>CVE-2023-0386</strong>
+</code>
+        . It is a vulnerability that affects the OverlayFS component. There is an exploit available here :
         <a>https://github.com/sxlmnwb/CVE-2023-0386</a>
     </p>
     <p>
         To use this exploit, we need to open two terminals. In the first one, we execute
-        <code>./fuse ./ovlcap/lower ./gc</code>
-        <code>./exp</code>
+        <strong><code>./fuse ./ovlcap/lower ./gc</code>
+        </strong>
+        <strong>. </strong>
+        In the second one, we need to execute<strong> </strong>
+        <strong><code>./exp</code>
+        </strong>
+        <strong> : </strong>
     </p>
     <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2028.png"></img>
     </a>
     <p>
-        We have now access to the <code>root</code>
-    </p>
+        We have now access to the <code><strong>root</strong>
+</code>
+        account.</p>
     <h1>Clearing tracks</h1>
     <table>
         <tr>
@@ -275,9 +314,12 @@ Service detection performed. Please report any incorrect results at https://nmap
             </tr>
             <tr>
                 <td>Post-exploitation - Local enumeration</td>
-                <td>- Remove <code>linpeas.sh</code>
-                    <code>pspy64</code>
-                    <code>/tmp</code>
+                <td>- Remove <code><strong>linpeas.sh</strong>
+</code>
+                    and <code><strong>pspy64</strong>
+</code>
+                    from <code><strong>/tmp</strong>
+</code>
                 </td>
             </tr>
             <tr>
@@ -287,7 +329,8 @@ Service detection performed. Please report any incorrect results at https://nmap
         </tbody>
     </table>
     <h1>Vulnerabilities summary</h1>
-    <h2>Improper Access Control on the API</h2>
+    <h2><strong>Improper Access Control on the API</strong>
+    </h2>
     <table>
         <tr>
             <th>Field</th>
@@ -300,21 +343,30 @@ Service detection performed. Please report any incorrect results at https://nmap
             </tr>
             <tr>
                 <td>CVSS 3.0 score</td>
-                <td>7.3</td>
+                <td><strong>7.3</strong>
+                </td>
             </tr>
             <tr>
                 <td>Severity</td>
-                <td>HIGH</td>
+                <td><strong>HIGH</strong>
+                </td>
             </tr>
             <tr>
                 <td>Attack vector</td>
-                <td>Network</td>
+                <td><strong>Network</strong>
+                </td>
             </tr>
             <tr>
                 <td>Impact</td>
                 <td>Allows an attacker to generate a valid invitation code. Also, it allows an authenticated attacker to
-                    give himself administrative privileges on the API.This has a low impact on the confidentiality,
-                    integrity, and availability of the affected component.</td>
+                    give himself administrative privileges on the API.This has a <strong>low</strong>
+                    impact on the <strong>confidentiality</strong>
+                    <strong>, </strong>
+                    <strong>integrity</strong>
+                    <strong>, </strong>
+                    and <strong>availability</strong>
+                    of the affected component.
+                </td>
             </tr>
             <tr>
                 <td>Remediation proposition</td>
@@ -335,26 +387,37 @@ Service detection performed. Please report any incorrect results at https://nmap
             </tr>
             <tr>
                 <td>CVSS 3.0 score</td>
-                <td>8.8</td>
+                <td><strong>8.8</strong>
+                </td>
             </tr>
             <tr>
                 <td>Severity</td>
-                <td>HIGH</td>
+                <td><strong>HIGH</strong>
+                </td>
             </tr>
             <tr>
                 <td>Attack vector</td>
-                <td>Network</td>
+                <td><strong>Network</strong>
+                </td>
             </tr>
             <tr>
                 <td>Impact</td>
-                <td>Allows an attacker to execute arbitrary system commands as <code>www-data</code>
+                <td>Allows an attacker to execute arbitrary system commands as <code><strong>www-data</strong>
+</code>
+                    . This can lead the attacker to gain a foothold on the system.This has a <strong>high</strong>
+                    impact on the <strong>confidentiality</strong>
+                    <strong>, </strong>
+                    <strong>integrity</strong>
+                    <strong>, </strong>
+                    and <strong>availability</strong>
+                    of the affected component.
                 </td>
             </tr>
             <tr>
                 <td>Remediation proposition</td>
-                <td>Sanitize the username parameter sent by the user in the POST request sent to
-                    <code>/api/v1/admin/vpn/generate</code>
-                </td>
+                <td>Sanitize the username parameter sent by the user in the POST request sent to <code><strong>/api/v1/admin/vpn/generate</strong>
+</code>
+                    .</td>
             </tr>
         </tbody>
     </table>
@@ -371,26 +434,36 @@ Service detection performed. Please report any incorrect results at https://nmap
             </tr>
             <tr>
                 <td>CVSS 3.0 score</td>
-                <td>8.4</td>
+                <td><strong>8.4</strong>
+                </td>
             </tr>
             <tr>
                 <td>Severity</td>
-                <td>HIGH</td>
+                <td><strong>HIGH</strong>
+                </td>
             </tr>
             <tr>
                 <td>Attack vector</td>
-                <td>Local</td>
+                <td><strong>Local</strong>
+                </td>
             </tr>
             <tr>
                 <td>Impact</td>
                 <td>Allows an attacker to escalate his privileges leading to the compromission of the root account. This
-                    has a high impact on the confidentiality, availability, and integrity of the affected component.
-                </td>
+                    has a <strong>high</strong>
+                    impact on the <strong>confidentiality</strong>
+                    , <strong>availability</strong>
+                    , and <strong>integrity</strong>
+                    of the affected component.</td>
             </tr>
             <tr>
                 <td>Remediation proposition</td>
-                <td>Update the system using <code>sudo apt update</code>
-                    <code>sudo apt upgrade</code>
+                <td>Update the system using <code><strong>sudo apt update</strong>
+</code>
+                    and <code><strong>sudo apt upgrade</strong>
+</code>
+                    <strong> </strong>
+                    to install a patched version of the linux kernel.
                 </td>
             </tr>
         </tbody>
@@ -403,12 +476,14 @@ Service detection performed. Please report any incorrect results at https://nmap
         </tr>
         <tbody>
             <tr>
-                <td><a>Nmap</a>
+                <td><a><strong>Nmap</strong>
+                    </a>
                 </td>
                 <td>- Scan for open ports- Scan services versions</td>
             </tr>
             <tr>
-                <td><a>Gobuster</a>
+                <td><a><strong>Gobuster</strong>
+                    </a>
                 </td>
                 <td>- Fuzz virtual hosts</td>
             </tr>

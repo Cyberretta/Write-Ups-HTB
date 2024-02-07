@@ -7,68 +7,68 @@
     </div>
 </header>
 <div class="writeUp">
-    <p class="boxLink">
-    	<a href="https://app.hackthebox.com/machines/547">https://app.hackthebox.com/machines/547</a>
+    <p>
+        <a href="https://app.hackthebox.com/machines/547">https://app.hackthebox.com/machines/547</a>
     </p>
     <h1>Table of contents</h1>
     <nav>
         <div>
-            <a>Table of contents</a>
+            <a href="#ac71f334-159a-4237-9382-46f9af66f74b">Table of contents</a>
         </div>
         <div>
-            <a>Enumeration</a>
+            <a href="#ed1d0265-5f92-4576-9ff5-122b81f5f1ca">Enumeration</a>
         </div>
         <div>
-            <a>Nmap scan</a>
+            <a href="#4921cbbc-ff6e-474e-b8b0-0b16ad3d819a">Nmap scan</a>
         </div>
         <div>
-            <a>Web enumeration</a>
+            <a href="#41538bb4-daad-44f7-a9d2-383136d7ba97">Web enumeration</a>
         </div>
         <div>
-            <a>Initial access</a>
+            <a href="#32a50070-9ff0-49e6-9f3a-b1c31534278d">Initial access</a>
         </div>
         <div>
-            <a>Retrieving a valid invite code</a>
+            <a href="#0c53a9f6-a366-4d9f-8543-0c16e6ef3edf">Retrieving a valid invite code</a>
         </div>
         <div>
-            <a>Obtaining admin access to the API</a>
+            <a href="#e7856600-8efe-42ec-9a5d-2350680cf5b4">Obtaining admin access to the API</a>
         </div>
         <div>
-            <a>Exploiting an OS Command Injection</a>
+            <a href="#e6ed6de1-a287-484c-bf30-fe676bc01f2b">Exploiting an OS Command Injection</a>
         </div>
         <div>
-            <a>Post-exploitation</a>
+            <a href="#746ae455-3f29-4549-9968-569542e258a4">Post-exploitation</a>
         </div>
         <div>
-            <a>Local enumeration</a>
+            <a href="#110b1076-6496-482d-b9f3-3ebc04ff0b7c">Local enumeration</a>
         </div>
         <div>
-            <a>Privilege escalation (admin)</a>
+            <a href="#cf2fbd27-3633-46b1-97b9-99865ae61e74">Privilege escalation (admin)</a>
         </div>
         <div>
-            <a>Privilege escalation (root)</a>
+            <a href="#e92825f6-b31f-4654-97e2-a52373b32bed">Privilege escalation (root)</a>
         </div>
         <div>
-            <a>Clearing tracks</a>
+            <a href="#811efca5-13e7-4636-acce-085525114f22">Clearing tracks</a>
         </div>
         <div>
-            <a>Vulnerabilities summary</a>
+            <a href="#b350e536-1b68-4406-9fbb-91ce3be854e3">Vulnerabilities summary</a>
         </div>
         <div>
-            <a><strong>Improper Access Control on the API</strong>
+            <a href="#41ff21f1-e183-45fc-9168-27d7e0c87317"><strong>Improper Access Control on the API</strong>
             </a>
         </div>
         <div>
-            <a>OS Command Injection</a>
+            <a href="#f48239b7-b9fb-4ad7-9ab8-04c1c5dd6e49">OS Command Injection</a>
         </div>
         <div>
-            <a>CVE-2023-0386 (OverlayFS)</a>
+            <a href="#4c5b6e7a-5f50-430d-8d86-19bbb72a8f20">CVE-2023-0386 (OverlayFS)</a>
         </div>
         <div>
-            <a>Tools used</a>
+            <a href="#81d9aef1-9249-44e7-85e4-32c1b8d0e2de">Tools used</a>
         </div>
         <div>
-            <a>Sources</a>
+            <a href="#98c85613-8dd1-4895-96d5-9b64b27025ea">Sources</a>
         </div>
     </nav>
     <h1>Enumeration</h1>
@@ -103,34 +103,40 @@ Service detection performed. Please report any incorrect results at https://nmap
         Let’s take a look at the web server on port <strong><code>80</code>
         </strong>
         : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled.png"></img>
     </a>
     <p>
         We can use Gobuster to fuzz directories :</p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%201.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%201.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%201.png"></img>
     </a>
     <p>
         Let’s take a look at the <strong><code>/register</code>
         </strong>
         page : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%202.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%202.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%202.png"></img>
     </a>
     <p>
         It seems that we need an invite code. We may be able to retrieve a valid invite code from the API. On the
         <strong><code>/invite</code>
         </strong>
         page, we can enter an invite code, and it checks if it is valid or not :</p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%203.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%203.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%203.png"></img>
     </a>
     <p>
         Let’s capture the POST request made to this page using BurpSuite : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%204.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%204.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%204.png"></img>
     </a>
     <p>
         We can see that the <code><strong>/api/v1/invite/verify</strong>
 </code>
         endpoint is used to check if the invite code is valid. We can try to fuzz this endpoint using Gobuster : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%205.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%205.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%205.png"></img>
     </a>
     <h1>Initial access</h1>
     <h2>Retrieving a valid invite code</h2>
@@ -139,15 +145,18 @@ Service detection performed. Please report any incorrect results at https://nmap
         </strong>
         . We may be able to generate a valid invite code on this endpoint. Let’s send a POST request to this endpoint
         using BurpSuite : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%206.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%206.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%206.png"></img>
     </a>
     <p>
         Here is the response from the web server :</p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%207.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%207.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%207.png"></img>
     </a>
     <p>
         It seems that the invite code is encoded in base64. Here is the decoded string : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%208.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%208.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%208.png"></img>
     </a>
     <p>
         So we have an invite code : <strong><code>0BLQN-9AII9-170XM-ZNEW</code>
@@ -158,11 +167,13 @@ Service detection performed. Please report any incorrect results at https://nmap
         Let’s see what we can find on the <strong><code>/api/v1</code>
         </strong>
         endpoint : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%209.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%209.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%209.png"></img>
     </a>
     <p>
         Here is the response from the web server :</p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2010.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2010.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2010.png"></img>
     </a>
     <p>
         We have a list of available api routes. There is an <strong><code>admin</code>
@@ -170,21 +181,25 @@ Service detection performed. Please report any incorrect results at https://nmap
         part in the API. It seems that we can update a user profile with the <code><strong>/api/v1/admin/settings/update</strong>
 </code>
         endpoint. Let’s send a request to this endpoint : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2011.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2011.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2011.png"></img>
     </a>
     <p>
         The response from the web server : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2012.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2012.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2012.png"></img>
     </a>
     <p>
         We need to provide an <code><strong>email</strong>
 </code>
         in json format : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2013.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2013.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2013.png"></img>
     </a>
     <p>
         After sending the request with an email, let’s see the response from the web server :</p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2014.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2014.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2014.png"></img>
     </a>
     <p>
         We need to specify an <code><strong>is_admin</strong>
@@ -192,17 +207,20 @@ Service detection performed. Please report any incorrect results at https://nmap
         parameter. Let’s try to update this value to <code><strong>1</strong>
 </code>
         : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2015.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2015.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2015.png"></img>
     </a>
     <p>
         Here is the response from the web server : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2016.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2016.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2016.png"></img>
     </a>
     <p>
         It seems we are now admin. Let’s verify this by sending a GET request to <strong><code>/api/v1/admin/auth</code>
         </strong>
         : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2017.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2017.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2017.png"></img>
     </a>
     <p>
         We have now an admin access to the API.</p>
@@ -215,11 +233,13 @@ Service detection performed. Please report any incorrect results at https://nmap
         at the <code><strong>/api/v1/admin/vpn/generate</strong>
 </code>
         endpoint : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2018.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2018.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2018.png"></img>
     </a>
     <p>
         The web server sends the generated file in the response : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2019.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2019.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2019.png"></img>
     </a>
     <p>
         Maybe the <strong><code>username</code>
@@ -227,21 +247,25 @@ Service detection performed. Please report any incorrect results at https://nmap
         we send to the web server is passed in a command line. So we may be able to perform an <strong>OS command
             injection</strong>
         . Let’s try to inject a command by adding a semicolon : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2020.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2020.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2020.png"></img>
     </a>
     <p>
         Let’s see if we received a request to our web server :</p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2021.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2021.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2021.png"></img>
     </a>
     <p>
         We successfully injected an arbitrary command in the <code><strong>username</strong>
 </code>
         field. We can start a listener and inject a malicious payload in order to get a reverse shell : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2022.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2022.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2022.png"></img>
     </a>
     <p>
         After sending this request, we can take a look at our listener : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2023.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2023.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2023.png"></img>
     </a>
     <p>
         We have now a foothold as <strong><code>www-data</code>
@@ -253,7 +277,8 @@ Service detection performed. Please report any incorrect results at https://nmap
         Let’s see if there is another user account by looking at the <code><strong>/home</strong>
 </code>
         directory : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2024.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2024.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2024.png"></img>
     </a>
     <p>
         There is an <strong><code>admin</code>
@@ -261,14 +286,16 @@ Service detection performed. Please report any incorrect results at https://nmap
         user. Let’s take a look at the web application source code to see if we can find credentials. There is a <code><strong>.env</strong>
 </code>
         file in the web root : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2025.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2025.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2025.png"></img>
     </a>
     <h2>Privilege escalation (admin)</h2>
     <p>
         Let’s see if this password was reused for the local <code><strong>admin</strong>
 </code>
         user : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2026.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2026.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2026.png"></img>
     </a>
     <p>
         We successfully escalated our privileges to the <strong><code>admin</code>
@@ -277,13 +304,14 @@ Service detection performed. Please report any incorrect results at https://nmap
     <h2>Privilege escalation (root)</h2>
     <p>
         Let’s take a look at the Linux kernel version : </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2027.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2027.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2027.png"></img>
     </a>
     <p>
         This version of the Linux kernel may be vulnerable to <code><strong>CVE-2023-0386</strong>
 </code>
-        . It is a vulnerability that affects the OverlayFS component. There is an exploit available here :
-        <a>https://github.com/sxlmnwb/CVE-2023-0386</a>
+        . It is a vulnerability that affects the OverlayFS component. There is an exploit available here : <a
+            href="https://github.com/sxlmnwb/CVE-2023-0386">https://github.com/sxlmnwb/CVE-2023-0386</a>
     </p>
     <p>
         To use this exploit, we need to open two terminals. In the first one, we execute
@@ -295,7 +323,8 @@ Service detection performed. Please report any incorrect results at https://nmap
         </strong>
         <strong> : </strong>
     </p>
-    <a><img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2028.png"></img>
+    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2028.png"><img
+            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2028.png"></img>
     </a>
     <p>
         We have now access to the <code><strong>root</strong>
@@ -476,29 +505,29 @@ Service detection performed. Please report any incorrect results at https://nmap
         </tr>
         <tbody>
             <tr>
-                <td><a><strong>Nmap</strong>
+                <td><a href="https://nmap.org/book/man.html"><strong>Nmap</strong>
                     </a>
                 </td>
                 <td>- Scan for open ports- Scan services versions</td>
             </tr>
             <tr>
-                <td><a><strong>Gobuster</strong>
+                <td><a href="https://github.com/OJ/gobuster"><strong>Gobuster</strong>
                     </a>
                 </td>
                 <td>- Fuzz virtual hosts</td>
             </tr>
             <tr>
-                <td><a>BurpSuite</a>
+                <td><a href="https://portswigger.net/burp">BurpSuite</a>
                 </td>
                 <td>- Analyse and modify requests sent to the web server</td>
             </tr>
             <tr>
-                <td><a>Revshells.com</a>
+                <td><a href="https://www.revshells.com/">Revshells.com</a>
                 </td>
                 <td>- Generate payloads for reverse shells</td>
             </tr>
             <tr>
-                <td><a>Pwncat-cs</a>
+                <td><a href="https://github.com/calebstewart/pwncat">Pwncat-cs</a>
                 </td>
                 <td>- Handle reverse shell connections</td>
             </tr>
@@ -506,12 +535,14 @@ Service detection performed. Please report any incorrect results at https://nmap
     </table>
     <h1>Sources</h1>
     <ul>
-        <li>CVE-2023-0386 exploit : <a>https://github.com/sxlmnwb/CVE-2023-0386</a>
+        <li>CVE-2023-0386 exploit : <a
+                href="https://github.com/sxlmnwb/CVE-2023-0386">https://github.com/sxlmnwb/CVE-2023-0386</a>
         </li>
     </ul>
     <ul>
-        <li>NIST NVD CVE-2023-0386 : <a>https://nvd.nist.gov/vuln/detail/CVE-2023-0386#:~:text=Description,nosuid mount
-                into another mount</a>
+        <li>NIST NVD CVE-2023-0386 : <a
+                href="https://nvd.nist.gov/vuln/detail/CVE-2023-0386#:~:text=Description,nosuid%20mount%20into%20another%20mount">https://nvd.nist.gov/vuln/detail/CVE-2023-0386#:~:text=Description,nosuid
+                mount into another mount</a>
         </li>
     </ul>
 </div>

@@ -85,7 +85,7 @@ Service detection performed. Please report any incorrect results at https://nmap
 # Nmap done at Fri Jun 16 11:22:42 2023 -- 1 IP address (1 host up) scanned in 16.57 seconds</code></pre>
 	<h2 id="web-enumeration">Web enumeration</h2>
 	<p>Let’s take a look at the website : </p>
-	<img src="https://github.com/Cyberretta/Write-Ups-HTB/tree/main/Easy/Topology/figure1.png"/>
+	<img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Topology/figure1.png"/>
 	<p>
 		We have an email address which gives us a <strong class="highlight-yellow">potential username</strong>(<strong class="highlight-red">lklein</strong>) and a domain name 
 		(<strong class="highlight-red">topology.htb</strong>). Also, there is a hyperlink (<strong class="highlight-red">LaTeX Equation Generator</strong>) that redirects us 
@@ -139,7 +139,7 @@ ff02::2         ip6-allrouters
 	<p>
 		The second one does not seems to be useful for an attacker. But the first one (<strong class="highlight-red">dev.topology.htb</strong>) requires us to authenticate using a <strong>Basic Authentication</strong> : 
 	</p>
-	<img src="https://github.com/Cyberretta/Write-Ups-HTB/tree/main/Easy/Topology/figure2.png"/>
+	<img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Topology/figure2.png"/>
 	<p>
 		The credentials for basic authentication on an Apache webserver are commonly found in the <strong>.htpasswd</strong> file at the root of the virtual host. If we want to find credentials for this virtual host, 
 		we will need to find a way to read arbitrary files on the web server.
@@ -147,11 +147,11 @@ ff02::2         ip6-allrouters
 	<p>
 		Let’s take a look at <strong>http://latex.topology.htb/equation.htb</strong> : 
 	</p>
-	<img src="https://github.com/Cyberretta/Write-Ups-HTB/tree/main/Easy/Topology/figure3.png"/>
+	<img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Topology/figure3.png"/>
 	<p>
 		We can enter <strong>LaTeX equations</strong> in a field and generate a PNG from it. Here is an example with <strong>\frac{52}{142+y}</strong> : 
 	</p>
-	<img src="https://github.com/Cyberretta/Write-Ups-HTB/tree/main/Easy/Topology/figure4.png"/>
+	<img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Topology/figure4.png"/>
 	<h1>Initial access</h1>
 	<p>
 		Since we can enter LaTeX code in this field, we may be able to inject malicious LaTeX code to read arbitrary files. Let’s try to read <strong>/etc/passwd</strong> with the following payload : 
@@ -164,7 +164,7 @@ ff02::2         ip6-allrouters
 	<p>
 		It gives us this PNG : 
 	</p>
-	<img src="https://github.com/Cyberretta/Write-Ups-HTB/tree/main/Easy/Topology/figure5.png"/>
+	<img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Topology/figure5.png"/>
 	<p>
 		So we are able to read arbitrary files. This payload can only read the first line of a file, but we don’t need to read more lines if we want to read the <strong>.htpasswd</strong> file in 
 		the <strong>dev</strong> virtual host. By default, the root of the <strong>dev</strong> virtual host should be located in <strong>/var/www/dev/</strong>. Let’s try to read this file with the 
@@ -178,12 +178,12 @@ ff02::2         ip6-allrouters
 	<p>
 		It gives us this response : 
 	</p>
-	<img src="https://github.com/Cyberretta/Write-Ups-HTB/tree/main/Easy/Topology/figure6.png"/>
+	<img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Topology/figure6.png"/>
 	<p>
 		We have an error. This could be due to the “<strong>$</strong>” signs in the hash in the <strong>.htpasswd</strong> file since those characters have a special meaning in LaTeX. 
 		They are used to start and finish math mode. If we take a look at the root of the <strong>latex</strong> virtual host, we can find something interesting : 
 	</p>
-	<img src="https://github.com/Cyberretta/Write-Ups-HTB/tree/main/Easy/Topology/figure7.png"/>
+	<img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Topology/figure7.png"/>
 	<p>
 		We can see the <strong>equationtest.tex</strong> file. It contains a LaTeX script. Let’s take a look at it : 
 	</p>
@@ -223,7 +223,7 @@ $ $apr1$rvk6cUzh$iYXx6JO0dG3.gOtFm1cRX0 $
 	<p >
 		It gives us this PNG : 
 	</p>
-	<img src="https://github.com/Cyberretta/Write-Ups-HTB/tree/main/Easy/Topology/figure8.png"/>
+	<img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Topology/figure8.png"/>
 	<p>
 		We successfully read the content of <strong>/var/www/dev/.htpasswd</strong>. Since the dollar signs are interpreted as math mode start and stop, they are missing from the output. Since 
 		the dollar signs are always at the same place in this type of hash, we can take example on another hash of the same type (apr1) to place the missing dollar signs. It gives us the 

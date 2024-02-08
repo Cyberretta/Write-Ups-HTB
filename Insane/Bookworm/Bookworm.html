@@ -4,7 +4,7 @@
 <header>
  <div class="header">
   <img class="headerImage" src="https://images.unsplash.com/photo-1588580000645-4562a6d2c839?ixlib=rb-4.0.3&amp;q=85&amp;fm=jpg&amp;crop=entropy&amp;cs=srgb"/>
-  <img class="headerIcon" src="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/f0c89af6ee134e1b432d95e4528cf0cd.png"/>
+  <img class="headerIcon" src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/icon.png"/>
   <h1 class="mainTitle">
    HackTheBox - Bookworm (Insane)
   </h1>
@@ -192,8 +192,8 @@ ff02::2         ip6-allrouters
  <p id="f43d0a86-9025-4f88-83d0-0c5a40777d18">
   Now, we can use our web browser to see what’s on the web server :
  </p>
- <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled.png">
-  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled.png"/>
  </a>
  <p id="ae144f01-d6f0-47c0-846c-0fe2e9b6917d">
   So, the web application on the web server is an online bookstore. We can see on the top right corner that we can
@@ -206,8 +206,8 @@ ff02::2         ip6-allrouters
   </strong>
   :
  </p>
- <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%201.png">
-  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%201.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled%201.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled%201.png"/>
  </a>
  <p id="791bfd86-ee16-4fa2-848a-a8cba5d1de5f">
   There is an hyperlink that can redirects us to
@@ -217,14 +217,14 @@ ff02::2         ip6-allrouters
    </a>
   </strong>
  </p>
- <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%202.png">
-  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%202.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled%202.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled%202.png"/>
  </a>
  <p id="abeb59a9-1e24-4d77-9325-dca36f743176">
   Let’s create an account, it may be useful to access more content on the website for further enumeration :
  </p>
- <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%203.png">
-  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%203.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled%203.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled%203.png"/>
  </a>
  <p id="bb32f1bd-55de-4741-a0af-93d961289225">
   After clicking on the
@@ -237,14 +237,14 @@ ff02::2         ip6-allrouters
   </strong>
   with this message :
  </p>
- <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%204.png">
-  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%204.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled%204.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled%204.png"/>
  </a>
  <p id="3a9c83ba-5f32-406f-b900-778b9e86cef0">
   After logging in, we are redirected to this page :
  </p>
- <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%205.png">
-  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%205.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled%205.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled%205.png"/>
  </a>
  <p id="7468da31-fd81-43bd-82a9-e413e4e73ecf">
   The first thing we can notice is the
@@ -253,8 +253,8 @@ ff02::2         ip6-allrouters
   </strong>
   section which shows the last books added to the basket of any clients. If we take a look at the source code of the page, we can see an HTML comment containing a different number for each entries. This number seems to increment for each entries :
  </p>
- <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Capture_dcran_2023-06-02_103325.png">
-  <img src="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Capture_dcran_2023-06-02_103325.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Capture_dcran_2023-06-02_103325.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Capture_dcran_2023-06-02_103325.png"/>
  </a>
  <p id="6195cda6-550c-4d2a-ad9e-04acee1e4dc7">
   We can keep this in mind for later. When we click on
@@ -263,8 +263,8 @@ ff02::2         ip6-allrouters
   </strong>
   under the book we want on the shop page, we have this page :
  </p>
- <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%206.png">
-  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%206.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled%206.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled%206.png"/>
  </a>
  <p id="e94531b8-4504-4e51-bbc8-d7e0a30b5242">
   We can add an item to our basket by clicking the
@@ -273,8 +273,8 @@ ff02::2         ip6-allrouters
   </strong>
   blue button. After we added the book to our basket, we are redirected to this page :
  </p>
- <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%207.png">
-  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%207.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled%207.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled%207.png"/>
  </a>
  <p id="aedcc696-10a2-42e9-bfa8-65eec3896b3d">
   We can see that our order is shown in the
@@ -287,8 +287,8 @@ ff02::2         ip6-allrouters
   </strong>
   at the top left of the webpage to access our basket :
  </p>
- <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%208.png">
-  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%208.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled%208.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Insane/Bookworm/Untitled%208.png"/>
  </a>
  <p id="dd11eab3-838d-48c9-8dd8-122045313fd4">
   There is a message saying that ebooks downloads are no more available except for old enough orders. Also, we can add a

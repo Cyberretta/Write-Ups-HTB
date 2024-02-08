@@ -1,79 +1,132 @@
-<title>HackTheBox - TwoMillion (Easy)</title>
+<title>
+ HackTheBox - TwoMillion (Easy)
+</title>
 <header>
-    <div class="header">
-        <img class="headerImage" src="https://www.notion.so/images/page-cover/gradients_3.png"></img>
-        <img class="headerIcon" src="https://labs.hackthebox.com/storage/avatars/d7bc2758fb7589dfa046bee9ce4d75cb.png"></img>
-        <h1 class="mainTitle">HackTheBox - TwoMillion (Easy)</h1>
-    </div>
+ <div class="header">
+  <img src="https://www.notion.so/images/page-cover/gradients_3.png"/>
+  <div>
+   <img src="https://labs.hackthebox.com/storage/avatars/d7bc2758fb7589dfa046bee9ce4d75cb.png"/>
+  </div>
+  <h1>
+   HackTheBox - TwoMillion (Easy)
+  </h1>
+ </div>
+ <p class="boxLink">
+  <a href="https://app.hackthebox.com/machines/547">
+   https://app.hackthebox.com/machines/547
+  </a>
+ </p>
 </header>
-<div class="writeUp">
-    <p class="boxLink">
-        <a href="https://app.hackthebox.com/machines/547">https://app.hackthebox.com/machines/547</a>
-    </p>
-    <h1>Table of contents</h1>
-    <nav>
-        <div>
-            <a href="#ac71f334-159a-4237-9382-46f9af66f74b">Table of contents</a>
-        </div>
-        <div>
-            <a href="#ed1d0265-5f92-4576-9ff5-122b81f5f1ca">Enumeration</a>
-        </div>
-        <div>
-            <a href="#4921cbbc-ff6e-474e-b8b0-0b16ad3d819a">Nmap scan</a>
-        </div>
-        <div>
-            <a href="#41538bb4-daad-44f7-a9d2-383136d7ba97">Web enumeration</a>
-        </div>
-        <div>
-            <a href="#32a50070-9ff0-49e6-9f3a-b1c31534278d">Initial access</a>
-        </div>
-        <div>
-            <a href="#0c53a9f6-a366-4d9f-8543-0c16e6ef3edf">Retrieving a valid invite code</a>
-        </div>
-        <div>
-            <a href="#e7856600-8efe-42ec-9a5d-2350680cf5b4">Obtaining admin access to the API</a>
-        </div>
-        <div>
-            <a href="#e6ed6de1-a287-484c-bf30-fe676bc01f2b">Exploiting an OS Command Injection</a>
-        </div>
-        <div>
-            <a href="#746ae455-3f29-4549-9968-569542e258a4">Post-exploitation</a>
-        </div>
-        <div>
-            <a href="#110b1076-6496-482d-b9f3-3ebc04ff0b7c">Local enumeration</a>
-        </div>
-        <div>
-            <a href="#cf2fbd27-3633-46b1-97b9-99865ae61e74">Privilege escalation (admin)</a>
-        </div>
-        <div>
-            <a href="#e92825f6-b31f-4654-97e2-a52373b32bed">Privilege escalation (root)</a>
-        </div>
-        <div>
-            <a href="#811efca5-13e7-4636-acce-085525114f22">Clearing tracks</a>
-        </div>
-        <div>
-            <a href="#b350e536-1b68-4406-9fbb-91ce3be854e3">Vulnerabilities summary</a>
-        </div>
-        <div>
-            <a href="#41ff21f1-e183-45fc-9168-27d7e0c87317"><strong>Improper Access Control on the API</strong>
-            </a>
-        </div>
-        <div>
-            <a href="#f48239b7-b9fb-4ad7-9ab8-04c1c5dd6e49">OS Command Injection</a>
-        </div>
-        <div>
-            <a href="#4c5b6e7a-5f50-430d-8d86-19bbb72a8f20">CVE-2023-0386 (OverlayFS)</a>
-        </div>
-        <div>
-            <a href="#81d9aef1-9249-44e7-85e4-32c1b8d0e2de">Tools used</a>
-        </div>
-        <div>
-            <a href="#98c85613-8dd1-4895-96d5-9b64b27025ea">Sources</a>
-        </div>
-    </nav>
-    <h1>Enumeration</h1>
-    <h2>Nmap scan</h2>
-    <pre class="code"><code># Nmap 7.93 scan initiated Fri Dec 15 16:08:55 2023 as: nmap -A -p- -oN nmapResults.txt -T5 -v 10.129.229.66
+<div>
+ <h1 id="ac71f334-159a-4237-9382-46f9af66f74b">
+  Table of contents
+ </h1>
+ <nav id="b40a29d5-2b12-45ac-a56e-b2dd8d19fa24">
+  <div>
+   <a href="#ac71f334-159a-4237-9382-46f9af66f74b">
+    Table of contents
+   </a>
+  </div>
+  <div>
+   <a href="#ed1d0265-5f92-4576-9ff5-122b81f5f1ca">
+    Enumeration
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#4921cbbc-ff6e-474e-b8b0-0b16ad3d819a">
+    Nmap scan
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#41538bb4-daad-44f7-a9d2-383136d7ba97">
+    Web enumeration
+   </a>
+  </div>
+  <div>
+   <a href="#32a50070-9ff0-49e6-9f3a-b1c31534278d">
+    Initial access
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#0c53a9f6-a366-4d9f-8543-0c16e6ef3edf">
+    Retrieving a valid invite code
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#e7856600-8efe-42ec-9a5d-2350680cf5b4">
+    Obtaining admin access to the API
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#e6ed6de1-a287-484c-bf30-fe676bc01f2b">
+    Exploiting an OS Command Injection
+   </a>
+  </div>
+  <div>
+   <a href="#746ae455-3f29-4549-9968-569542e258a4">
+    Post-exploitation
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#110b1076-6496-482d-b9f3-3ebc04ff0b7c">
+    Local enumeration
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#cf2fbd27-3633-46b1-97b9-99865ae61e74">
+    Privilege escalation (admin)
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#e92825f6-b31f-4654-97e2-a52373b32bed">
+    Privilege escalation (root)
+   </a>
+  </div>
+  <div>
+   <a href="#811efca5-13e7-4636-acce-085525114f22">
+    Clearing tracks
+   </a>
+  </div>
+  <div>
+   <a href="#b350e536-1b68-4406-9fbb-91ce3be854e3">
+    Vulnerabilities summary
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#41ff21f1-e183-45fc-9168-27d7e0c87317">
+    <strong>
+     Improper Access Control on the API
+    </strong>
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#f48239b7-b9fb-4ad7-9ab8-04c1c5dd6e49">
+    OS Command Injection
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#4c5b6e7a-5f50-430d-8d86-19bbb72a8f20">
+    CVE-2023-0386 (OverlayFS)
+   </a>
+  </div>
+  <div>
+   <a href="#81d9aef1-9249-44e7-85e4-32c1b8d0e2de">
+    Tools used
+   </a>
+  </div>
+  <div>
+   <a href="#98c85613-8dd1-4895-96d5-9b64b27025ea">
+    Sources
+   </a>
+  </div>
+ </nav>
+ <h1 id="ed1d0265-5f92-4576-9ff5-122b81f5f1ca">
+  Enumeration
+ </h1>
+ <h2 id="4921cbbc-ff6e-474e-b8b0-0b16ad3d819a">
+  Nmap scan
+ </h2>
+ <pre class="code" id="065d978d-d13f-47db-9a6e-4a30470fad37"><code># Nmap 7.93 scan initiated Fri Dec 15 16:08:55 2023 as: nmap -A -p- -oN nmapResults.txt -T5 -v 10.129.229.66
 Nmap scan report for 10.129.229.66
 Host is up (0.026s latency).
 Not shown: 65533 closed tcp ports (conn-refused)
@@ -92,457 +145,860 @@ Read data files from: /usr/bin/../share/nmap
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 # Nmap done at Fri Dec 15 16:09:14 2023 -- 1 IP address (1 host up) scanned in 18.95 seconds</code>
 </pre>
-    <p>
-        We can see on the nmap scan that the web server redirects us to <strong><code>http://2million.htb/</code>
-        </strong>
-        virtual host. We need to add it to our <strong><code>/etc/hosts</code>
-        </strong>
-        file.</p>
-    <h2>Web enumeration</h2>
-    <p>
-        Let’s take a look at the web server on port <strong><code>80</code>
-        </strong>
-        : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled.png"></img>
-    </a>
-    <p>
-        We can use Gobuster to fuzz directories :</p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%201.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%201.png"></img>
-    </a>
-    <p>
-        Let’s take a look at the <strong><code>/register</code>
-        </strong>
-        page : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%202.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%202.png"></img>
-    </a>
-    <p>
-        It seems that we need an invite code. We may be able to retrieve a valid invite code from the API. On the
-        <strong><code>/invite</code>
-        </strong>
-        page, we can enter an invite code, and it checks if it is valid or not :</p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%203.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%203.png"></img>
-    </a>
-    <p>
-        Let’s capture the POST request made to this page using BurpSuite : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%204.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%204.png"></img>
-    </a>
-    <p>
-        We can see that the <code><strong>/api/v1/invite/verify</strong>
-</code>
-        endpoint is used to check if the invite code is valid. We can try to fuzz this endpoint using Gobuster : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%205.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%205.png"></img>
-    </a>
-    <h1>Initial access</h1>
-    <h2>Retrieving a valid invite code</h2>
-    <p>
-        We found another endpoint called <strong><code>/generate</code>
-        </strong>
-        . We may be able to generate a valid invite code on this endpoint. Let’s send a POST request to this endpoint
-        using BurpSuite : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%206.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%206.png"></img>
-    </a>
-    <p>
-        Here is the response from the web server :</p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%207.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%207.png"></img>
-    </a>
-    <p>
-        It seems that the invite code is encoded in base64. Here is the decoded string : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%208.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%208.png"></img>
-    </a>
-    <p>
-        So we have an invite code : <strong><code>0BLQN-9AII9-170XM-ZNEW</code>
-        </strong>
-        .</p>
-    <h2>Obtaining admin access to the API</h2>
-    <p>
-        Let’s see what we can find on the <strong><code>/api/v1</code>
-        </strong>
-        endpoint : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%209.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%209.png"></img>
-    </a>
-    <p>
-        Here is the response from the web server :</p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2010.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2010.png"></img>
-    </a>
-    <p>
-        We have a list of available api routes. There is an <strong><code>admin</code>
-        </strong>
-        part in the API. It seems that we can update a user profile with the <code><strong>/api/v1/admin/settings/update</strong>
-</code>
-        endpoint. Let’s send a request to this endpoint : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2011.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2011.png"></img>
-    </a>
-    <p>
-        The response from the web server : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2012.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2012.png"></img>
-    </a>
-    <p>
-        We need to provide an <code><strong>email</strong>
-</code>
-        in json format : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2013.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2013.png"></img>
-    </a>
-    <p>
-        After sending the request with an email, let’s see the response from the web server :</p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2014.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2014.png"></img>
-    </a>
-    <p>
-        We need to specify an <code><strong>is_admin</strong>
-</code>
-        parameter. Let’s try to update this value to <code><strong>1</strong>
-</code>
-        : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2015.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2015.png"></img>
-    </a>
-    <p>
-        Here is the response from the web server : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2016.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2016.png"></img>
-    </a>
-    <p>
-        It seems we are now admin. Let’s verify this by sending a GET request to <strong><code>/api/v1/admin/auth</code>
-        </strong>
-        : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2017.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2017.png"></img>
-    </a>
-    <p>
-        We have now an admin access to the API.</p>
-    <h2>Exploiting an OS Command Injection</h2>
-    <p>
-        We can generate an <strong><code>.ovpn</code>
-        </strong>
-        by sending a POST request with the <code><strong>username</strong>
-</code>
-        at the <code><strong>/api/v1/admin/vpn/generate</strong>
-</code>
-        endpoint : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2018.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2018.png"></img>
-    </a>
-    <p>
-        The web server sends the generated file in the response : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2019.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2019.png"></img>
-    </a>
-    <p>
-        Maybe the <strong><code>username</code>
-        </strong>
-        we send to the web server is passed in a command line. So we may be able to perform an <strong>OS command
-            injection</strong>
-        . Let’s try to inject a command by adding a semicolon : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2020.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2020.png"></img>
-    </a>
-    <p>
-        Let’s see if we received a request to our web server :</p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2021.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2021.png"></img>
-    </a>
-    <p>
-        We successfully injected an arbitrary command in the <code><strong>username</strong>
-</code>
-        field. We can start a listener and inject a malicious payload in order to get a reverse shell : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2022.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2022.png"></img>
-    </a>
-    <p>
-        After sending this request, we can take a look at our listener : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2023.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2023.png"></img>
-    </a>
-    <p>
-        We have now a foothold as <strong><code>www-data</code>
-        </strong>
-        .</p>
-    <h1>Post-exploitation</h1>
-    <h2>Local enumeration</h2>
-    <p>
-        Let’s see if there is another user account by looking at the <code><strong>/home</strong>
-</code>
-        directory : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2024.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2024.png"></img>
-    </a>
-    <p>
-        There is an <strong><code>admin</code>
-        </strong>
-        user. Let’s take a look at the web application source code to see if we can find credentials. There is a <code><strong>.env</strong>
-</code>
-        file in the web root : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2025.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2025.png"></img>
-    </a>
-    <h2>Privilege escalation (admin)</h2>
-    <p>
-        Let’s see if this password was reused for the local <code><strong>admin</strong>
-</code>
-        user : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2026.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2026.png"></img>
-    </a>
-    <p>
-        We successfully escalated our privileges to the <strong><code>admin</code>
-        </strong>
-        user.</p>
-    <h2>Privilege escalation (root)</h2>
-    <p>
-        Let’s take a look at the Linux kernel version : </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2027.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2027.png"></img>
-    </a>
-    <p>
-        This version of the Linux kernel may be vulnerable to <code><strong>CVE-2023-0386</strong>
-</code>
-        . It is a vulnerability that affects the OverlayFS component. There is an exploit available here : <a
-            href="https://github.com/sxlmnwb/CVE-2023-0386">https://github.com/sxlmnwb/CVE-2023-0386</a>
-    </p>
-    <p>
-        To use this exploit, we need to open two terminals. In the first one, we execute
-        <strong><code>./fuse ./ovlcap/lower ./gc</code>
-        </strong>
-        <strong>. </strong>
-        In the second one, we need to execute<strong> </strong>
-        <strong><code>./exp</code>
-        </strong>
-        <strong> : </strong>
-    </p>
-    <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2028.png"><img
-            src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2028.png"></img>
-    </a>
-    <p>
-        We have now access to the <code><strong>root</strong>
-</code>
-        account.</p>
-    <h1>Clearing tracks</h1>
-    <table>
-        <tr>
-            <th>Step</th>
-            <th>Tracks to remove</th>
-        </tr>
-        <tbody>
-            <tr>
-                <td>Post-exploitation - Privilege escalation (root)</td>
-                <td>- Remove files from the OverlayFS exploit</td>
-            </tr>
-            <tr>
-                <td>Post-exploitation - Local enumeration</td>
-                <td>- Remove <code><strong>linpeas.sh</strong>
-</code>
-                    and <code><strong>pspy64</strong>
-</code>
-                    from <code><strong>/tmp</strong>
-</code>
-                </td>
-            </tr>
-            <tr>
-                <td>Initial access - Retrieving a valid invite code</td>
-                <td>- Remove the user account created on the website</td>
-            </tr>
-        </tbody>
-    </table>
-    <h1>Vulnerabilities summary</h1>
-    <h2><strong>Improper Access Control on the API</strong>
-    </h2>
-    <table>
-        <tr>
-            <th>Field</th>
-            <th>Value</th>
-        </tr>
-        <tbody>
-            <tr>
-                <td>Affected component</td>
-                <td>Web API</td>
-            </tr>
-            <tr>
-                <td>CVSS 3.0 score</td>
-                <td><strong>7.3</strong>
-                </td>
-            </tr>
-            <tr>
-                <td>Severity</td>
-                <td><strong>HIGH</strong>
-                </td>
-            </tr>
-            <tr>
-                <td>Attack vector</td>
-                <td><strong>Network</strong>
-                </td>
-            </tr>
-            <tr>
-                <td>Impact</td>
-                <td>Allows an attacker to generate a valid invitation code. Also, it allows an authenticated attacker to
-                    give himself administrative privileges on the API.This has a <strong>low</strong>
-                    impact on the <strong>confidentiality</strong>
-                    <strong>, </strong>
-                    <strong>integrity</strong>
-                    <strong>, </strong>
-                    and <strong>availability</strong>
-                    of the affected component.
-                </td>
-            </tr>
-            <tr>
-                <td>Remediation proposition</td>
-                <td>Set up proper access control to avoid unauthorized user to gain a privileged access to the API.</td>
-            </tr>
-        </tbody>
-    </table>
-    <h2>OS Command Injection</h2>
-    <table>
-        <tr>
-            <th>Field</th>
-            <th>Value</th>
-        </tr>
-        <tbody>
-            <tr>
-                <td>Affected component</td>
-                <td>Web API</td>
-            </tr>
-            <tr>
-                <td>CVSS 3.0 score</td>
-                <td><strong>8.8</strong>
-                </td>
-            </tr>
-            <tr>
-                <td>Severity</td>
-                <td><strong>HIGH</strong>
-                </td>
-            </tr>
-            <tr>
-                <td>Attack vector</td>
-                <td><strong>Network</strong>
-                </td>
-            </tr>
-            <tr>
-                <td>Impact</td>
-                <td>Allows an attacker to execute arbitrary system commands as <code><strong>www-data</strong>
-</code>
-                    . This can lead the attacker to gain a foothold on the system.This has a <strong>high</strong>
-                    impact on the <strong>confidentiality</strong>
-                    <strong>, </strong>
-                    <strong>integrity</strong>
-                    <strong>, </strong>
-                    and <strong>availability</strong>
-                    of the affected component.
-                </td>
-            </tr>
-            <tr>
-                <td>Remediation proposition</td>
-                <td>Sanitize the username parameter sent by the user in the POST request sent to <code><strong>/api/v1/admin/vpn/generate</strong>
-</code>
-                    .</td>
-            </tr>
-        </tbody>
-    </table>
-    <h2>CVE-2023-0386 (OverlayFS)</h2>
-    <table>
-        <tr>
-            <th>Field</th>
-            <th>Value</th>
-        </tr>
-        <tbody>
-            <tr>
-                <td>Affected component</td>
-                <td>Linux kernel</td>
-            </tr>
-            <tr>
-                <td>CVSS 3.0 score</td>
-                <td><strong>8.4</strong>
-                </td>
-            </tr>
-            <tr>
-                <td>Severity</td>
-                <td><strong>HIGH</strong>
-                </td>
-            </tr>
-            <tr>
-                <td>Attack vector</td>
-                <td><strong>Local</strong>
-                </td>
-            </tr>
-            <tr>
-                <td>Impact</td>
-                <td>Allows an attacker to escalate his privileges leading to the compromission of the root account. This
-                    has a <strong>high</strong>
-                    impact on the <strong>confidentiality</strong>
-                    , <strong>availability</strong>
-                    , and <strong>integrity</strong>
-                    of the affected component.</td>
-            </tr>
-            <tr>
-                <td>Remediation proposition</td>
-                <td>Update the system using <code><strong>sudo apt update</strong>
-</code>
-                    and <code><strong>sudo apt upgrade</strong>
-</code>
-                    <strong> </strong>
-                    to install a patched version of the linux kernel.
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <h1>Tools used</h1>
-    <table>
-        <tr>
-            <th>Tool</th>
-            <th>Purpose</th>
-        </tr>
-        <tbody>
-            <tr>
-                <td><a href="https://nmap.org/book/man.html"><strong>Nmap</strong>
-                    </a>
-                </td>
-                <td>- Scan for open ports- Scan services versions</td>
-            </tr>
-            <tr>
-                <td><a href="https://github.com/OJ/gobuster"><strong>Gobuster</strong>
-                    </a>
-                </td>
-                <td>- Fuzz virtual hosts</td>
-            </tr>
-            <tr>
-                <td><a href="https://portswigger.net/burp">BurpSuite</a>
-                </td>
-                <td>- Analyse and modify requests sent to the web server</td>
-            </tr>
-            <tr>
-                <td><a href="https://www.revshells.com/">Revshells.com</a>
-                </td>
-                <td>- Generate payloads for reverse shells</td>
-            </tr>
-            <tr>
-                <td><a href="https://github.com/calebstewart/pwncat">Pwncat-cs</a>
-                </td>
-                <td>- Handle reverse shell connections</td>
-            </tr>
-        </tbody>
-    </table>
-    <h1>Sources</h1>
-    <ul>
-        <li>CVE-2023-0386 exploit : <a
-                href="https://github.com/sxlmnwb/CVE-2023-0386">https://github.com/sxlmnwb/CVE-2023-0386</a>
-        </li>
-    </ul>
-    <ul>
-        <li>NIST NVD CVE-2023-0386 : <a
-                href="https://nvd.nist.gov/vuln/detail/CVE-2023-0386#:~:text=Description,nosuid%20mount%20into%20another%20mount">https://nvd.nist.gov/vuln/detail/CVE-2023-0386#:~:text=Description,nosuid
-                mount into another mount</a>
-        </li>
-    </ul>
+ <p id="53715c66-42b2-4173-8ce4-04b3a5510eb3">
+  We can see on the nmap scan that the web server redirects us to
+  <strong>
+   <code>
+    http://2million.htb/
+   </code>
+  </strong>
+  virtual host. We need to add it to our
+  <strong>
+   <code>
+    /etc/hosts
+   </code>
+  </strong>
+  file.
+ </p>
+ <h2 id="41538bb4-daad-44f7-a9d2-383136d7ba97">
+  Web enumeration
+ </h2>
+ <p id="47801327-48f0-4530-8959-a87d5051ec96">
+  Let’s take a look at the web server on port
+  <strong>
+   <code>
+    80
+   </code>
+  </strong>
+  :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled.png"/>
+ </a>
+ <p id="3cd43418-4a39-4d2e-93ab-889d8f97a786">
+  We can use Gobuster to fuzz directories :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%201.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%201.png"/>
+ </a>
+ <p id="672e7b88-ac98-4292-9c53-5598e93c9afd">
+  Let’s take a look at the
+  <strong>
+   <code>
+    /register
+   </code>
+  </strong>
+  page :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%202.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%202.png"/>
+ </a>
+ <p id="19a8be86-f05f-4f6f-bdac-1d9733072cd1">
+  It seems that we need an invite code. We may be able to retrieve a valid invite code from the API. On the
+  <strong>
+   <code>
+    /invite
+   </code>
+  </strong>
+  page, we can enter an invite code, and it checks if it is valid or not :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%203.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%203.png"/>
+ </a>
+ <p id="b32b4a8b-241f-43fa-9795-0fce93a9fba8">
+  Let’s capture the POST request made to this page using BurpSuite :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%204.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%204.png"/>
+ </a>
+ <p id="0dfd551e-81c8-44d5-b07b-ca594bff8a11">
+  We can see that the
+  <code>
+   <strong>
+    /api/v1/invite/verify
+   </strong>
+  </code>
+  endpoint is used to check if the invite code is valid. We can try to fuzz this endpoint using Gobuster :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%205.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%205.png"/>
+ </a>
+ <h1 id="32a50070-9ff0-49e6-9f3a-b1c31534278d">
+  Initial access
+ </h1>
+ <h2 id="0c53a9f6-a366-4d9f-8543-0c16e6ef3edf">
+  Retrieving a valid invite code
+ </h2>
+ <p id="657ceb85-9d25-4aea-8a22-69c01c2d259e">
+  We found another endpoint called
+  <strong>
+   <code>
+    /generate
+   </code>
+  </strong>
+  . We may be able to generate a valid invite code on this endpoint. Let’s send a POST request to this endpoint using BurpSuite :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%206.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%206.png"/>
+ </a>
+ <p id="f4e184aa-8077-4c3c-82cd-beb1e1552396">
+  Here is the response from the web server :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%207.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%207.png"/>
+ </a>
+ <p id="59375088-a2b5-4a01-8e55-30ba017e2318">
+  It seems that the invite code is encoded in base64. Here is the decoded string :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%208.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%208.png"/>
+ </a>
+ <p id="8ddbcea1-a71e-4ce7-8a51-9743407ac0e2">
+  So we have an invite code :
+  <strong>
+   <code>
+    0BLQN-9AII9-170XM-ZNEW
+   </code>
+  </strong>
+  .
+ </p>
+ <h2 id="e7856600-8efe-42ec-9a5d-2350680cf5b4">
+  Obtaining admin access to the API
+ </h2>
+ <p id="ef7c99cb-6dab-451f-9b55-0d841f846409">
+  Let’s see what we can find on the
+  <strong>
+   <code>
+    /api/v1
+   </code>
+  </strong>
+  endpoint :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%209.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%209.png"/>
+ </a>
+ <p id="b50ddf39-f36d-43bf-a865-377d96c599b9">
+  Here is the response from the web server :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2010.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2010.png"/>
+ </a>
+ <p id="fe82fe37-3e7e-4735-8ae4-83bb2bf1a910">
+  We have a list of available api routes. There is an
+  <strong>
+   <code>
+    admin
+   </code>
+  </strong>
+  part in the API. It seems that we can update a user profile with the
+  <code>
+   <strong>
+    /api/v1/admin/settings/update
+   </strong>
+  </code>
+  endpoint. Let’s send a request to this endpoint :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2011.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2011.png"/>
+ </a>
+ <p id="e3fb8f93-1672-4d26-8dfb-24d4f68b8f1c">
+  The response from the web server :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2012.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2012.png"/>
+ </a>
+ <p id="c5a9ff12-62fa-4142-b8a6-7f61151e8863">
+  We need to provide an
+  <code>
+   <strong>
+    email
+   </strong>
+  </code>
+  in json format :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2013.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2013.png"/>
+ </a>
+ <p id="d2fdbff4-993e-4b2c-87ac-bf65204edf63">
+  After sending the request with an email, let’s see the response from the web server :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2014.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2014.png"/>
+ </a>
+ <p id="c4f85328-4c2b-4277-b3ae-9166c14b4818">
+  We need to specify an
+  <code>
+   <strong>
+    is_admin
+   </strong>
+  </code>
+  parameter. Let’s try to update this value to
+  <code>
+   <strong>
+    1
+   </strong>
+  </code>
+  :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2015.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2015.png"/>
+ </a>
+ <p id="c4fa0925-46fd-4d20-a515-39a6fa194b2d">
+  Here is the response from the web server :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2016.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2016.png"/>
+ </a>
+ <p id="f3df9e0a-b42f-4bed-ab48-b396dbc17c30">
+  It seems we are now admin. Let’s verify this by sending a GET request to
+  <strong>
+   <code>
+    /api/v1/admin/auth
+   </code>
+  </strong>
+  :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2017.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2017.png"/>
+ </a>
+ <p id="bc0643ae-9e7e-47aa-94d3-76b43d810009">
+  We have now an admin access to the API.
+ </p>
+ <h2 id="e6ed6de1-a287-484c-bf30-fe676bc01f2b">
+  Exploiting an OS Command Injection
+ </h2>
+ <p id="dc25b5fa-533b-430d-b3fc-f627a6c0faf6">
+  We can generate an
+  <strong>
+   <code>
+    .ovpn
+   </code>
+  </strong>
+  by sending a POST request with the
+  <code>
+   <strong>
+    username
+   </strong>
+  </code>
+  at the
+  <code>
+   <strong>
+    /api/v1/admin/vpn/generate
+   </strong>
+  </code>
+  endpoint :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2018.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2018.png"/>
+ </a>
+ <p id="dc7b7419-b2e2-48ac-b981-bfe2517b9b43">
+  The web server sends the generated file in the response :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2019.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2019.png"/>
+ </a>
+ <p id="58982948-cbe8-4e2e-8fd4-7deb5dbadcc1">
+  Maybe the
+  <strong>
+   <code>
+    username
+   </code>
+  </strong>
+  we send to the web server is passed in a command line. So we may be able to perform an
+  <strong>
+   OS command injection
+  </strong>
+  . Let’s try to inject a command by adding a semicolon :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2020.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2020.png"/>
+ </a>
+ <p id="7edecbfc-e6d8-4e2b-bff3-2dfd4d796ff0">
+  Let’s see if we received a request to our web server :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2021.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2021.png"/>
+ </a>
+ <p id="5b23dd6f-1372-4f4f-bcfd-712cbabf4097">
+  We successfully injected an arbitrary command in the
+  <code>
+   <strong>
+    username
+   </strong>
+  </code>
+  field. We can start a listener and inject a malicious payload in order to get a reverse shell :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2022.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2022.png"/>
+ </a>
+ <p id="78a45438-7247-4d81-a920-2028b1bfd33d">
+  After sending this request, we can take a look at our listener :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2023.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2023.png"/>
+ </a>
+ <p id="5848bf12-b77e-4603-a0c1-32e309a98e88">
+  We have now a foothold as
+  <strong>
+   <code>
+    www-data
+   </code>
+  </strong>
+  .
+ </p>
+ <h1 id="746ae455-3f29-4549-9968-569542e258a4">
+  Post-exploitation
+ </h1>
+ <h2 id="110b1076-6496-482d-b9f3-3ebc04ff0b7c">
+  Local enumeration
+ </h2>
+ <p id="f0729991-7dd2-4fef-b8e2-1fdeff76a999">
+  Let’s see if there is another user account by looking at the
+  <code>
+   <strong>
+    /home
+   </strong>
+  </code>
+  directory :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2024.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2024.png"/>
+ </a>
+ <p id="2db30238-8b3c-4ef2-a7a8-b9f0803a458e">
+  There is an
+  <strong>
+   <code>
+    admin
+   </code>
+  </strong>
+  user. Let’s take a look at the web application source code to see if we can find credentials. There is a
+  <code>
+   <strong>
+    .env
+   </strong>
+  </code>
+  file in the web root :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2025.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2025.png"/>
+ </a>
+ <h2 id="cf2fbd27-3633-46b1-97b9-99865ae61e74">
+  Privilege escalation (admin)
+ </h2>
+ <p id="cc03f8a1-5256-4f97-8f88-a4498b0b7095">
+  Let’s see if this password was reused for the local
+  <code>
+   <strong>
+    admin
+   </strong>
+  </code>
+  user :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2026.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2026.png"/>
+ </a>
+ <p id="617cfbeb-80f3-4d86-9c7e-1b69ab5f39d2">
+  We successfully escalated our privileges to the
+  <strong>
+   <code>
+    admin
+   </code>
+  </strong>
+  user.
+ </p>
+ <h2 id="e92825f6-b31f-4654-97e2-a52373b32bed">
+  Privilege escalation (root)
+ </h2>
+ <p id="e2e83cd6-9e9b-413b-b680-cbf452aa6e72">
+  Let’s take a look at the Linux kernel version :
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2027.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2027.png"/>
+ </a>
+ <p id="368a2059-889e-4a28-b38f-d75b5311b129">
+  This version of the Linux kernel may be vulnerable to
+  <code>
+   <strong>
+    CVE-2023-0386
+   </strong>
+  </code>
+  . It is a vulnerability that affects the OverlayFS component. There is an exploit available here :
+  <a href="https://github.com/sxlmnwb/CVE-2023-0386">
+   https://github.com/sxlmnwb/CVE-2023-0386
+  </a>
+ </p>
+ <p id="ddc2332f-5a47-4f9e-a8e1-eea37c3c69ec">
+  To use this exploit, we need to open two terminals. In the first one, we execute
+  <strong>
+   <code>
+    ./fuse ./ovlcap/lower ./gc
+   </code>
+  </strong>
+  <strong>
+   .
+  </strong>
+  In the second one, we need to execute
+  <strong>
+  </strong>
+  <strong>
+   <code>
+    ./exp
+   </code>
+  </strong>
+  <strong>
+   :
+  </strong>
+ </p>
+ <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2028.png">
+  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2028.png"/>
+ </a>
+ <p id="537b4f13-866e-42b5-8f42-d1fc37708c81">
+  We have now access to the
+  <code>
+   <strong>
+    root
+   </strong>
+  </code>
+  account.
+ </p>
+ <h1 id="811efca5-13e7-4636-acce-085525114f22">
+  Clearing tracks
+ </h1>
+ <table id="5e54cf0c-08c3-4806-91c8-a8072507d67c">
+  <tr id="7ed53852-0d57-47e6-96f8-8dde03d3aa82">
+   <th id="xDBb">
+    Step
+   </th>
+   <th id="^z&gt;Y">
+    Tracks to remove
+   </th>
+  </tr>
+  <tbody>
+   <tr id="2c3c027e-9138-4795-9b75-270bbcae31f0">
+    <td id="xDBb">
+     Post-exploitation - Privilege escalation (root)
+    </td>
+    <td id="^z&gt;Y">
+     - Remove files from the OverlayFS exploit
+    </td>
+   </tr>
+   <tr id="88d23afb-479f-4f38-be29-c3cfeed8adeb">
+    <td id="xDBb">
+     Post-exploitation - Local enumeration
+    </td>
+    <td id="^z&gt;Y">
+     - Remove
+     <code>
+      <strong>
+       linpeas.sh
+      </strong>
+     </code>
+     and
+     <code>
+      <strong>
+       pspy64
+      </strong>
+     </code>
+     from
+     <code>
+      <strong>
+       /tmp
+      </strong>
+     </code>
+    </td>
+   </tr>
+   <tr id="07fc2e39-ac15-4e40-81f9-7880887e7bd7">
+    <td id="xDBb">
+     Initial access - Retrieving a valid invite code
+    </td>
+    <td id="^z&gt;Y">
+     - Remove the user account created on the website
+    </td>
+   </tr>
+  </tbody>
+ </table>
+ <h1 id="b350e536-1b68-4406-9fbb-91ce3be854e3">
+  Vulnerabilities summary
+ </h1>
+ <h2 id="41ff21f1-e183-45fc-9168-27d7e0c87317">
+  <strong>
+   Improper Access Control on the API
+  </strong>
+ </h2>
+ <table id="2fcef0b7-78e4-4b1e-9803-b3cd6b227744">
+  <tr id="db06a986-80de-43be-851d-0eeab38323c4">
+   <th id="&lt;?AB">
+    Field
+   </th>
+   <th id="BY@B">
+    Value
+   </th>
+  </tr>
+  <tbody>
+   <tr id="73ca824d-5e44-4b19-9749-bf60095d2e4f">
+    <td id="&lt;?AB">
+     Affected component
+    </td>
+    <td id="BY@B">
+     Web API
+    </td>
+   </tr>
+   <tr id="543fe670-86fd-4d97-80d0-041e2968f8a8">
+    <td id="&lt;?AB">
+     CVSS 3.0 score
+    </td>
+    <td id="BY@B">
+     <strong>
+      7.3
+     </strong>
+    </td>
+   </tr>
+   <tr id="57bec0db-b305-407d-851a-e5fe3736c9a3">
+    <td id="&lt;?AB">
+     Severity
+    </td>
+    <td id="BY@B">
+     <strong>
+      HIGH
+     </strong>
+    </td>
+   </tr>
+   <tr id="004746b8-cb3a-4790-8222-24275ea20fbf">
+    <td id="&lt;?AB">
+     Attack vector
+    </td>
+    <td id="BY@B">
+     <strong>
+      Network
+     </strong>
+    </td>
+   </tr>
+   <tr id="23d8779b-c3c6-42cc-889a-bc9b9ed08a36">
+    <td id="&lt;?AB">
+     Impact
+    </td>
+    <td id="BY@B">
+     Allows an attacker to generate a valid invitation code. Also, it allows an authenticated attacker to give himself administrative privileges on the API.This has a
+     <strong>
+      low
+     </strong>
+     impact on the
+     <strong>
+      confidentiality
+     </strong>
+     <strong>
+      ,
+     </strong>
+     <strong>
+      integrity
+     </strong>
+     <strong>
+      ,
+     </strong>
+     and
+     <strong>
+      availability
+     </strong>
+     of the affected component.
+    </td>
+   </tr>
+   <tr id="68fa0b9d-c80e-413d-865b-fce4073afd1b">
+    <td id="&lt;?AB">
+     Remediation proposition
+    </td>
+    <td id="BY@B">
+     Set up proper access control to avoid unauthorized user to gain a privileged access to the API.
+    </td>
+   </tr>
+  </tbody>
+ </table>
+ <h2 id="f48239b7-b9fb-4ad7-9ab8-04c1c5dd6e49">
+  OS Command Injection
+ </h2>
+ <table id="64ca21f7-f36d-4fd1-b4b6-22f00b87a962">
+  <tr id="ef01b613-b947-4319-bc5e-1e6d91b1ace1">
+   <th id="&lt;?AB">
+    Field
+   </th>
+   <th id="BY@B">
+    Value
+   </th>
+  </tr>
+  <tbody>
+   <tr id="29ef798f-6036-4eac-965c-ae5b29255b77">
+    <td id="&lt;?AB">
+     Affected component
+    </td>
+    <td id="BY@B">
+     Web API
+    </td>
+   </tr>
+   <tr id="229db9e7-8d07-4591-b863-75186e518ef0">
+    <td id="&lt;?AB">
+     CVSS 3.0 score
+    </td>
+    <td id="BY@B">
+     <strong>
+      8.8
+     </strong>
+    </td>
+   </tr>
+   <tr id="6ff8450b-a939-41f8-8f35-3315488410fa">
+    <td id="&lt;?AB">
+     Severity
+    </td>
+    <td id="BY@B">
+     <strong>
+      HIGH
+     </strong>
+    </td>
+   </tr>
+   <tr id="79eb0b49-e747-4a3c-8d59-7232ae54a0e2">
+    <td id="&lt;?AB">
+     Attack vector
+    </td>
+    <td id="BY@B">
+     <strong>
+      Network
+     </strong>
+    </td>
+   </tr>
+   <tr id="eb914464-a24c-4fef-84c5-5200e89d13e8">
+    <td id="&lt;?AB">
+     Impact
+    </td>
+    <td id="BY@B">
+     Allows an attacker to execute arbitrary system commands as
+     <code>
+      <strong>
+       www-data
+      </strong>
+     </code>
+     . This can lead the attacker to gain a foothold on the system.This has a
+     <strong>
+      high
+     </strong>
+     impact on the
+     <strong>
+      confidentiality
+     </strong>
+     <strong>
+      ,
+     </strong>
+     <strong>
+      integrity
+     </strong>
+     <strong>
+      ,
+     </strong>
+     and
+     <strong>
+      availability
+     </strong>
+     of the affected component.
+    </td>
+   </tr>
+   <tr id="098d9c6e-f27b-4b50-9759-3c8b7860992b">
+    <td id="&lt;?AB">
+     Remediation proposition
+    </td>
+    <td id="BY@B">
+     Sanitize the username parameter sent by the user in the POST request sent to
+     <code>
+      <strong>
+       /api/v1/admin/vpn/generate
+      </strong>
+     </code>
+     .
+    </td>
+   </tr>
+  </tbody>
+ </table>
+ <h2 id="4c5b6e7a-5f50-430d-8d86-19bbb72a8f20">
+  CVE-2023-0386 (OverlayFS)
+ </h2>
+ <table id="f4f8f085-6e80-4a2c-bb32-eefd1b36a550">
+  <tr id="ecaef5c6-f762-4a76-a882-68259ad2423d">
+   <th id="&lt;?AB">
+    Field
+   </th>
+   <th id="BY@B">
+    Value
+   </th>
+  </tr>
+  <tbody>
+   <tr id="c52f0809-fbba-44dc-8106-e2a3377ec337">
+    <td id="&lt;?AB">
+     Affected component
+    </td>
+    <td id="BY@B">
+     Linux kernel
+    </td>
+   </tr>
+   <tr id="c7afce8e-9b4f-4f78-b28a-63ec27355bc3">
+    <td id="&lt;?AB">
+     CVSS 3.0 score
+    </td>
+    <td id="BY@B">
+     <strong>
+      8.4
+     </strong>
+    </td>
+   </tr>
+   <tr id="24558781-6111-48e2-8d65-9787cbd156bd">
+    <td id="&lt;?AB">
+     Severity
+    </td>
+    <td id="BY@B">
+     <strong>
+      HIGH
+     </strong>
+    </td>
+   </tr>
+   <tr id="d4ad08a1-be3b-4549-b9ec-da169699f6c6">
+    <td id="&lt;?AB">
+     Attack vector
+    </td>
+    <td id="BY@B">
+     <strong>
+      Local
+     </strong>
+    </td>
+   </tr>
+   <tr id="75cc4f99-36e5-4686-b83f-9a3673131d02">
+    <td id="&lt;?AB">
+     Impact
+    </td>
+    <td id="BY@B">
+     Allows an attacker to escalate his privileges leading to the compromission of the root account. This has a
+     <strong>
+      high
+     </strong>
+     impact on the
+     <strong>
+      confidentiality
+     </strong>
+     ,
+     <strong>
+      availability
+     </strong>
+     , and
+     <strong>
+      integrity
+     </strong>
+     of the affected component.
+    </td>
+   </tr>
+   <tr id="a20abe22-9887-4477-9064-97bd8a568014">
+    <td id="&lt;?AB">
+     Remediation proposition
+    </td>
+    <td id="BY@B">
+     Update the system using
+     <code>
+      <strong>
+       sudo apt update
+      </strong>
+     </code>
+     and
+     <code>
+      <strong>
+       sudo apt upgrade
+      </strong>
+     </code>
+     <strong>
+     </strong>
+     to install a patched version of the linux kernel.
+    </td>
+   </tr>
+  </tbody>
+ </table>
+ <h1 id="81d9aef1-9249-44e7-85e4-32c1b8d0e2de">
+  Tools used
+ </h1>
+ <table id="bb1c0f42-161f-474c-abfd-44f15c104705">
+  <tr id="023d750d-b2b8-4752-9a71-e7725d12b3bf">
+   <th id="`&gt;MF">
+    Tool
+   </th>
+   <th id="A|qY">
+    Purpose
+   </th>
+  </tr>
+  <tbody>
+   <tr id="b6d31d19-53a7-4d7b-bdea-e71d5c6548d1">
+    <td id="`&gt;MF">
+     <a href="https://nmap.org/book/man.html">
+      <strong>
+       Nmap
+      </strong>
+     </a>
+    </td>
+    <td id="A|qY">
+     - Scan for open ports- Scan services versions
+    </td>
+   </tr>
+   <tr id="6b8f1f49-feb3-40a6-84e6-27f0b183c495">
+    <td id="`&gt;MF">
+     <a href="https://github.com/OJ/gobuster">
+      <strong>
+       Gobuster
+      </strong>
+     </a>
+    </td>
+    <td id="A|qY">
+     - Fuzz virtual hosts
+    </td>
+   </tr>
+   <tr id="e6b5b34a-4e57-42bb-85d2-1373638da6a5">
+    <td id="`&gt;MF">
+     <a href="https://portswigger.net/burp">
+      BurpSuite
+     </a>
+    </td>
+    <td id="A|qY">
+     - Analyse and modify requests sent to the web server
+    </td>
+   </tr>
+   <tr id="2a8b5fa0-e546-4d25-99b7-b71946394fa0">
+    <td id="`&gt;MF">
+     <a href="https://www.revshells.com/">
+      Revshells.com
+     </a>
+    </td>
+    <td id="A|qY">
+     - Generate payloads for reverse shells
+    </td>
+   </tr>
+   <tr id="1e6419af-95b0-47dd-bca0-bcfb8083e0b9">
+    <td id="`&gt;MF">
+     <a href="https://github.com/calebstewart/pwncat">
+      Pwncat-cs
+     </a>
+    </td>
+    <td id="A|qY">
+     - Handle reverse shell connections
+    </td>
+   </tr>
+  </tbody>
+ </table>
+ <h1 id="98c85613-8dd1-4895-96d5-9b64b27025ea">
+  Sources
+ </h1>
+ <ul id="c8edbebc-c735-4e50-9a47-6d86e04a78a7">
+  <li>
+   CVE-2023-0386 exploit :
+   <a href="https://github.com/sxlmnwb/CVE-2023-0386">
+    https://github.com/sxlmnwb/CVE-2023-0386
+   </a>
+  </li>
+ </ul>
+ <ul id="e6566dc6-0542-4ceb-b945-1026f634cbf9">
+  <li>
+   NIST NVD CVE-2023-0386 :
+   <a href="https://nvd.nist.gov/vuln/detail/CVE-2023-0386#:~:text=Description,nosuid%20mount%20into%20another%20mount">
+    https://nvd.nist.gov/vuln/detail/CVE-2023-0386#:~:text=Description,nosuid mount into another mount
+   </a>
+  </li>
+ </ul>
 </div>

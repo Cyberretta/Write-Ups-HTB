@@ -90,9 +90,7 @@
   </div>
   <div>
    <a class="t2" href="#41ff21f1-e183-45fc-9168-27d7e0c87317">
-    <strong>
      Improper Access Control on the API
-    </strong>
    </a>
   </div>
   <div>
@@ -168,14 +166,14 @@ Service detection performed. Please report any incorrect results at https://nmap
   </strong>
   :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled.png"/>
  </a>
  <p id="3cd43418-4a39-4d2e-93ab-889d8f97a786">
   We can use Gobuster to fuzz directories :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%201.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%201.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%201.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%201.png"/>
  </a>
  <p id="672e7b88-ac98-4292-9c53-5598e93c9afd">
   Let’s take a look at the
@@ -186,8 +184,8 @@ Service detection performed. Please report any incorrect results at https://nmap
   </strong>
   page :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%202.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%202.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%202.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%202.png"/>
  </a>
  <p id="19a8be86-f05f-4f6f-bdac-1d9733072cd1">
   It seems that we need an invite code. We may be able to retrieve a valid invite code from the API. On the
@@ -198,14 +196,14 @@ Service detection performed. Please report any incorrect results at https://nmap
   </strong>
   page, we can enter an invite code, and it checks if it is valid or not :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%203.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%203.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%203.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%203.png"/>
  </a>
  <p id="b32b4a8b-241f-43fa-9795-0fce93a9fba8">
   Let’s capture the POST request made to this page using BurpSuite :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%204.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%204.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%204.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%204.png"/>
  </a>
  <p id="0dfd551e-81c8-44d5-b07b-ca594bff8a11">
   We can see that the
@@ -216,8 +214,8 @@ Service detection performed. Please report any incorrect results at https://nmap
   </code>
   endpoint is used to check if the invite code is valid. We can try to fuzz this endpoint using Gobuster :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%205.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%205.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%205.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%205.png"/>
  </a>
  <h1 id="32a50070-9ff0-49e6-9f3a-b1c31534278d">
   Initial access
@@ -234,20 +232,20 @@ Service detection performed. Please report any incorrect results at https://nmap
   </strong>
   . We may be able to generate a valid invite code on this endpoint. Let’s send a POST request to this endpoint using BurpSuite :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%206.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%206.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%206.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%206.png"/>
  </a>
  <p id="f4e184aa-8077-4c3c-82cd-beb1e1552396">
   Here is the response from the web server :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%207.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%207.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%207.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%207.png"/>
  </a>
  <p id="59375088-a2b5-4a01-8e55-30ba017e2318">
   It seems that the invite code is encoded in base64. Here is the decoded string :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%208.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%208.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%208.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%208.png"/>
  </a>
  <p id="8ddbcea1-a71e-4ce7-8a51-9743407ac0e2">
   So we have an invite code :
@@ -270,14 +268,14 @@ Service detection performed. Please report any incorrect results at https://nmap
   </strong>
   endpoint :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%209.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%209.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%209.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%209.png"/>
  </a>
  <p id="b50ddf39-f36d-43bf-a865-377d96c599b9">
   Here is the response from the web server :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2010.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2010.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2010.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2010.png"/>
  </a>
  <p id="fe82fe37-3e7e-4735-8ae4-83bb2bf1a910">
   We have a list of available api routes. There is an
@@ -294,14 +292,14 @@ Service detection performed. Please report any incorrect results at https://nmap
   </code>
   endpoint. Let’s send a request to this endpoint :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2011.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2011.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2011.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2011.png"/>
  </a>
  <p id="e3fb8f93-1672-4d26-8dfb-24d4f68b8f1c">
   The response from the web server :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2012.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2012.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2012.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2012.png"/>
  </a>
  <p id="c5a9ff12-62fa-4142-b8a6-7f61151e8863">
   We need to provide an
@@ -312,14 +310,14 @@ Service detection performed. Please report any incorrect results at https://nmap
   </code>
   in json format :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2013.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2013.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2013.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2013.png"/>
  </a>
  <p id="d2fdbff4-993e-4b2c-87ac-bf65204edf63">
   After sending the request with an email, let’s see the response from the web server :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2014.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2014.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2014.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2014.png"/>
  </a>
  <p id="c4f85328-4c2b-4277-b3ae-9166c14b4818">
   We need to specify an
@@ -336,14 +334,14 @@ Service detection performed. Please report any incorrect results at https://nmap
   </code>
   :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2015.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2015.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2015.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2015.png"/>
  </a>
  <p id="c4fa0925-46fd-4d20-a515-39a6fa194b2d">
   Here is the response from the web server :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2016.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2016.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2016.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2016.png"/>
  </a>
  <p id="f3df9e0a-b42f-4bed-ab48-b396dbc17c30">
   It seems we are now admin. Let’s verify this by sending a GET request to
@@ -354,8 +352,8 @@ Service detection performed. Please report any incorrect results at https://nmap
   </strong>
   :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2017.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2017.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2017.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2017.png"/>
  </a>
  <p id="bc0643ae-9e7e-47aa-94d3-76b43d810009">
   We have now an admin access to the API.
@@ -384,14 +382,14 @@ Service detection performed. Please report any incorrect results at https://nmap
   </code>
   endpoint :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2018.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2018.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2018.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2018.png"/>
  </a>
  <p id="dc7b7419-b2e2-48ac-b981-bfe2517b9b43">
   The web server sends the generated file in the response :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2019.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2019.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2019.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2019.png"/>
  </a>
  <p id="58982948-cbe8-4e2e-8fd4-7deb5dbadcc1">
   Maybe the
@@ -406,14 +404,14 @@ Service detection performed. Please report any incorrect results at https://nmap
   </strong>
   . Let’s try to inject a command by adding a semicolon :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2020.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2020.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2020.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2020.png"/>
  </a>
  <p id="7edecbfc-e6d8-4e2b-bff3-2dfd4d796ff0">
   Let’s see if we received a request to our web server :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2021.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2021.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2021.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2021.png"/>
  </a>
  <p id="5b23dd6f-1372-4f4f-bcfd-712cbabf4097">
   We successfully injected an arbitrary command in the
@@ -424,14 +422,14 @@ Service detection performed. Please report any incorrect results at https://nmap
   </code>
   field. We can start a listener and inject a malicious payload in order to get a reverse shell :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2022.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2022.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2022.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2022.png"/>
  </a>
  <p id="78a45438-7247-4d81-a920-2028b1bfd33d">
   After sending this request, we can take a look at our listener :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2023.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2023.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2023.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2023.png"/>
  </a>
  <p id="5848bf12-b77e-4603-a0c1-32e309a98e88">
   We have now a foothold as
@@ -457,8 +455,8 @@ Service detection performed. Please report any incorrect results at https://nmap
   </code>
   directory :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2024.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2024.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2024.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2024.png"/>
  </a>
  <p id="2db30238-8b3c-4ef2-a7a8-b9f0803a458e">
   There is an
@@ -475,8 +473,8 @@ Service detection performed. Please report any incorrect results at https://nmap
   </code>
   file in the web root :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2025.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2025.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2025.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2025.png"/>
  </a>
  <h2 id="cf2fbd27-3633-46b1-97b9-99865ae61e74">
   Privilege escalation (admin)
@@ -490,8 +488,8 @@ Service detection performed. Please report any incorrect results at https://nmap
   </code>
   user :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2026.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2026.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2026.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2026.png"/>
  </a>
  <p id="617cfbeb-80f3-4d86-9c7e-1b69ab5f39d2">
   We successfully escalated our privileges to the
@@ -508,8 +506,8 @@ Service detection performed. Please report any incorrect results at https://nmap
  <p id="e2e83cd6-9e9b-413b-b680-cbf452aa6e72">
   Let’s take a look at the Linux kernel version :
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2027.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2027.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2027.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2027.png"/>
  </a>
  <p id="368a2059-889e-4a28-b38f-d75b5311b129">
   This version of the Linux kernel may be vulnerable to
@@ -545,8 +543,8 @@ Service detection performed. Please report any incorrect results at https://nmap
    :
   </strong>
  </p>
- <a href="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2028.png">
-  <img src="HackTheBox%20-%20TwoMillion%20(Easy)%20be8406f9829844e7a343e3260195ecd7/Untitled%2028.png"/>
+ <a href="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2028.png">
+  <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/TwoMillion/Untitled%2028.png"/>
  </a>
  <p id="537b4f13-866e-42b5-8f42-d1fc37708c81">
   We have now access to the

